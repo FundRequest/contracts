@@ -1,0 +1,15 @@
+{
+  "package_name": "fundrequest",
+  "version": "0.0.1-SNAPSHOT",
+  "description": "Fundrequest public contracts",
+  "authors": [
+    "Quinten De Swaef <info@fundrequest.io>"
+  ],
+  "keywords": [
+    "fundrequest",
+    "ethereum",
+    "smart",
+    "contracts"
+  ],
+  "license": "MIT"
+}
