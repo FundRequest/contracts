@@ -1,7 +1,7 @@
 {
   "package_name": "fundrequest",
-  "version": "0.0.1-SNAPSHOT",
-  "description": "Fundrequest public contracts",
+  "version": "0.1.0-SNAPSHOT",
+  "description": "FundRequest public contracts",
   "authors": [
     "Quinten De Swaef <info@fundrequest.io>"
   ],
