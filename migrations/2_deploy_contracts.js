@@ -1,8 +1,11 @@
-var ConvertLib = artifacts.require("./ConvertLib.sol");
-var MetaCoin = artifacts.require("./MetaCoin.sol");
+var FundRequestPrivateSeed = artifacts.require("./presale/FundRequestPrivateSeed.sol");
+var SafeMath = artifacts.require("./math/SafeMath.sol");
 
-module.exports = function(deployer) {
-  deployer.deploy(ConvertLib);
-  deployer.link(ConvertLib, MetaCoin);
-  deployer.deploy(MetaCoin);
+module.exports = function(deployer, network, accounts) {
+  deployer.deploy(SafeMath);
+  deployer.link(SafeMath, FundRequestPrivateSeed);
+  deployer.deploy(FundRequestPrivateSeed,
+    4500,
+    accounts[0]
+  );
 };
