@@ -4,10 +4,11 @@ var HDWalletProvider = require("truffle-hdwallet-provider");
 
 var getMnemonic = function (env) {
   try {
-    var mnemonic = fs.readFileSync('./config/' + env + '/mnemonic').toString()
-    console.log("using predefined mnemonic for network " + env + ", value :" + mnemonic);
+    //var mnemonic = fs.readFileSync('./config/' + env + '/mnemonic').toString()
+    //console.log("using predefined mnemonic for network " + env + ", value :" + mnemonic);
     return "dead fish racket soul plunger dirty boats cracker mammal nicholas cage";
   } catch (exception) {
+    console.log('Error getting mnemonic');
     return "diplr"
   }
 }
@@ -47,6 +48,12 @@ module.exports = {
       network_id: '4',
       host: "https://rinkeby.infura.io/" + getSecret(),
       provider: new HDWalletProvider(getMnemonic('rinkeby'), "https://rinkeby.infura.io/" + getSecret())
-    }
+    },
+    rinkeby_local: {
+      network_id: '4',
+      host: "localhost",
+      port: 8545,
+      gas: 4612388
+    },
   },
 };

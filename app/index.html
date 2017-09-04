@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>FundRequest.io Private Seed</title>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+  <link href='css/main-1.0.css' rel='stylesheet' type='text/css'>
+  <link rel="shortcut icon" href="/favicons/favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style type="text/css">
+    .cf-hidden {
+      display: none;
+    }
+
+    .cf-invisible {
+      visibility: hidden;
+    }
+  </style>
+  <style type="text/css">
+    .fancybox-margin {
+      margin-right: 0px;
+    }
+  </style>
+  <style>
+    .mdl-card {
+      width: 230px;
+      height: 200px;
+    }
+
+    .mdl-card__title {
+      color: #fff;
+      background-color: #46B6AC;
+    }
+
+    .custom_teal {
+      background-color: #00a79b !important;
+      opacity: 0.7;
+    }
+
+    .custom-font{
+      font-family: 'Montserrat', serif;
+    }
+
+    .font-large{
+      font-size: 16px;
+    }
+
+    .custom_btn {
+      background-color: #829299 !important;
+       opacity: 0.2;
+    }
+
+    .custom_dropdown {
+      color: #a8d1e8 !important;
+    }
+
+    .dropdown-content {
+      color: #a8d1e8 !important;
+    }
+
+    .custom_teal_dark {
+      background-color: rgba(119, 167, 196, 0.8) !important;
+    }
+
+    .card_transparent {
+      background-color: transparent;
+    }
+
+    .snippet-group .snippet-demo {
+      display: table-cell;
+      text-align: center;
+      vertical-align: middle;
+      margin: 0;
+      padding: 0 40px 40px;
+    }
+    .txtLarge{
+      font-weight: bold;
+      color: #00bab5;
+    }
+
+    .smallPrint{
+      margin-bottom: 0px;
+    }
+
+    #toast-container {
+      top: 80px;
+      right: 1%;
+      bottom: auto !important;
+      left:auto !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div class="main-container custom-font">
+      <div class="header">
+        <div class="gr-container">
+          <div class="row">
+            <div class="gr-3 gr-12@tablet gr-12@mobile"><a href="#/en/home"><img src="/images/app/header-logo.png" class="header-logo"></a></div>
+            <div class="gr-9 gr-12@tablet gr-12@mobile">
+              <div class="navigation"><a class="nav-item" href="https://fundrequest.io/whitepaper" target="_blank">Whitepaper</a><a class="nav-item"
+                  href="https://docs.fundrequest.io/display/PUB/" target="_blank">Documentation</a>
+                <a class="nav-item" href="https://blog.fundrequest.io" target="_blank">Blog</a>
+                <div class="nav-item center@mobile center@tablet"><a class="nav-item" href="https://slack.fundrequest.io" target="_blank" style="margin-right: 0px;"><button class="sign-up-button button primary" tabindex="0" type="button" style="border: 1px solid rgb(255, 171, 0); box-sizing: border-box; display: inline-block; font-family: Roboto, sans-serif; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); cursor: pointer; text-decoration: none; margin: 0px 10px; padding: 0px; outline: none; font-size: inherit; font-weight: inherit; position: relative; z-index: 1; height: 28px; line-height: 24px; min-width: 88px; color: rgb(255, 171, 0); transition: all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms; border-radius: 3px; user-select: none; overflow: hidden; background-color: transparent; text-align: center; text-transform: none;"><div><span style="position: relative; padding-left: 16px; padding-right: 16px; vertical-align: middle; letter-spacing: 0px; text-transform: inherit; font-weight: 500; font-size: 14px;">Get Invited</span></div></button></a></div>
+                <i class="fa  fa-bars fa-lg toggle-icon" aria-hidden="true"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="header-spacer"></div>
+      <div class="home">
+        <div class="introduction section">
+          <div class="content-middle">
+            <div class="gr-container">
+              <div class="row">
+                <div class="gr-12 center">
+                  <h1>Funding and rewarding open source development</h1>
+                  <h3>FundRequest makes it easy to fund open issues on any project, in any language</h3>
+                  <br>
+                  <h1>Private Seed</h1>
+                  <h3 class="smallPrint">The private seed contract is located at <a href="https://etherscan.io/address/0x436aad97c5c4298521a1295f5e55c7bd9ab090c3#code" target="_blanc">0x436aad97c5c4298521a1295f5e55c7bd9ab090c3</a></h3>
+                  <span style='font-size:10px; color:grey'>* By transferring ETH to the FundRequest private seed contract address you explicitely agree to the terms and conditions</span>
+                  <br><br>
+                  <h2>Starts on Friday, 1 September 10:00 AM CEST and ends on Tuesday, 5 September 23:59 PM CEST</h2>
+
+                  <div class="gr-12 center" id="counters">
+                    <countdown title="Private Seed opens in" date="Fri Sep 01 2017 10:00:00 GMT+0200 (CEST)"></countdown>
+                    <countdown title="Private Seed closes in"
+                               ended-label="Private Seed is closed."
+                               date="Tue Sep 05 2017 23:59:59 GMT+0200 (CEST)"
+                               start="Fri Sep 01 2017 10:00:01 GMT+0200 (CEST)"></countdown>
+                  </div>
+
+                  <h3>For questions or support, <a href="https://slack.fundrequest.io" target="_blank">join</a> us on Slack and contact @karel, @gerbert or @timdierckxsens</h3>
+                  <h3>New to crypto funding and you love some help, then have a look at our <a href="https://docs.fundrequest.io/display/PUB/Private+Seed+User+Guide" target="_blank">user guides</a></h3>
+                  <br>
+                  <div id="personalStash" style="opacity: 0">
+                    <h3> Account <span id="targetAddressLabel">0x0</a></span> is currently entitled to <span class="txtLarge" id="fndYourTokens">0</span> FND Tokens </h3>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="gr-12 center">
+                  <div class="gr-4 center">
+                    <div class="card card_transparent">
+                      <div class="card-content custom_teal white-text">
+                        <span class="card-title">Rate</span>
+                        <p>Tokens per ETH</p>
+                      </div>
+                      <div class="card-action custom_teal_dark">
+                        <b><span id="fndCurrentRate" class="white-text font-large"></span></b><span class="white-text font-large"> FND/ETH</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="gr-4 center">
+                    <div class="card card_transparent">
+                      <div class="card-content custom_teal white-text">
+                        <span class="card-title custom_teal">Raised</span>
+                        <p>Total ETH raised</p>
+                      </div>
+                      <div class="card-action custom_teal_dark">
+                        <span id="fndTotalRaised" class="white-text font-large">Loading...</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="gr-4 center">
+                    <div class="card card_transparent">
+                      <div class="card-content custom_teal white-text">
+                        <span class="card-title">Backers</span>
+                        <p>Total number</p>
+                      </div>
+                      <div class="card-action custom_teal_dark">
+                        <span id="fndTotalBackers" class="white-text font-large">Loading...</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row smallPrint">
+                <div class="gr-12 center">
+                  <div class="input-field col s7  offset-s1">
+                    <select id="accountSelect">
+                          <option value="" disabled selected>Choose your account*</option>
+                        </select>
+                    <label>Select your account</label>
+                  </div>
+                  <div class="input-field inline col s2 offset-s1">
+                    <input id="amount"  placeholder="Amount" type="number">
+                    <label for="amount">Amount</label>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="gr-1"></div>
+                <div class="gr-11">
+                  <span style='font-size:10px; color:grey'>* In order to partake in our private seed your address must be whitelisted</span>
+                </div>
+              </div>
+
+
+              <div class="gr-12 center">
+                <a id="btnBuy" class="waves-effect waves-light btn-large custom_btn">Fund </a>
+                 &nbsp;&nbsp;&nbsp;<input type="checkbox" class="filled-in custom_teal" id="filled-in-box"/>
+                 <label for="filled-in-box"> I confirm to accept the <a href="https://docs.fundrequest.io/display/PUB/Private+Seed+Disclaimer" target="_blank" class="disclaimer-hyperlink">Terms and Conditions</a> for the private seed</label>
+                 <br><br>
+              </div>
+
+              <div class="row">
+                <div id="busy" class="progress" style="display: none;">
+                  <div class="indeterminate"></div>
+                </div>
+              </div>
+              <div class="row" id="whitelistarea" style="display:none">
+                <div class="gr-12 center">
+                  <br>
+                  <div class="input-field inline col s12 offset-s1">
+                    <input id="targetAddress" placeholder="Address to whitelist" type="text" class="validate">
+                    <label for="targetAddress">Address to whitelist </label>
+                  </div>
+                  <a id="btnAllow" style="display: block;" class="waves-effect waves-light btn-large orange darken-1">Allow</a>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="gr-12 center"><br><br>
+                  <div><span class="already-joined"><span>Already joined Fundrequest Slack Channel? </span></span><a href="https://slack.fundrequest.io" target="_blank" class="sign-in-hyperlink"><span>Get invited</span></a></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="gr-container">
+      <div class="row">
+        <div class="gr-6 gr-12@mobile"><a href="#/en/home"><img src="/images/app/header-logo.png" class="footer-logo"></a>
+          <div class="copyright">
+            <p>© 2017 FundRequest. All rights reserved.</p>
+          </div>
+          <div class="social-container"><a href="https://twitter.com/fundrequest_io" target="_blank"><i class="fa  fa-twitter fa-lg " aria-hidden="true"></i></a>
+            <a href="https://blog.fundrequest.io" target="_blank"><i class="fa  fa-medium fa-lg " aria-hidden="true"></i></a>
+            <a href="https://github.com/fundrequest/" target="_blank"><i class="fa  fa-github fa-lg " aria-hidden="true"></i></a>
+            <a href="https://fundrequest.slack.com" target="_blank"><i class="fa  fa-slack fa-lg " aria-hidden="true"></i></a>
+            <a href="https://fundrequest.io" target="_blank"><i class="fa  fa-globe fa-lg " aria-hidden="true"></i></a>
+          </div>
+        </div>
+        <div class="gr-2 hide@mobile">
+          <div class="footer-section">
+            <div class="title">
+              <p>Resources</p>
+            </div>
+            <div class="content">
+              <a href="https://fundrequest.io/whitepaper" target="_blank">
+                <p>Whitepaper</p>
+              </a>
+              <a href="https://docs.fundrequest.io/display/PUB" target="_blank">
+                <p>Documentation</p>
+              </a>
+              <a href="https://blog.fundrequest.io" target="_blank">
+                <p>Blog</p>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="gr-2 hide@mobile">
+          <div class="footer-section">
+            <div class="title">
+              <p>Company</p>
+            </div>
+            <div class="content">
+              <a href="https://fundrequest.io" target="_blank">
+                <p>Team</p>
+              </a>
+              <a href="https://fundrequest.io" target="_blank">
+                <p>Advisors</p>
+              </a><br></div>
+          </div>
+        </div>
+        <div class="gr-2 hide@mobile">
+          <div class="footer-section">
+            <div class="title">
+              <p>Legal</p>
+            </div>
+            <div class="content">
+              <a href="https://docs.fundrequest.io/display/PUB/Private+Seed+Disclaimer" target="_blank">
+                <p>Disclaimer</p>
+              </a><br>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script type="application/javascript" src="js/web3.js"></script>
+<script type="application/javascript" src="js/truffle-contract.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.4.2/vue.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.1/js/materialize.min.js"></script>
+<script type="text/javascript" src="js/countdown.js"></script>
+<script type="text/javascript" src="js/presale-1.0.js"></script>
+</body>
+
+</html>
