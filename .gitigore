@@ -1,4 +1,4 @@
-build
+build/
 /build/*
 build/css/
 build/favicons/
