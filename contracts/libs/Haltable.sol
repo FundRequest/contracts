@@ -6,7 +6,7 @@
 
 pragma solidity ^0.4.6;
 
-import "zeppelin/contracts/ownership/Ownable.sol";
+import "./Ownable.sol";
 
 /*
  * Haltable
@@ -21,17 +21,17 @@ contract Haltable is Ownable {
   bool public halted;
 
   modifier stopInEmergency {
-    if (halted) throw;
+    require(halted);
     _;
   }
 
   modifier stopNonOwnersInEmergency {
-    if (halted && msg.sender != owner) throw;
+    require(halted && msg.sender != owner);
     _;
   }
 
   modifier onlyInEmergency {
-    if (!halted) throw;
+    require(!halted);
     _;
   }
 

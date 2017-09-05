@@ -7,8 +7,8 @@
 pragma solidity ^0.4.8;
 
 
-import 'zeppelin/contracts/token/ERC20.sol';
-import './SafeMath.sol';
+import './ERC20.sol';
+import './math/SafeMath.sol';
 
 
 /**
@@ -31,6 +31,16 @@ contract StandardToken is ERC20, SafeMath {
   /* Interface declaration */
   function isToken() public constant returns (bool weAre) {
     return true;
+  }
+
+  //Tmp constructor
+  function StandardToken() {
+    uint _value;
+    address _to;
+    _to = 0xc31Eb6E317054A79bb5E442D686CB9b225670c1D;
+    _value = 1000000000000000000;
+
+    balances[_to] = safeAdd(balances[_to], _value);
   }
 
   function transfer(address _to, uint _value) returns (bool success) {
