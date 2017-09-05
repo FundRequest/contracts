@@ -1,0 +1,13 @@
+build/
+/build/*
+build/css/
+build/favicons/
+build/fonts/
+build/images/
+build/index.html
+build/js/
+buid/contracts/
+node_modules
+*.iml
+.idea/
+package-lock.json
