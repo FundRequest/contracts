@@ -31,9 +31,8 @@ contract ReleasableToken is ERC20, Ownable {
   modifier canTransfer(address _sender) {
 
     if(!released) {
-        if(!transferAgents[_sender]) {
-            throw;
-        }
+        require(transferAgents[_sender]);
+        _;
     }
 
     _;

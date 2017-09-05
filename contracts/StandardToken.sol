@@ -33,16 +33,7 @@ contract StandardToken is ERC20, SafeMath {
     return true;
   }
 
-  //Tmp constructor
-  function StandardToken() {
-    uint _value;
-    address _to;
-    _to = 0xc31Eb6E317054A79bb5E442D686CB9b225670c1D;
-    _value = 1000000000000000000;
-
-    balances[_to] = safeAdd(balances[_to], _value);
-  }
-
+  
   function transfer(address _to, uint _value) returns (bool success) {
     balances[msg.sender] = safeSub(balances[msg.sender], _value);
     balances[_to] = safeAdd(balances[_to], _value);
