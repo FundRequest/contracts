@@ -6,8 +6,8 @@
 
 pragma solidity ^0.4.8;
 
-import "./SafeMathLib.sol";
-import "./Haltable.sol";
+import "./math/SafeMathLib.sol";
+import "./libs/Haltable.sol";
 import "./PricingStrategy.sol";
 import "./FinalizeAgent.sol";
 import "./FractionalERC20.sol";

@@ -1,11 +1,9 @@
-var FundRequestPrivateSeed = artifacts.require("./presale/FundRequestPrivateSeed.sol");
 var SafeMath = artifacts.require("./math/SafeMath.sol");
+//var ERC20 = artifacts.require("./ERC20.sol");
+var StandardToken = artifacts.require("./StandardToken.sol");
 
 module.exports = function(deployer, network, accounts) {
   deployer.deploy(SafeMath);
-  deployer.link(SafeMath, FundRequestPrivateSeed);
-  deployer.deploy(FundRequestPrivateSeed,
-    4500,
-    accounts[0]
-  );
+  //deployer.deploy(ERC20);
+  deployer.deploy(StandardToken);
 };
