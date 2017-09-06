@@ -15,6 +15,3 @@ module.exports = function(deployer, network, accounts) {
     true
   );
 };
-
-//function CrowdsaleToken(string _name, string _symbol, uint _initialSupply, uint _decimals, bool _mintable)
-    //UpgradeableToken(msg.sender) {
