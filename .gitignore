@@ -11,3 +11,7 @@ node_modules
 *.iml
 .idea/
 package-lock.json
+
+config/kovan/
+config/secrets/infura-token.js
+config/ropsten/
