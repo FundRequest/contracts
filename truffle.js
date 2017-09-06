@@ -9,7 +9,7 @@ var getMnemonic = function (env) {
     return "dead fish racket soul plunger dirty boats cracker mammal nicholas cage";
   } catch (exception) {
     console.log('Error getting mnemonic');
-    return "diplr"
+    return "fundrequest"
   }
 }
 
