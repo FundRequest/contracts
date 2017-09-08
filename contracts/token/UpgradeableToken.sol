@@ -59,11 +59,11 @@ contract UpgradeableToken is StandardToken {
       UpgradeState state = getUpgradeState();
       if(!(state == UpgradeState.ReadyToUpgrade || state == UpgradeState.Upgrading)) {
         // Called in a bad state
-        throw;
+        revert();
       }
 
       // Validate input value.
-      if (value == 0) throw;
+      require (value != 0);
 
       balances[msg.sender] = balances[msg.sender].sub(value);
 
@@ -81,23 +81,22 @@ contract UpgradeableToken is StandardToken {
    */
   function setUpgradeAgent(address agent) external {
 
-      if(!canUpgrade()) {
-        // The token is not yet in a state that we could think upgrading
-        throw;
-      }
+      //the contract should be in a state where we can actually upgrade
+      require(canUpgrade());
 
-      if (agent == 0x0) throw;
+      //the address of the agent should not be 0
+      require(agent != address(0));
       // Only a master can designate the next agent
-      if (msg.sender != upgradeMaster) throw;
+      require(msg.sender == upgradeMaster);
       // Upgrade has already begun for an agent
-      if (getUpgradeState() == UpgradeState.Upgrading) throw;
+      require(getUpgradeState() != UpgradeState.Upgrading);
 
       upgradeAgent = UpgradeAgent(agent);
 
       // Bad interface
-      if(!upgradeAgent.isUpgradeAgent()) throw;
+      require(upgradeAgent.isUpgradeAgent());
       // Make sure that token supplies match in source and target
-      if (upgradeAgent.originalSupply() != totalSupply) throw;
+      require (upgradeAgent.originalSupply() == totalSupply);
 
       UpgradeAgentSet(upgradeAgent);
   }
@@ -106,10 +105,15 @@ contract UpgradeableToken is StandardToken {
    * Get the state of the token upgrade.
    */
   function getUpgradeState() public constant returns(UpgradeState) {
-    if(!canUpgrade()) return UpgradeState.NotAllowed;
-    else if(address(upgradeAgent) == 0x00) return UpgradeState.WaitingForAgent;
-    else if(totalUpgraded == 0) return UpgradeState.ReadyToUpgrade;
-    else return UpgradeState.Upgrading;
+    if(!canUpgrade()) {
+      return UpgradeState.NotAllowed;
+    } else if(address(upgradeAgent) == address(0)) {
+      return UpgradeState.WaitingForAgent;
+    } else if(totalUpgraded == 0) {
+      return UpgradeState.ReadyToUpgrade;
+    } else {
+      return UpgradeState.Upgrading;
+    } 
   }
 
   /**
@@ -118,8 +122,8 @@ contract UpgradeableToken is StandardToken {
    * This allows us to set a new owner for the upgrade mechanism.
    */
   function setUpgradeMaster(address master) public {
-      if (master == 0x0) throw;
-      if (msg.sender != upgradeMaster) throw;
+      require (master != address(0));
+      require(msg.sender == upgradeMaster);
       upgradeMaster = master;
   }
 
