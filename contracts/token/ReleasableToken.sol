@@ -1,4 +1,4 @@
-pragma solidity ^0.4.8;
+pragma solidity ^0.4.13;
 
 import "../ownership/Ownable.sol";
 import "./ERC20.sol";
@@ -21,15 +21,16 @@ contract ReleasableToken is ERC20, Ownable {
   /**
    * Limit token transfer until the crowdsale is over.
    *
+   * The tokens needs to be released
+   * OR
+   * The sender needs to be one of the transfer-agents
    */
   modifier canTransfer(address _sender) {
-
     if(!released) {
         if(!transferAgents[_sender]) {
-            throw;
+            revert();
         }
     }
-
     _;
   }
 
@@ -62,26 +63,22 @@ contract ReleasableToken is ERC20, Ownable {
 
   /** The function can be called only before or after the tokens have been releasesd */
   modifier inReleaseState(bool releaseState) {
-    if(releaseState != released) {
-        throw;
-    }
+    require(releaseState == released);
     _;
   }
 
   /** The function can be called only by a whitelisted release agent. */
   modifier onlyReleaseAgent() {
-    if(msg.sender != releaseAgent) {
-        throw;
-    }
+    require(msg.sender == releaseAgent);
     _;
   }
 
-  function transfer(address _to, uint _value) canTransfer(msg.sender) returns (bool success) {
+  function transfer(address _to, uint256 _value) canTransfer(msg.sender) returns (bool success) {
     // Call StandardToken.transfer()
    return super.transfer(_to, _value);
   }
 
-  function transferFrom(address _from, address _to, uint _value) canTransfer(_from) returns (bool success) {
+  function transferFrom(address _from, address _to, uint256 _value) canTransfer(_from) returns (bool success) {
     // Call StandardToken.transferForm()
     return super.transferFrom(_from, _to, _value);
   }

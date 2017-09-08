@@ -29,7 +29,7 @@ contract StandardToken is ERC20 {
     return true;
   }
 
-  function transfer(address _to, uint _value) returns (bool success) {
+  function transfer(address _to, uint256 _value) returns (bool success) {
     balances[msg.sender] = balances[msg.sender].sub(_value);
     balances[_to] = balances[_to].add(_value);
     Transfer(msg.sender, _to, _value);
@@ -46,7 +46,7 @@ contract StandardToken is ERC20 {
     return true;
   }
 
-  function balanceOf(address _owner) constant returns (uint balance) {
+  function balanceOf(address _owner) constant returns (uint256 balance) {
     return balances[_owner];
   }
 

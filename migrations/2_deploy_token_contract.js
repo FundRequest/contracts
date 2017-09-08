@@ -1,12 +1,11 @@
 var SafeMath = artifacts.require("./math/SafeMath.sol");
 var SafeMathLib = artifacts.require("./math/SafeMathLib.sol");
-//var ERC20 = artifacts.require("./ERC20.sol");
-var CrowdsaleToken = artifacts.require("./CrowdsaleToken.sol");
+
+var FundrequestToken = artifacts.require("./token/FundRequestToken.sol");
 
 module.exports = function(deployer, network, accounts) {
   deployer.deploy(SafeMath);
-  deployer.deploy(SafeMathLib);
-  deployer.link(SafeMathLib, CrowdsaleToken)
+  deployer.link(SafeMath, FundrequestToken)
   deployer.deploy(CrowdsaleToken,
     "FundRequest",
     "FND",
