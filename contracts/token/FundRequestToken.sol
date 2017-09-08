@@ -1,4 +1,4 @@
-pragma solidity ^0.4.8;
+pragma solidity ^0.4.13;
 
 import "./CrowdsaleToken.sol";
 
@@ -11,4 +11,8 @@ contract FundRequestToken is CrowdsaleToken {
     function FundRequestToken(string _name, string _symbol, uint256 _initialSupply, uint _decimals, bool _mintable) CrowdsaleToken(_name, _symbol, _initialSupply, _decimals, _mintable) {
         //constructor
     }
+
+  function isFundRequestToken() public constant returns(bool) {
+    return true;
+  }
 }

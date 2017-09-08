@@ -21,7 +21,7 @@ contract MintableToken is StandardToken, Ownable {
   /** List of agents that are allowed to create new tokens */
   mapping (address => bool) public mintAgents;
 
-  event MintingAgentChanged(address addr, bool state  );
+  event MintingAgentChanged(address addr, bool state);
 
   /**
    * Create new tokens and allocate them to an address..
