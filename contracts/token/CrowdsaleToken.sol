@@ -39,8 +39,7 @@ contract CrowdsaleToken is ReleasableToken, MintableToken, UpgradeableToken {
    * @param _decimals Number of decimal places
    * @param _mintable Are new tokens created over the crowdsale or do we distribute only the initial supply? Note that when the token becomes transferable the minting always ends.
    */
-  function CrowdsaleToken(string _name, string _symbol, uint _initialSupply, uint _decimals, bool _mintable)
-    UpgradeableToken(msg.sender) {
+  function CrowdsaleToken(string _name, string _symbol, uint256 _initialSupply, uint _decimals, bool _mintable) UpgradeableToken(msg.sender) {
 
     // Create any address, can be transferred
     // to team multisig via changeOwner(),
@@ -64,9 +63,7 @@ contract CrowdsaleToken is ReleasableToken, MintableToken, UpgradeableToken {
     // No more new supply allowed after the token creation
     if(!_mintable) {
       mintingFinished = true;
-      if(totalSupply == 0) {
-        throw; // Cannot create a token without supply and no minting
-      }
+      require(totalSupply != 0);
     }
   }
 
@@ -100,5 +97,4 @@ contract CrowdsaleToken is ReleasableToken, MintableToken, UpgradeableToken {
 
     UpdatedTokenInformation(name, symbol);
   }
-
 }

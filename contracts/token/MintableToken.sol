@@ -1,9 +1,9 @@
-pragma solidity ^0.4.6;
+pragma solidity ^0.4.13;
 
 import "./ERC20.sol";
 import "../ownership/Ownable.sol";
 import './StandardToken.sol';
-import "../math/SafeMathLib.sol";
+import "../math/SafeMath.sol";
 
 /**
  * A token that can increase its supply by another contract.
@@ -14,7 +14,7 @@ import "../math/SafeMathLib.sol";
  */
 contract MintableToken is StandardToken, Ownable {
 
-  using SafeMathLib for uint;
+  using SafeMath for uint256;
 
   bool public mintingFinished = false;
 
@@ -28,7 +28,7 @@ contract MintableToken is StandardToken, Ownable {
    *
    * Only callably by a crowdsale contract (mint agent).
    */
-  function mint(address receiver, uint amount) onlyMintAgent canMint public {
+  function mint(address receiver, uint256 amount) onlyMintAgent canMint public {
     totalSupply = totalSupply.plus(amount);
     balances[receiver] = balances[receiver].plus(amount);
 
@@ -48,14 +48,16 @@ contract MintableToken is StandardToken, Ownable {
   modifier onlyMintAgent() {
     // Only crowdsale contracts are allowed to mint new tokens
     if(!mintAgents[msg.sender]) {
-        throw;
+        revert();
     }
     _;
   }
 
   /** Make sure we are not done yet. */
-  modifier canMint() {
-    if(mintingFinished) throw;
-    _;
-  }
+    modifier canMint() {
+      if (mintingFinished) {
+        revert();
+      } 
+      _;
+    }
 }
