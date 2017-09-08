@@ -1,10 +1,10 @@
 pragma solidity ^0.4.8;
 
-import "../math/SafeMathLib.sol";
+import "../math/SafeMath.sol";
 import "../lifecycle/Haltable.sol";
 import "./PricingStrategy.sol";
 import "./FinalizeAgent.sol";
-import "./FractionalERC20.sol";
+import "../token/FractionalERC20.sol";
 
 
 /**
@@ -24,7 +24,7 @@ contract Crowdsale is Haltable {
   /* Max investment count when we are still allowed to change the multisig address */
   uint public MAX_INVESTMENTS_BEFORE_MULTISIG_CHANGE = 5;
 
-  using SafeMathLib for uint;
+  using SafeMath for uint256;
 
   /* The token we are selling */
   FractionalERC20 public token;
@@ -86,9 +86,6 @@ contract Crowdsale is Haltable {
   /** Addresses that are allowed to invest even before ICO offical opens. For testing, for ICO partners, etc. */
   mapping (address => bool) public earlyParticipantWhitelist;
 
-  /** This is for manul testing for the interaction from owner wallet. You can set it to any value and inspect this in blockchain explorer to see that crowdsale interaction works. */
-  uint public ownerTestValue;
-
   /** State machine
    *
    * - Preparing: All contract initialization calls and variables have not been set yet
@@ -102,10 +99,10 @@ contract Crowdsale is Haltable {
   enum State{Unknown, Preparing, PreFunding, Funding, Success, Failure, Finalized, Refunding}
 
   // A new investment was made
-  event Invested(address investor, uint weiAmount, uint tokenAmount, uint128 customerId);
+  event Invested(address investor, uint weiAmount256, uint tokenAmount256, uint128 customerId);
 
   // Refund was processed for a contributor
-  event Refund(address investor, uint weiAmount);
+  event Refund(address investor, uint256 weiAmount);
 
   // The rules were changed what kind of investments we accept
   event InvestmentPolicyChanged(bool requireCustomerId, bool requiredSignedAddress, address signerAddress);
@@ -183,8 +180,8 @@ contract Crowdsale is Haltable {
       throw;
     }
 
-    uint weiAmount = msg.value;
-    uint tokenAmount = pricingStrategy.calculatePrice(weiAmount, weiRaised, tokensSold, msg.sender, token.decimals());
+    uint256 weiAmount = msg.value;
+    uint256 tokenAmount = pricingStrategy.calculatePrice(weiAmount, weiRaised, tokensSold, msg.sender, token.decimals());
 
     if(tokenAmount == 0) {
       // Dust transaction
@@ -212,7 +209,9 @@ contract Crowdsale is Haltable {
     assignTokens(receiver, tokenAmount);
 
     // Pocket the money
-    if(!multisigWallet.send(weiAmount)) throw;
+    if(!multisigWallet.send(weiAmount)) {
+      revert();
+    }
 
     // Tell us invest was success
     Invested(receiver, weiAmount, tokenAmount, customerId);
@@ -233,7 +232,7 @@ contract Crowdsale is Haltable {
    * @param weiPrice Price of a single full token in wei
    *
    */
-  function preallocate(address receiver, uint fullTokens, uint weiPrice) public onlyOwner {
+  function preallocate(address receiver, uint256 fullTokens, uint weiPrice) public onlyOwner {
 
     uint tokenAmount = fullTokens * 10**token.decimals();
     uint weiAmount = weiPrice * fullTokens; // This can be also 0, we give out tokens for free
@@ -480,11 +479,6 @@ contract Crowdsale is Haltable {
     else if (isMinimumGoalReached()) return State.Success;
     else if (!isMinimumGoalReached() && weiRaised > 0 && loadedRefund >= weiRaised) return State.Refunding;
     else return State.Failure;
-  }
-
-  /** This is for manual testing of multisig wallet interaction */
-  function setOwnerTestValue(uint val) onlyOwner {
-    ownerTestValue = val;
   }
 
   /** Interface marker. */
