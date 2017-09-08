@@ -2,7 +2,6 @@ pragma solidity ^0.4.8;
 
 
 import './ERC20.sol';
-import '../math/SafeMathLib.sol';
 import '../math/SafeMath.sol';
 
 
@@ -14,17 +13,16 @@ import '../math/SafeMath.sol';
  */
 contract StandardToken is ERC20 {
 
-  using SafeMathLib for uint;
   using SafeMath for uint256;
 
   /* Token supply got increased and a new owner received these tokens */
-  event Minted(address receiver, uint amount);
+  event Minted(address receiver, uint256 amount);
 
   /* Actual balances of token holders */
-  mapping(address => uint) balances;
+  mapping(address => uint256) balances;
 
   /* approve() allowances */
-  mapping (address => mapping (address => uint)) allowed;
+  mapping (address => mapping (address => uint256)) allowed;
 
   /* Interface declaration */
   function isToken() public constant returns (bool weAre) {
@@ -38,8 +36,8 @@ contract StandardToken is ERC20 {
     return true;
   }
 
-  function transferFrom(address _from, address _to, uint _value) returns (bool success) {
-    uint _allowance = allowed[_from][msg.sender];
+  function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
+    uint256 _allowance = allowed[_from][msg.sender];
 
     balances[_to] = balances[_to].add(_value);
     balances[_from] = balances[_from].sub(_value);
@@ -52,20 +50,22 @@ contract StandardToken is ERC20 {
     return balances[_owner];
   }
 
-  function approve(address _spender, uint _value) returns (bool success) {
+  function approve(address _spender, uint256 _value) returns (bool success) {
 
     // To change the approve amount you first have to reduce the addresses`
     //  allowance to zero by calling `approve(_spender, 0)` if it is not
     //  already 0 to mitigate the race condition described here:
     //  https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
-    if ((_value != 0) && (allowed[msg.sender][_spender] != 0)) throw;
+    if ((_value != 0) && (allowed[msg.sender][_spender] != 0)) {
+      revert();
+    }
 
     allowed[msg.sender][_spender] = _value;
     Approval(msg.sender, _spender, _value);
     return true;
   }
 
-  function allowance(address _owner, address _spender) constant returns (uint remaining) {
+  function allowance(address _owner, address _spender) constant returns (uint256 remaining) {
     return allowed[_owner][_spender];
   }
 }
