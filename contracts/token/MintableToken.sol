@@ -5,6 +5,7 @@ import "../ownership/Ownable.sol";
 import './StandardToken.sol';
 import "../math/SafeMath.sol";
 
+
 /**
  * A token that can increase its supply by another contract.
  *
@@ -47,7 +48,7 @@ contract MintableToken is StandardToken, Ownable {
 
   modifier onlyMintAgent() {
     // Only crowdsale contracts are allowed to mint new tokens
-    if(!mintAgents[msg.sender]) {
+    if (!mintAgents[msg.sender]) {
         revert();
     }
     _;
