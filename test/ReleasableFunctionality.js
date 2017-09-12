@@ -90,7 +90,7 @@ contract('FundRequestToken', function (accounts) {
       });
   });
 
-  it('should be possible to set release agent', function () {
+  it('should be possible to set transfer agent', function () {
     return fnd.setTransferAgent(owner, true, {
       from: owner
     }).then(function (res) {
@@ -100,4 +100,27 @@ contract('FundRequestToken', function (accounts) {
     });
   });
 
+  it('it should be possible to transfer as transferAgent, in any case', function () {
+    return fnd.setTransferAgent(owner, true, {
+        from: owner
+      })
+      .then(function (res) {
+        return fnd.transfer(accounts[1], 10, {
+          from: accounts[0]
+        });
+      })
+      .then(function (res) {
+        return fnd.balanceOf.call(accounts[1]);
+      }).then(function (res) {
+        expect(res.toNumber()).to.equal(10);
+        return fnd.transfer(accounts[2], 3, {
+          from: accounts[1]
+        });
+      }).catch(function (error) {
+        assert(
+          error.message.indexOf('invalid opcode') >= 0,
+          'transfer should throw an opCode exception if not released and not transferagent'
+        );
+      });
+  });
 });
