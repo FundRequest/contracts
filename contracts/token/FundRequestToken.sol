@@ -2,9 +2,11 @@ pragma solidity ^0.4.15;
 
 import "./CrowdsaleToken.sol";
 
-/**
+
+/** 
  * Creating an instance of CrowdsaleToken, for the specific reason that we'll need an entrypoint 
- to the fundrequest contracts with a mandate to tokens
+ * to the fundrequest contracts with a mandate to tokens
+ *
  */
 contract FundRequestToken is CrowdsaleToken {
 
