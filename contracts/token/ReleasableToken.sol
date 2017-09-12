@@ -26,8 +26,8 @@ contract ReleasableToken is ERC20, Ownable {
    * The sender needs to be one of the transfer-agents
    */
   modifier canTransfer(address _sender) {
-    if(!released) {
-        if(!transferAgents[_sender]) {
+    if (!released) {
+        if (!transferAgents[_sender]) {
             revert();
         }
     }
@@ -38,6 +38,7 @@ contract ReleasableToken is ERC20, Ownable {
    * Set the contract that can call release and make the token transferable.
    *
    * Design choice. Allow reset the release agent to fix fat finger mistakes.
+   * needs to be specifically set after deploying the contract
    */
   function setReleaseAgent(address addr) onlyOwner inReleaseState(false) public {
 

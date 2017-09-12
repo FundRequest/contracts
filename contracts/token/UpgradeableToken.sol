@@ -5,6 +5,7 @@ import './StandardToken.sol';
 import "./UpgradeAgent.sol";
 import "../math/SafeMath.sol";
 
+
 /**
  * A token upgrade mechanism where users can opt-in amount of tokens to the next smart contract revision.
  *
@@ -57,7 +58,7 @@ contract UpgradeableToken is StandardToken {
   function upgrade(uint256 value) public {
 
       UpgradeState state = getUpgradeState();
-      if(!(state == UpgradeState.ReadyToUpgrade || state == UpgradeState.Upgrading)) {
+      if (!(state == UpgradeState.ReadyToUpgrade || state == UpgradeState.Upgrading)) {
         // Called in a bad state
         revert();
       }
@@ -105,11 +106,11 @@ contract UpgradeableToken is StandardToken {
    * Get the state of the token upgrade.
    */
   function getUpgradeState() public constant returns(UpgradeState) {
-    if(!canUpgrade()) {
+    if (!canUpgrade()) {
       return UpgradeState.NotAllowed;
-    } else if(address(upgradeAgent) == address(0)) {
+    } else if (address(upgradeAgent) == address(0)) {
       return UpgradeState.WaitingForAgent;
-    } else if(totalUpgraded == 0) {
+    } else if (totalUpgraded == 0) {
       return UpgradeState.ReadyToUpgrade;
     } else {
       return UpgradeState.Upgrading;
