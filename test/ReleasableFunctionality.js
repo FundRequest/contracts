@@ -34,7 +34,7 @@ contract('FundRequestToken', function (accounts) {
     });
   });
 
-  it('should be possible to release token transfer', function () {
+  it('should be possible to release token transfer as release agent', function () {
     return fnd.setReleaseAgent(owner).then(function (res) {
       return fnd.releaseTokenTransfer();
     }).then(function (res) {
@@ -44,6 +44,24 @@ contract('FundRequestToken', function (accounts) {
     });
   });
 
+  it('should not be possible to release token transfer as non-release agent', function () {
+    return fnd.setReleaseAgent(owner).then(function (res) {
+        return fnd.releaseTokenTransfer({
+          from: accounts[1]
+        });
+      })
+      .catch(function (error) {
+        assert(
+          error.message.indexOf('invalid opcode') >= 0,
+          'releaseTokenTransfer should throw an opCode exception.'
+        );
+      })
+      .then(function (res) {
+        return fnd.released.call();
+      }).then(function (res) {
+        expect(res).to.be.false;
+      });
+  });
 
   it('should set minting to finished once we released the token', function () {
     return fnd.setReleaseAgent(owner).then(function (res) {
@@ -66,7 +84,6 @@ contract('FundRequestToken', function (accounts) {
   /* methods concerning transfer agents */
 
   it('shouldnt have anyone as releaseagent by default', function () {
-
     return fnd.transferAgents.call(owner)
       .then(function (res) {
         expect(res).to.be.false;
