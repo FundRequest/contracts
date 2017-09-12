@@ -24,6 +24,8 @@ contract('FundRequestToken', function (accounts) {
     });
   });
 
+  /* methods concerning release-agents and releasing */
+
   it('should be possible to set release agent', function () {
     return fnd.setReleaseAgent(owner).then(function (res) {
       return fnd.releaseAgent.call();
@@ -59,6 +61,26 @@ contract('FundRequestToken', function (accounts) {
       .then(function (res) {
         expect(res).to.be.true;
       });
+  });
+
+  /* methods concerning transfer agents */
+
+  it('shouldnt have anyone as releaseagent by default', function () {
+
+    return fnd.transferAgents.call(owner)
+      .then(function (res) {
+        expect(res).to.be.false;
+      });
+  });
+
+  it('should be possible to set release agent', function () {
+    return fnd.setTransferAgent(owner, true, {
+      from: owner
+    }).then(function (res) {
+      return fnd.transferAgents.call(owner);
+    }).then(function (res) {
+      expect(res).to.be.true;
+    });
   });
 
 });
