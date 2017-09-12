@@ -1,49 +1,45 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.15;
 
 
 import "../ownership/Ownable.sol";
 
 
-/**
- * @title Pausable
- * @dev Base contract which allows children to implement an emergency stop mechanism.
+/*
+ * Haltable
+ *
+ * Abstract contract that allows children to implement an
+ * emergency stop mechanism. Differs from Pausable by causing a throw when in halt mode.
+ *
+ *
+ * Originally envisioned in FirstBlood ICO contract.
  */
-contract Pausable is Ownable {
-  event Pause();
-  event Unpause();
+contract Haltable is Ownable {
+  bool public halted;
 
-  bool public paused = false;
-
-
-  /**
-   * @dev Modifier to make a function callable only when the contract is not paused.
-   */
-  modifier whenNotPaused() {
-    require(!paused);
+  modifier stopInEmergency {
+    require(!halted);
     _;
   }
 
-  /**
-   * @dev Modifier to make a function callable only when the contract is paused.
-   */
-  modifier whenPaused() {
-    require(paused);
+  modifier stopNonOwnersInEmergency {
+    if (halted && msg.sender != owner) {
+      revert();
+    } 
     _;
   }
 
-  /**
-   * @dev called by the owner to pause, triggers stopped state
-   */
-  function pause() onlyOwner whenNotPaused {
-    paused = true;
-    Pause();
+  modifier onlyInEmergency {
+    require(halted);
+    _;
   }
 
-  /**
-   * @dev called by the owner to unpause, returns to normal state
-   */
-  function unpause() onlyOwner whenPaused {
-    paused = false;
-    Unpause();
+  // called by the owner on emergency, triggers stopped state
+  function halt() external onlyOwner {
+    halted = true;
+  }
+
+  // called by the owner on end of emergency, returns to normal state
+  function unhalt() external onlyOwner onlyInEmergency {
+    halted = false;
   }
 }
