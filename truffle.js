@@ -1,8 +1,8 @@
-fs = require('fs')
+fs = require('fs');
 
-var HDWalletProvider = require("truffle-hdwallet-provider");
+const HDWalletProvider = require("truffle-hdwallet-provider");
 
-var getMnemonic = function (env) {
+const getMnemonic = function (env) {
   try {
     //var mnemonic = fs.readFileSync('./config/' + env + '/mnemonic').toString()
     //console.log("using predefined mnemonic for network " + env + ", value :" + mnemonic);
@@ -11,16 +11,16 @@ var getMnemonic = function (env) {
     console.log('Error getting mnemonic');
     return "fundrequest"
   }
-}
+};
 
-var getSecret = function () {
+const getSecret = function () {
   try {
     return fs.readFileSync('./config/secrets/infura-token.js').toString();
   } catch (ex) {
     console.log(ex);
     return "";
   }
-}
+};
 
 module.exports = {
 
