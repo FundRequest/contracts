@@ -5,7 +5,7 @@ var log = console.log;
 contract('FundRequestToken', function (accounts) {
 
   var fnd;
-  var owner = address[0];
+  var owner = accounts[0];
 
   beforeEach(function (done) {
     FND.new("FundRequest",
