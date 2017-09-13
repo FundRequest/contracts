@@ -1,37 +1,29 @@
-var FND = artifacts.require('./token/FundRequestToken.sol');
-var expect = require('chai').expect;
-var log = console.log;
+const FND = artifacts.require('./token/FundRequestToken.sol');
+const expect = require('chai').expect;
+const log = console.log;
 
 contract('FundRequestToken', function (accounts) {
 
-  var fnd;
-  var owner = accounts[0];
+  let fnd;
+  let owner = accounts[0];
 
-  beforeEach(function (done) {
-    FND.new("FundRequest",
-      "FND",
-      666000000000000000000,
-      18,
-      true).then(function (instance) {
-      fnd = instance;
-    })
-      .then(done);
+  beforeEach(async function () {
+    fnd = await FND.new("FundRequest", "FND", 666000000000000000000, 18, true);
+    await fnd.setReleaseAgent(owner);
+    await fnd.releaseTokenTransfer();
   });
 
   it('contract should be set', function () {
     expect(fnd).to.not.be.null;
   });
 
-  it('should be a fundrequest token', function () {
-    return fnd.isFundRequestToken.call().then(function (res) {
-      expect(res).to.be.true;
-    });
+  it('should be a fundrequest token', async function () {
+    let isFndToken = await fnd.isFundRequestToken.call();
+    expect(isFndToken).to.be.true;
   });
 
-  it('should have correct owner', function () {
-    return fnd.owner.call().then(function (res) {
-      expect(res).to.equal(owner)
-    });
+  it('should have correct owner', async function () {
+    let retOwner = await fnd.owner.call();
+    expect(retOwner).to.equal(owner)
   });
-
 });
