@@ -34,11 +34,4 @@ contract('FundRequestToken', function (accounts) {
     });
   });
 
-  it('should be possible to set token contract address', function () {
-    return fnd.setFrContractAddress('0x9f88c5cc76148d41a5db8d0a7e581481efc9667b').then(function (res) {
-      return fnd.frContractAddress.call();
-    }).then(function (res) {
-      expect(res).to.equal('0x9f88c5cc76148d41a5db8d0a7e581481efc9667b');
-    });
-  });
 });
