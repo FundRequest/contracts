@@ -1,8 +1,7 @@
-require('chai');
 const FND = artifacts.require('./token/FundRequestToken.sol');
 
 contract('FundRequestToken', function (accounts) {
-
+  let expect = require('chai').expect;
   let fnd;
   const owner = accounts[0];
 
