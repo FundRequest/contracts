@@ -1,35 +1,21 @@
-var FND = artifacts.require('./token/FundRequestToken.sol');
-var expect = require('chai').expect;
-var log = console.log;
+require('chai');
+const FND = artifacts.require('./token/FundRequestToken.sol');
 
 contract('FundRequestToken', function (accounts) {
 
-    var fnd;
-    var owner = accounts[0];
+  let fnd;
+  const owner = accounts[0];
 
-    beforeEach(function (done) {
-        FND.new("FundRequest",
-                "FND",
-                666000000000000000000,
-                18,
-                true).then(function (instance) {
-                fnd = instance;
-            })
-            .then(function () {
-                fnd.setReleaseAgent(owner);
-            }).then(function () {
-                fnd.releaseTokenTransfer();
-            })
-            .then(done);
-    });
+  beforeEach(async function () {
+    fnd = await FND.new("FundRequest", "FND", 666000000000000000000, 18, true);
+    await fnd.setReleaseAgent(owner);
+    await fnd.releaseTokenTransfer();
+  });
 
-    it('should be possible to transfer tokens', function () {
-        var receiver = accounts[1];
-        return fnd.transfer(receiver, 23)
-            .then(function (res) {
-                return fnd.balanceOf.call(receiver);
-            }).then(function (res) {
-                expect(res.toString()).to.equal('23');
-            });
-    });
+  it('should be possible to transfer tokens', async function () {
+    const receiver = accounts[1];
+    await fnd.transfer(receiver, 23);
+    let balance = await fnd.balanceOf.call(receiver);
+    expect(balance.toString()).to.equal('23');
+  });
 });
