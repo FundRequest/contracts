@@ -1,6 +1,8 @@
 pragma solidity ^0.4.15;
 
+
 import "./CrowdsaleToken.sol";
+import "../fund/Fundable.sol";
 
 
 /** 
@@ -10,11 +12,24 @@ import "./CrowdsaleToken.sol";
  */
 contract FundRequestToken is CrowdsaleToken {
 
-    function FundRequestToken(string _name, string _symbol, uint256 _initialSupply, uint _decimals, bool _mintable) CrowdsaleToken(_name, _symbol, _initialSupply, _decimals, _mintable) {
-        //constructor
-    }
+  address public fundRequestContractAddress;
 
-  function isFundRequestToken() public constant returns(bool) {
+  function FundRequestToken(string _name, string _symbol, uint256 _initialSupply, uint _decimals, bool _mintable) CrowdsaleToken(_name, _symbol, _initialSupply, _decimals, _mintable) {
+    //constructor
+  }
+
+  function isFundRequestToken() public constant returns (bool) {
     return true;
+  }
+
+  function setFundRequestContractAddress(address _fundRequestContractAddress) onlyOwner {
+    fundRequestContractAddress = _fundRequestContractAddress;
+  }
+
+  function transferFunding(uint256 value, string data) {
+    super.transfer(fundRequestContractAddress, value);
+    Fundable fundRequestContract = Fundable(fundRequestContractAddress);
+    bool success = fundRequestContract.fund(msg.sender, value, data);
+    require(success);
   }
 }
