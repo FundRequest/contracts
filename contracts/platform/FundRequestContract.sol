@@ -3,28 +3,32 @@ pragma solidity ^0.4.15;
 
 import "../math/SafeMath.sol";
 import "../fund/Fundable.sol";
+import '../token/FundRequestToken.sol';
 
 
 contract FundRequestContract is Fundable {
 
   using SafeMath for uint256;
 
-  address public tokenAddress;
+  FundRequestToken public token;
 
   struct Funding {
-  address[] funders;
-  mapping (address => uint256) balances;
-  uint256 totalBalance;
+    address[] funders;
+    mapping (address => uint256) balances;
+    uint256 totalBalance;
   }
 
   mapping (string => Funding) funds;
 
 
   function FundRequestContract(address _tokenAddress) {
-    tokenAddress = _tokenAddress;
+    token = FundRequestToken(_tokenAddress);
+
+    //making sure that the token is a fundrequesttoken
+    assert(token.isFundRequestToken());
   }
 
-  function fund(address _from, uint256 _value, string _data) canFund(msg.sender) returns (bool success) {
+  function fund(address _from, uint256 _value, string _data) onlyToken(msg.sender) returns (bool success) {
     updateFunders(_from, _data);
     updateBalances(_from, _value, _data);
     return true;
@@ -46,8 +50,8 @@ contract FundRequestContract is Fundable {
     funds[_data].totalBalance = funds[_data].totalBalance.add(_value);
   }
 
-  modifier canFund(address _sender) {
-    if (_sender != tokenAddress) {
+  modifier onlyToken(address _sender) {
+    if (_sender != address(token)) {
       revert();
     }
     _;
