@@ -12,7 +12,7 @@ import "../fund/Fundable.sol";
  */
 contract FundRequestToken is CrowdsaleToken {
 
-  address public fundRequestContractAddress;
+  Fundable public fundRequestContract;
 
   function FundRequestToken(string _name, string _symbol, uint256 _initialSupply, uint _decimals, bool _mintable) CrowdsaleToken(_name, _symbol, _initialSupply, _decimals, _mintable) {
     //constructor
@@ -22,13 +22,15 @@ contract FundRequestToken is CrowdsaleToken {
     return true;
   }
 
+  /**
+   * only the owner of the FundRequestToken should be able to set the fundrequest entrypoint  
+   */
   function setFundRequestContractAddress(address _fundRequestContractAddress) onlyOwner {
-    fundRequestContractAddress = _fundRequestContractAddress;
+    fundRequestContract = Fundable(_fundRequestContractAddress);
   }
 
   function transferFunding(uint256 value, string data) {
-    super.transfer(fundRequestContractAddress, value);
-    Fundable fundRequestContract = Fundable(fundRequestContractAddress);
+    super.transfer(fundRequestContract, value);
     bool success = fundRequestContract.fund(msg.sender, value, data);
     require(success);
   }
