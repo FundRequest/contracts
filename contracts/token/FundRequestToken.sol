@@ -30,6 +30,7 @@ contract FundRequestToken is CrowdsaleToken {
   }
 
   function transferFunding(uint256 value, string data) {
+    require(address(fundRequestContract) != address(0));
     super.transfer(fundRequestContract, value);
     bool success = fundRequestContract.fund(msg.sender, value, data);
     require(success);
