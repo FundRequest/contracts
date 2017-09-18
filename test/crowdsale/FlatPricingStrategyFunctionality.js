@@ -7,11 +7,13 @@ contract('FundRequestToken', function (accounts) {
   const owner = accounts[0];
 
   beforeEach(async function () {
-    pricingStrategy = await PRICING_STRATEGY.new(5);
+    console.log((1 * Math.pow(10, 18)/1235));
+    pricingStrategy = await PRICING_STRATEGY.new((1 * Math.pow(10, 18))/1235); //still issues here with floats
   });
 
   it('should correcty calculate price', async function(){
-   let price = await pricingStrategy.calculatePrice(5, 0, 0, owner, 18);
-   expect(price.toNumber()).to.equal(Math.pow(1, 18));
+    //send 10 ether
+   let price = await pricingStrategy.calculatePrice(1 * Math.pow(10, 18), 0, 0, owner, 18);
+   expect(price.toNumber()).to.equal(1235 * Math.pow(10, 18));
   });
 });
