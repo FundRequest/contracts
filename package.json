@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "FundRequest Contracts",
   "scripts": {
-    "test": "truffle test"
+    "test": "truffle test",
+    "coverage": "solidity-coverage"
   },
   "author": "FundRequest",
   "license": "MIT",
@@ -14,8 +15,10 @@
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
     "mocha": "^2.2.5",
+    "solium": "^0.5.4",
     "truffle": "^3.4.6",
-    "truffle-hdwallet-provider": "0.0.3"
+    "truffle-hdwallet-provider": "0.0.3",
+    "solidity-coverage": "^0.2.1"
   },
   "dependencies": {
     "chai": "^3.5.0",
