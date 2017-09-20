@@ -34,6 +34,12 @@ contract('FundRequestToken', function (accounts) {
         expect(softcapReached).to.be.true;
     });
 
+    it('should have a different endTime if the softcap was reached, 1day after the transaction that broke the cap', async function () {
+        await crowdsale.buy({from: accounts[1], value: web3.toWei(2 /* ether */)});
+        let endsAt = (await crowdsale.endsAt.call()).toNumber();
+        expect(endsAt).to.be.at.least(getTimestamp(startBlock) + 86400);
+    });
+
     function getTimestamp(block) {
         return web3.eth.getBlock(block).timestamp;
     }
