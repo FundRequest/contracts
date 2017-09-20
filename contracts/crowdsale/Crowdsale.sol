@@ -153,7 +153,6 @@ contract Crowdsale is Haltable {
    */
    function investInternal(address receiver) stopInEmergency private {
 
-     Generic("investing");
      //The only state we're allowed to fund is the Funding State
      if(getState() != State.Funding) {
        revert();
@@ -163,8 +162,6 @@ contract Crowdsale is Haltable {
     // Account presale sales separately, so that they do not count against pricing tranches
     uint tokenAmount = calculateTokensPerWei(weiAmount); 
     
-    Generic("calculated tokens");
-
     if(tokenAmount == 0) {
       // Dust transaction
       revert();
@@ -185,8 +182,6 @@ contract Crowdsale is Haltable {
     weiRaised = weiRaised.add(weiAmount);
     tokensSold = tokensSold.add(tokenAmount);
     
-    Generic("checking if breaking cap");
-    
     // Check that we did not bust the cap
     if(isBreakingCap(weiAmount, tokenAmount, weiRaised, tokensSold)) {
       revert();
@@ -194,12 +189,12 @@ contract Crowdsale is Haltable {
 
     assignTokens(receiver, tokenAmount);
 
-    Generic("assigned tokens");
     // Pocket the money
     if(!multisigWallet.send(weiAmount)) {
         revert();
     }
 
+    //if this is the first time reaching the softcap, set the softcap + endtime is now + 1 day
     if(!softcapReached && weiRaised >= softcap) {
       softcapReached = true;
       endsAt = block.timestamp + 1 days;
@@ -210,7 +205,6 @@ contract Crowdsale is Haltable {
   }
 
   function calculateTokensPerWei(uint256 _weiAmount) public constant returns (uint256 tokensPerWei) {
-    //1800 tokens per eth
     return _weiAmount.mul(1800);
   }
 
