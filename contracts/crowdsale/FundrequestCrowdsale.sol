@@ -16,12 +16,12 @@ import "../token/MintableToken.sol";
  *
  *
  */
-contract MintedEthCappedCrowdsale is Crowdsale {
+contract FundrequestCrowdsale is Crowdsale {
 
   /* Maximum amount of wei this crowdsale can raise. */
   uint public weiCap;
 
-  function MintedEthCappedCrowdsale(address _token, PricingStrategy _pricingStrategy, address _multisigWallet, uint _start, uint _end, uint _minimumFundingGoal, uint _weiCap) Crowdsale(_token, _pricingStrategy, _multisigWallet, _start, _end, _minimumFundingGoal) {
+  function FundrequestCrowdsale(address _token, address _multisigWallet, uint _start, uint _end, uint256 _minimumFundingGoal, uint256 _weiCap, uint256 _weiSoftcap) Crowdsale(_token,  _multisigWallet, _start, _end, _minimumFundingGoal, _weiSoftcap) {
     weiCap = _weiCap;
   }
 
