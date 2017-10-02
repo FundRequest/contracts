@@ -12,7 +12,9 @@ node_modules
 *.iml
 .idea/
 package-lock.json
-
+config/*
+config/local/
+config/rinkeby/
 config/kovan/
 config/secrets/infura-token.js
 config/ropsten/
