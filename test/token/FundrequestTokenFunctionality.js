@@ -27,7 +27,6 @@ contract('FundRequestToken', function (accounts) {
     expect(retOwner).to.equal(owner)
   });
 
-
   it('should be possible to set fundrequest contract address as owner', async function () {
     const contractAddr = accounts[1];
     await fnd.setFundRequestContractAddress(contractAddr, {
