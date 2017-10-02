@@ -50,12 +50,4 @@ contract('FundRequestToken', function (accounts) {
       );
     }
   });
-
-  it('When funding, amount is transferred to fundrequest contract', async function () {
-    // const contractAddr = accounts[1];
-    // await fnd.setFundRequestContractAddress(contractAddr);
-    // await fnd.transferFunding(132, 'data');
-    // let balance = await fnd.balanceOf.call(contractAddr);
-    // expect(balance.toString()).to.equal('132');
-  });
 });
