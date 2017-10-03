@@ -16,8 +16,6 @@ env:
 before_script:
   - npm install -g truffle
   - npm install -g ethereumjs-testrpc
-install:
-  - gulp build
 script: 
   - testrpc&
   - truffle test
