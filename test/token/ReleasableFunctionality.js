@@ -1,4 +1,4 @@
-var FND = artifacts.require('./token/FundRequestToken.sol');
+var FND = artifacts.require('./token/DefaultFundRequestToken.sol');
 var expect = require('chai').expect;
 var log = console.log;
 

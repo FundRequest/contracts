@@ -1,4 +1,4 @@
-const FND = artifacts.require('./token/FundRequestToken.sol');
+const FND = artifacts.require('./token/DefaultFundRequestToken.sol');
 const CROWDSALE = artifacts.require('./crowdsale/FundRequestCrowdsale.sol');
 const expect = require('chai').expect;
 

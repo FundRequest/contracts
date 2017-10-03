@@ -1,11 +1,11 @@
 const SafeMath = artifacts.require("./math/SafeMath.sol");
 
-const FundrequestToken = artifacts.require("./token/FundRequestToken.sol");
+const DefaultFundrequestToken = artifacts.require("./token/DefaultFundRequestToken.sol");
 
 module.exports = function (deployer, network, accounts) {
   deployer.deploy(SafeMath);
-  deployer.link(SafeMath, FundrequestToken);
-  deployer.deploy(FundrequestToken,
+  deployer.link(SafeMath, DefaultFundrequestToken);
+  deployer.deploy(DefaultFundrequestToken,
     "FundRequest",
     "FND",
     666000000000000000000,

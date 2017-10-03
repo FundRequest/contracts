@@ -8,7 +8,7 @@ pragma solidity ^0.4.15;
 
 import "../math/SafeMath.sol";
 import "../lifecycle/Haltable.sol";
-import "../token/FundRequestToken.sol";
+import "../token/DefaultFundRequestToken.sol";
 
 
 /**
@@ -32,7 +32,7 @@ contract Crowdsale is Haltable {
   using SafeMath for uint256;
 
   /* The token we are selling */
-  FundRequestToken public token;
+  DefaultFundRequestToken public token;
 
   /* tokens will be transfered from this address */
   address public multisigWallet;
@@ -103,7 +103,7 @@ contract Crowdsale is Haltable {
 
     owner = msg.sender;
 
-    token = FundRequestToken(_token);
+    token = DefaultFundRequestToken(_token);
 
     softcap = _softcap;
 
