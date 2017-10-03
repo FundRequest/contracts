@@ -1,0 +1,31 @@
+sudo: true
+language: node_js
+cache:
+  yarn: true
+  directories:
+  - "$HOME/.npm"
+  - "$HOME/.yarn-cache"
+  - node_modules
+node_js:
+  - 6
+compiler:
+- gcc
+- clang
+env:
+- CXX=g++-4.8
+before_script:
+  - npm install -g truffle
+  - npm install -g ethereumjs-testrpc
+install:
+  - gulp build
+script: 
+  - testrpc&
+  - truffle test
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-4.8
+    - g++-4.8
+    - clang
