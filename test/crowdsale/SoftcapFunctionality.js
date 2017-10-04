@@ -1,5 +1,5 @@
 const FND = artifacts.require('./token/DefaultFundRequestToken.sol');
-const CROWDSALE = artifacts.require('./crowdsale/FundRequestCrowdsale.sol');
+const CROWDSALE = artifacts.require('./crowdsale/FundrequestCrowdsale.sol');
 const expect = require('chai').expect;
 
 contract('FundRequestToken', function (accounts) {
