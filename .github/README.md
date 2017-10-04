@@ -7,4 +7,4 @@ Contracts for FundRequest (token, crowdsale and platform contracts)
 
 ### Development
 
-![Latest](/.images/development_latest.deploy.png)
+![Latest](/.images/development_latest_deploy.png)
