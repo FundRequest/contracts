@@ -13,9 +13,14 @@ contract FundRequestFaucet is Ownable {
         token = DefaultFundRequestToken(_tokenAddress);
     }
 
+    function init() onlyOwner public {
+        token.mint(address(this), 10000000 * (10 ** token.decimals()));
+    }
+
+
     /* default function, call this and get tokens */
     function() payable {
-        token.mint(msg.sender, token.decimals().mul(100));
+        token.transfer(msg.sender, (1 * (10**token.decimals())));
         //send everything back
         owner.transfer(msg.value);
     }
