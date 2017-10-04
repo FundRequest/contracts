@@ -108,9 +108,7 @@ contract Crowdsale is Haltable {
     softcap = _softcap;
 
     multisigWallet = _multisigWallet;
-    if(multisigWallet == 0) {
-        throw;
-    }
+    require(multisigWallet != 0);
 
     if(_start == 0) {
         revert();
@@ -126,7 +124,7 @@ contract Crowdsale is Haltable {
 
     // Don't mess the dates
     if(startsAt >= endsAt) {
-        throw;
+        revert();
     }
 
     // Minimum funding goal can be zero
@@ -137,7 +135,7 @@ contract Crowdsale is Haltable {
    * Don't expect to just send in money and get tokens.
    */
   function() payable {
-    throw;
+    revert();
   }
 
   event Generic(string message);
