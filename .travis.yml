@@ -13,12 +13,9 @@ compiler:
 - clang
 env:
 - CXX=g++-4.8
-before_script:
-  - npm install -g truffle
-  - npm install -g ethereumjs-testrpc
 script: 
-  - testrpc&
-  - truffle test
+  - ./node_modules/.bin/testrpc&
+  - ./node_modules/.bin/truffle test
 addons:
   apt:
     sources:

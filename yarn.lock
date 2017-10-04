@@ -4512,9 +4512,9 @@ truffle-hdwallet-provider@0.0.3:
     web3 "^0.18.2"
     web3-provider-engine "^8.4.0"
 
-truffle@^3.4.6:
-  version "3.4.9"
-  resolved "https://registry.yarnpkg.com/truffle/-/truffle-3.4.9.tgz#9186a2b8d51696fffae1439bf8eea3dd3deed44e"
+truffle@^3.4.9:
+  version "3.4.11"
+  resolved "https://registry.yarnpkg.com/truffle/-/truffle-3.4.11.tgz#c4aa12bd512c741a0fd2f6e922e6cd69cda97acb"
   dependencies:
     mocha "^3.4.2"
     original-require "^1.0.1"
