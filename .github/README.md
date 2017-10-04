@@ -7,6 +7,16 @@ Contracts for FundRequest (token, crowdsale and platform contracts)
 
 ### Development
 
+**Using the Facuet**
+
+Send a transaction of 0 wei to 0x9db4361d44c5311291a12eddd1f3ea58c12951b8. This will give you 1 FND token to work with. 
+
+
+---
+
+**Latest Migration**
+
+
 ```
 Running migration: 1_migrations.js
   Deploying Migrations...
