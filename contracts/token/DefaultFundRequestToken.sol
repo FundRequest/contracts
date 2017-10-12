@@ -15,7 +15,7 @@ contract DefaultFundRequestToken is FundRequestToken, CrowdsaleToken {
 
   Fundable public fundRequestContract;
 
-  function DefaultFundRequestToken(string _name, string _symbol, uint256 _initialSupply, uint _decimals, bool _mintable) CrowdsaleToken(_name, _symbol, _initialSupply, _decimals, _mintable) {
+  function DefaultFundRequestToken(string _name, string _symbol, uint256 _initialSupply, uint8 _decimals, bool _mintable) CrowdsaleToken(_name, _symbol, _initialSupply, _decimals, _mintable) {
     //constructor
   }
 
