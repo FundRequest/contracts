@@ -26,10 +26,10 @@ contract DefaultFundRequestToken is FundRequestToken, CrowdsaleToken {
     fundRequestContract = Fundable(_fundRequestContractAddress);
   }
 
-  function transferFunding(uint256 value, bytes32 data) {
+  function transferFunding(uint256 value, bytes32 data, string user) {
     require(address(fundRequestContract) != address(0));
     super.transfer(fundRequestContract, value);
-    bool success = fundRequestContract.fund(msg.sender, value, data);
+    bool success = fundRequestContract.fund(msg.sender, value, data, user);
     require(success);
   }
 }
