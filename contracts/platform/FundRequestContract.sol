@@ -9,7 +9,7 @@ contract FundRequestContract {
 
   using SafeMath for uint256;
 
-  event Funded(address indexed from, uint256 value, bytes32 data);
+  event Funded(address indexed from, uint256 value, bytes32 data, string user);
 
   FundRequestToken public token;
 
@@ -29,10 +29,10 @@ contract FundRequestContract {
     assert(token.isFundRequestToken());
   }
 
-  function fund(address _from, uint256 _value, bytes32 _data) onlyToken(msg.sender) returns (bool success) {
+  function fund(address _from, uint256 _value, bytes32 _data, string _user) onlyToken(msg.sender) returns (bool success) {
     updateFunders(_from, _data);
     updateBalances(_from, _value, _data);
-    Funded(_from, _value, _data);
+    Funded(_from, _value, _data, _user);
     return true;
   }
 
