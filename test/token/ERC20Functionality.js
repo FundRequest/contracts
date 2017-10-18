@@ -1,4 +1,4 @@
-const FND = artifacts.require('./token/DefaultFundRequestToken.sol');
+const FND = artifacts.require('./token/FundRequestToken.sol');
 const expect = require('chai').expect;
 
 contract('FundRequestToken', function (accounts) {
@@ -7,9 +7,9 @@ contract('FundRequestToken', function (accounts) {
   const owner = accounts[0];
 
   beforeEach(async function () {
-    fnd = await FND.new("FundRequest", "FND", 666000000000000000000, 18, true);
-    await fnd.setReleaseAgent(owner);
-    await fnd.releaseTokenTransfer();
+    fnd = await FND.new(0x0, 0, "FundRequest", 18, "FND", true);
+    await fnd.changeController(owner);
+    await fnd.generateTokens(owner, 666000000000000000000);
   });
 
   it('should be possible to transfer tokens', async function () {
