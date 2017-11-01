@@ -16,6 +16,9 @@ contract FundRequestCampaign is TokenController, Owned {
   MiniMeToken public tokenContract;   // The new token for this Campaign
   address public vaultAddress;        // The address to hold the funds donated
 
+  //KYC 
+  mapping(address => bool) public allowed;
+
   /// @notice 'Campaign()' initiates the Campaign by setting its funding
   /// parameters
   /// @dev There are several checks to make sure the parameters are acceptable
@@ -37,7 +40,7 @@ contract FundRequestCampaign is TokenController, Owned {
 
   ) {
     require ((_endFundingTime >= now) &&           // Cannot end in the past
-    (_endFundingTime > _startFundingTime) &&
+(_endFundingTime > _startFundingTime) &&
     (_maximumFunding <= 10000 ether) &&        // The Beta is limited
     (_vaultAddress != 0));                    // To prevent burning ETH
     startFundingTime = _startFundingTime;
@@ -100,11 +103,12 @@ contract FundRequestCampaign is TokenController, Owned {
   function doPayment(address _owner) internal {
 
     // First check that the Campaign is allowed to receive this donation
-    require ((now >= startFundingTime) &&
-    (now <= endFundingTime) &&
-    (tokenContract.controller() != 0) &&           // Extra check
-    (msg.value != 0) &&
-    (totalCollected + msg.value <= maximumFunding));
+    require(now >= startFundingTime);
+    require(now <= endFundingTime);
+    require(validBeneficiary(_owner));
+    require(tokenContract.controller() != 0);
+    require(msg.value != 0);
+    require(totalCollected + msg.value <= maximumFunding);
 
     //Track how much the Campaign has collected
     totalCollected += msg.value;
@@ -137,4 +141,11 @@ contract FundRequestCampaign is TokenController, Owned {
     vaultAddress = _newVaultAddress;
   }
 
+  function validBeneficiary(address beneficiary) internal constant returns (bool) {
+      return allowed[beneficiary] == true;
+  }
+
+  function allow(address beneficiary) onlyOwner {
+    allowed[beneficiary] = true;
+  }
 }
