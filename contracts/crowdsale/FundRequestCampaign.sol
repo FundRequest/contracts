@@ -39,10 +39,11 @@ contract FundRequestCampaign is TokenController, Owned {
   address _tokenAddress
 
   ) {
-    require ((_endFundingTime >= now) &&           // Cannot end in the past
-(_endFundingTime > _startFundingTime) &&
-    (_maximumFunding <= 10000 ether) &&        // The Beta is limited
-    (_vaultAddress != 0));                    // To prevent burning ETH
+    require(_endFundingTime >= now);          // Cannot end in the past
+    require(_endFundingTime > _startFundingTime);
+    require(_maximumFunding <= 10000 ether); // The Beta is limited
+    require(_vaultAddress != 0);  // To prevent burning ETH
+    
     startFundingTime = _startFundingTime;
     endFundingTime = _endFundingTime;
     maximumFunding = _maximumFunding;
