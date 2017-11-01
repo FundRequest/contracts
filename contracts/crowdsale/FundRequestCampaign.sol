@@ -118,9 +118,15 @@ contract FundRequestCampaign is TokenController, Owned {
 
     // Creates an equal amount of tokens as ether sent. The new tokens are created
     //  in the `_owner` address
-    require (tokenContract.generateTokens(_owner, msg.value));
+
+    uint tokens_to_be_generated = calculateTokensForTGE(msg.value);
+    require (tokenContract.generateTokens(_owner, tokens_to_be_generated));
 
     return;
+  }
+
+  function calculateTokensForTGE(uint _wei) internal constant returns (uint) {
+      return _wei; //TODO: calculate tokens
   }
 
   /// @notice `finalizeFunding()` ends the Campaign by calling setting the
