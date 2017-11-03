@@ -26,7 +26,7 @@ contract CrowdsaleToken is ReleasableToken, MintableToken, UpgradeableToken {
 
   string public symbol;
 
-  uint public decimals;
+  uint8 public decimals;
 
   /**
    * Construct the token.
@@ -39,7 +39,7 @@ contract CrowdsaleToken is ReleasableToken, MintableToken, UpgradeableToken {
    * @param _decimals Number of decimal places
    * @param _mintable Are new tokens created over the crowdsale or do we distribute only the initial supply? Note that when the token becomes transferable the minting always ends.
    */
-  function CrowdsaleToken(string _name, string _symbol, uint256 _initialSupply, uint _decimals, bool _mintable) UpgradeableToken(msg.sender) {
+  function CrowdsaleToken(string _name, string _symbol, uint256 _initialSupply, uint8 _decimals, bool _mintable) UpgradeableToken(msg.sender) {
 
     // Create any address, can be transferred
     // to team multisig via changeOwner(),
