@@ -1,4 +1,4 @@
-pragma solidity ^0.4.15;
+pragma solidity ^0.4.13;
 /// @dev This is designed to control the issuance of a MiniMe Token for a
 ///  non-profit Campaign. This contract effectively dictates the terms of the
 ///  funding round.

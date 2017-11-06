@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.13;
 
 /*
     Copyright 2016, Jordi Baylina
@@ -475,7 +475,7 @@ contract MiniMeToken is Controlled {
     }
 
     /// @dev Helper function to return a min betwen the two uints
-    function min(uint a, uint b) pure internal returns (uint) {
+    function min(uint a, uint b) constant internal returns (uint) {
         return a < b ? a : b;
     }
 

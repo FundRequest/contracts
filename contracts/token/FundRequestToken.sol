@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.13;
 
 
 import "./MiniMeToken.sol";
@@ -15,7 +15,7 @@ contract FundRequestToken is MiniMeToken {
     //constructor
   }
 
-  function isFundRequestToken() pure returns (bool) {
+  function isFundRequestToken() constant returns (bool) {
     return true;
   }
 }
