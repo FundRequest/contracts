@@ -1,12 +1,11 @@
-pragma solidity ^0.4.15;
+pragma solidity ^0.4.13;
 
 
 import "../math/SafeMath.sol";
-import "../fund/Fundable.sol";
 import '../token/FundRequestToken.sol';
 
 
-contract FundRequestContract is Fundable {
+contract FundRequestContract {
 
   using SafeMath for uint256;
 
