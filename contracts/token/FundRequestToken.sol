@@ -6,8 +6,8 @@ import "./MiniMeToken.sol";
 
 /**
  * Fundrequest Token as deployed by https://fundrequest.io
- * @Davy Van Roy
- * @Quinten De Swaef
+ * Davy Van Roy
+ * Quinten De Swaef
  */
 contract FundRequestToken is MiniMeToken {
 
