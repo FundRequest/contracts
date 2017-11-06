@@ -5,9 +5,9 @@ import "./MiniMeToken.sol";
 
 
 /**
- * Creating an instance of CrowdsaleToken, for the specific reason that we'll need an entrypoint
- * to the fundrequest contracts with a mandate to tokens
- *
+ * Fundrequest Token as deployed by https://fundrequest.io
+ * @Davy Van Roy
+ * @Quinten De Swaef
  */
 contract FundRequestToken is MiniMeToken {
 
