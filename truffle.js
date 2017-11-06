@@ -55,5 +55,11 @@ module.exports = {
       port: 8545,
       gas: 4612388
     },
+    solc: {
+      optimizer: {
+        enabled: true,
+        runs: 200
+      }
+    }
   },
 };

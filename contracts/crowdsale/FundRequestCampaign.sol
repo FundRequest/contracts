@@ -139,7 +139,6 @@ contract FundRequestCampaign is TokenController, Owned {
     tokenContract.changeController(0);
   }
 
-
   /// @notice `onlyOwner` changes the location that ether is sent
   /// @param _newVaultAddress The address that will receive the ether sent to this
   ///  Campaign
@@ -153,5 +152,14 @@ contract FundRequestCampaign is TokenController, Owned {
 
   function allow(address beneficiary) onlyOwner {
     allowed[beneficiary] = true;
+  }
+
+
+  function privatePresale() internal returns (bool) {
+    return true;
+  }
+
+  function publicPresale() internal returns (bool) {
+    return true;
   }
 }

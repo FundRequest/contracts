@@ -1,4 +1,4 @@
-pragma solidity ^0.4.15;
+pragma solidity ^0.4.18;
 
 
 import "./MiniMeToken.sol";
@@ -11,12 +11,11 @@ import "./MiniMeToken.sol";
  */
 contract FundRequestToken is MiniMeToken {
 
-  function FundRequestToken(address _parentToken, uint _parentSnapShotBlock, string _tokenName, uint8 _decimalUnits, string _tokenSymbol, bool _transfersEnabled) MiniMeToken(_parentToken, _parentSnapShotBlock, _tokenName, _decimalUnits, _tokenSymbol, _transfersEnabled) {
+  function FundRequestToken(address _tokenFactory, address _parentToken, uint _parentSnapShotBlock, string _tokenName, uint8 _decimalUnits, string _tokenSymbol, bool _transfersEnabled) MiniMeToken(_tokenFactory, _parentToken, _parentSnapShotBlock, _tokenName, _decimalUnits, _tokenSymbol, _transfersEnabled) {
     //constructor
   }
 
-  function isFundRequestToken() public constant returns (bool) {
+  function isFundRequestToken() pure returns (bool) {
     return true;
   }
-
 }
