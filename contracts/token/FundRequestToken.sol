@@ -15,6 +15,12 @@ contract FundRequestToken is MiniMeToken {
     //constructor
   }
 
+  function approve(address _spender, uint256 _currentValue, uint256 _amount) returns (bool success) {
+    require(allowed[msg.sender][_spender] == _currentValue);
+    require(approve(_spender, _amount));
+    return true;
+  }
+
   function isFundRequestToken() constant returns (bool) {
     return true;
   }
