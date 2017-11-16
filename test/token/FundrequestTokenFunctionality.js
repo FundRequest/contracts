@@ -30,4 +30,17 @@ contract('FundRequestToken', function (accounts) {
     let retOwner = await fnd.controller.call();
     expect(retOwner).to.equal(owner)
   });
+
+  it('should be possible to approve tokens', async function () {
+    await fnd.approve(accounts[0], 23, {from: accounts[1]});
+    let balance = await fnd.allowance.call(accounts[1], accounts[0]);
+    expect(balance.toString()).to.equal('23');
+  });
+
+  it('should be possible to approve tokens with already an approve balance', async function () {
+    await fnd.approve(accounts[0], 23, {from: accounts[1]});
+    await fnd.safeApprove(accounts[0], 23, 13, {from: accounts[1]});
+    let balance = await fnd.allowance.call(accounts[1], accounts[0]);
+    expect(balance.toString()).to.equal('13');
+  });
 });

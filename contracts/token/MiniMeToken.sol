@@ -224,12 +224,14 @@ contract MiniMeToken is Controlled {
         //  already 0 to mitigate the race condition described here:
         //  https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
         require((_amount == 0) || (allowed[msg.sender][_spender] == 0));
+        return doApprove(_spender, _amount);
+    }
 
-        // Alerts the token controller of the approve function call
+    function doApprove(address _spender, uint256 _amount) internal returns (bool success) {
+        require(transfersEnabled);
         if (isContract(controller)) {
             require(TokenController(controller).onApprove(msg.sender, _spender, _amount));
         }
-
         allowed[msg.sender][_spender] = _amount;
         Approval(msg.sender, _spender, _amount);
         return true;
