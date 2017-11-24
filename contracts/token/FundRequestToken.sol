@@ -1,7 +1,7 @@
 pragma solidity ^0.4.13;
 
 
-import "./MiniMeToken.sol";
+import "./LimitedTransferMiniMeToken.sol";
 
 
 /**
@@ -9,13 +9,13 @@ import "./MiniMeToken.sol";
  * Davy Van Roy
  * Quinten De Swaef
  */
-contract FundRequestToken is MiniMeToken {
+contract FundRequestToken is LimitedTransferMiniMeToken {
 
-  function FundRequestToken(address _tokenFactory, address _parentToken, uint _parentSnapShotBlock, string _tokenName, uint8 _decimalUnits, string _tokenSymbol, bool _transfersEnabled) MiniMeToken(_tokenFactory, _parentToken, _parentSnapShotBlock, _tokenName, _decimalUnits, _tokenSymbol, _transfersEnabled) {
+  function FundRequestToken(address _tokenFactory, address _parentToken, uint _parentSnapShotBlock, string _tokenName, uint8 _decimalUnits, string _tokenSymbol, bool _transfersEnabled) LimitedTransferMiniMeToken(_tokenFactory, _parentToken, _parentSnapShotBlock, _tokenName, _decimalUnits, _tokenSymbol, _transfersEnabled) {
     //constructor
   }
 
-  function safeApprove(address _spender, uint256 _currentValue, uint256 _amount) returns (bool success) {
+  function safeApprove(address _spender, uint256 _currentValue, uint256 _amount) public canTransfer(msg.sender, _spender) returns (bool success) {
     require(allowed[msg.sender][_spender] == _currentValue);
     return doApprove(_spender, _amount);
   }
