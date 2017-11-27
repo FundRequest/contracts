@@ -21,7 +21,7 @@ contract('LimitedTransferMiniMeToken', function (accounts) {
 
   it('should be possible to transfer tokens when limited transfers enabled from correct sender to contract', async function () {
     await fnd.enableLimitedTransfers(true);
-    await fnd.addLimitedTransferAddress(owner);
+    await fnd.updateLimitedTransferAddress(owner, true);
     await fnd.transfer(contractAddress, 23, {from: owner});
     let balance = await fnd.balanceOf.call(contractAddress);
     expect(balance.toString()).to.equal('23');
@@ -37,7 +37,7 @@ contract('LimitedTransferMiniMeToken', function (accounts) {
 
   it('should be possible to approve tokens when limited transfers enabled', async function () {
     await fnd.enableLimitedTransfers(true);
-    await fnd.addLimitedTransferAddress(accounts[1]);
+    await fnd.updateLimitedTransferAddress(accounts[1], true);
     await fnd.approve(contractAddress, 23, {from: accounts[1]});
     let balance = await fnd.allowance.call(accounts[1], contractAddress);
     expect(balance.toString()).to.equal('23');
@@ -55,7 +55,7 @@ contract('LimitedTransferMiniMeToken', function (accounts) {
 
   it('should be possible to transfer tokens from addresses with limited transfers enabled with correct address', async function () {
     await fnd.enableLimitedTransfers(true);
-    await fnd.addLimitedTransferAddress(accounts[0]);
+    await fnd.updateLimitedTransferAddress(accounts[0], true);
     await fnd.approve(contractAddress, 23, {from: accounts[0]});
     await fnd.transferFrom(accounts[0], accounts[2], 23, {from: contractAddress});
     let balance = await fnd.balanceOf.call(accounts[2]);

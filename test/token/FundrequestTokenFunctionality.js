@@ -46,7 +46,7 @@ contract('FundRequestToken', function (accounts) {
 
   it('should be possible to approve tokens with already an approve balance with limited functionality', async function () {
     await fnd.enableLimitedTransfers(true);
-    await fnd.addLimitedTransferAddress(accounts[1]);
+    await fnd.updateLimitedTransferAddress(accounts[1], true);
     await fnd.setContractAddress(accounts[0]);
     await fnd.approve(accounts[0], 23, {from: accounts[1]});
     await fnd.safeApprove(accounts[0], 23, 13, {from: accounts[1]});
