@@ -21,8 +21,8 @@ contract LimitedTransferMiniMeToken is MiniMeToken {
     //constructor
   }
 
-  function addLimitedTransferAddress(address _allowed) public onlyController returns (bool success) {
-    limitedTransferAddresses[_allowed] = true;
+  function updateLimitedTransferAddress(address _allowedAddress, bool _allowed) public onlyController returns (bool success) {
+    limitedTransferAddresses[_allowedAddress] = _allowed;
     return true;
   }
 
