@@ -65,6 +65,16 @@ contract('FundRequestTokenGeneration', function (accounts) {
     }
   });
 
+  it('should not be possible to buytokens when contract is paused', async function () {
+    try {
+      await tge.pause();
+      await buyTokens(1);
+      assert.fail('should fail');
+    } catch (error) {
+      assertInvalidOpCode(error);
+    }
+  });
+
   it('should be possible to update maxcap', async function () {
     await tge.setMaxCap(getAmountInWei(10));
     let maxCap = await tge.maxCap.call();
@@ -82,7 +92,8 @@ contract('FundRequestTokenGeneration', function (accounts) {
 
   it('should not be possible to go over max cap', async function () {
     try {
-      await buyTokens(30);
+      await tge.setMaxCap(getAmountInWei(1), {from: tokenBuyer});
+      await buyTokens(2);
       assert.fail('should fail');
     } catch (error) {
       assertInvalidOpCode(error);
@@ -131,6 +142,34 @@ contract('FundRequestTokenGeneration', function (accounts) {
     await buyTokens(1);
     let wei = await tge.totalCollected.call();
     expect(wei.toNumber()).to.equal(getAmountInWei(1));
+  });
+
+  it('should be possible to allocate tokens from previous rounds', async function () {
+    await tge.allocateTokens(tokenBuyer, getAmountInWei(1800));
+    await expectBalance(tokenBuyer, 1800);
+    await expectBalance(founderWallet, 810);
+    await expectBalance(advisorWallet, 90);
+    await expectBalance(ecoSystemWallet, 1350);
+    await expectBalance(coldStorageWallet, 450);
+  });
+
+  it('only owner can assign tokens from previous rounds', async function () {
+    try {
+      await tge.allocateTokens(tokenBuyer, getAmountInWei(1800), {from: tokenBuyer});
+      assert.fail('should fail');
+    } catch (error) {
+      assertInvalidOpCode(error);
+    }
+  });
+
+  it('should not be possible to allocate tokens when contract is paused', async function () {
+    try {
+      await tge.pause();
+      await tge.allocateTokens(tokenBuyer, getAmountInWei(1800));
+      assert.fail('should fail');
+    } catch (error) {
+      assertInvalidOpCode(error);
+    }
   });
 
   let buyTokens = async function (amountInEther) {

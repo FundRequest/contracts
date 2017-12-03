@@ -2,11 +2,11 @@ pragma solidity ^0.4.13;
 
 
 import '../math/SafeMath.sol';
-import '../ownership/Owned.sol';
+import '../pause/Pausable.sol';
 import "../token/MiniMeToken.sol";
 
 
-contract FundRequestTokenGeneration is Owned {
+contract FundRequestTokenGeneration is Pausable {
   using SafeMath for uint256;
 
   address public founderWallet;
@@ -45,7 +45,7 @@ contract FundRequestTokenGeneration is Owned {
     maxCap = _maxCap;
   }
 
-  function() payable {
+  function() payable whenNotPaused {
     doPayment(msg.sender);
   }
 
@@ -53,12 +53,12 @@ contract FundRequestTokenGeneration is Owned {
   /// have the tokens created in an address of their choosing
   /// @param _owner The address that will hold the newly created tokens
 
-  function proxyPayment(address _owner) payable returns (bool) {
+  function proxyPayment(address _owner) payable whenNotPaused returns (bool) {
     doPayment(_owner);
     return true;
   }
 
-  function doPayment(address beneficiary) internal {
+  function doPayment(address beneficiary) whenNotPaused internal {
     require(validPurchase(beneficiary));
     require(maxCapNotReached());
     bool existing = deposits[beneficiary] > 0;
@@ -72,15 +72,21 @@ contract FundRequestTokenGeneration is Owned {
       investors.push(beneficiary);
       investorCount++;
     }
+    distributeTokens(beneficiary, tokensInWei);
+    return;
+  }
 
-    uint256 totalTokensInWei = tokensInWei.mul(100).div(40);
+  function allocateTokens(address beneficiary, uint256 tokensSold) whenNotPaused onlyOwner {
+    distributeTokens(beneficiary, tokensSold);
+  }
+
+  function distributeTokens(address beneficiary, uint256 tokensSold) internal {
+    uint256 totalTokensInWei = tokensSold.mul(100).div(40);
     require(generateTokens(totalTokensInWei, beneficiary, 40));
     require(generateTokens(totalTokensInWei, founderWallet, 18));
     require(generateTokens(totalTokensInWei, advisorWallet, 2));
     require(generateTokens(totalTokensInWei, ecoSystemWallet, 30));
     require(generateTokens(totalTokensInWei, coldStorageWallet, 10));
-
-    return;
   }
 
   function validPurchase(address beneficiary) internal returns (bool) {
