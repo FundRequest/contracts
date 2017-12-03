@@ -17,7 +17,7 @@ contract FundRequestTokenGeneration is Owned {
 
   address public coldStorageWallet;
 
-  uint256 public rate;
+  uint public rate;
 
   mapping (address => uint) public deposits;
 
@@ -27,19 +27,22 @@ contract FundRequestTokenGeneration is Owned {
 
   uint public investorCount;
 
-  uint256 public weiRaised;
-
   mapping (address => uint) public allowed;
 
   MiniMeToken public tokenContract;
 
-  function FundRequestTokenGeneration(address _tokenAddress, address _founderWallet, address _advisorWallet, address _ecoSystemWallet, address _coldStorageWallet, uint256 _rate) {
+  uint public maxCap;         // In wei
+  uint256 public totalCollected;         // In wei
+
+
+  function FundRequestTokenGeneration(address _tokenAddress, address _founderWallet, address _advisorWallet, address _ecoSystemWallet, address _coldStorageWallet, uint _rate, uint _maxCap) {
     tokenContract = MiniMeToken(_tokenAddress);
     founderWallet = _founderWallet;
     advisorWallet = _advisorWallet;
     ecoSystemWallet = _ecoSystemWallet;
     coldStorageWallet = _coldStorageWallet;
     rate = _rate;
+    maxCap = _maxCap;
   }
 
   function() payable {
@@ -56,18 +59,13 @@ contract FundRequestTokenGeneration is Owned {
   }
 
   function doPayment(address beneficiary) internal {
-    require(tokenContract.controller() != 0);
-      require(msg.value >= 0.01 ether);
-//        require(validPurchase());
-    //    require(validBeneficiary(_owner));
-    //    require(maxCapNotReached());
-    //    require(now >= startFundingTime);
-    //    require(now <= endFundingTime);
+    require(validPurchase(beneficiary));
+    require(maxCapNotReached());
     bool existing = deposits[beneficiary] > 0;
     uint256 weiAmount = msg.value;
-    uint256 updatedWeiRaised = weiRaised.add(weiAmount);
+    uint256 updatedWeiRaised = totalCollected.add(weiAmount);
     uint256 tokensInWei = weiAmount.mul(rate);
-    weiRaised = updatedWeiRaised;
+    totalCollected = updatedWeiRaised;
     deposits[beneficiary] = deposits[beneficiary].add(msg.value);
     balances[beneficiary] = balances[beneficiary].add(tokensInWei);
     if (!existing) {
@@ -85,10 +83,29 @@ contract FundRequestTokenGeneration is Owned {
     return;
   }
 
+  function validPurchase(address beneficiary) internal returns (bool) {
+    require(tokenContract.controller() != 0);
+    require(msg.value >= 0.01 ether);
+    require(msg.value <= allowed[beneficiary]);
+    return true;
+  }
+
   function generateTokens(uint256 _total, address _owner, uint _pct) internal returns (bool) {
     uint256 tokensInWei = _total.div(100).mul(_pct);
     require(tokenContract.generateTokens(_owner, tokensInWei));
     return true;
+  }
+
+  function allow(address beneficiary, uint _cap) onlyOwner {
+    allowed[beneficiary] = _cap;
+  }
+
+  function maxCapNotReached() internal returns (bool) {
+    return totalCollected.add(msg.value) <= maxCap;
+  }
+
+  function setMaxCap(uint _maxCap) onlyOwner {
+    maxCap = _maxCap;
   }
 
 }
