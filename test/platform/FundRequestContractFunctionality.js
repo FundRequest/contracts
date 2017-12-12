@@ -24,27 +24,58 @@ contract('FundRequestContract', function (accounts) {
     await fnd.approve(frc.address, 1000);
   });
 
-  let expectBalance = async function (platform, platformId, balance) {
-    let bal = await frc.balance.call(web3.fromAscii(platform), web3.fromAscii(platformId));
-    expect(bal.toNumber()).to.equal(balance);
+  let expectBalance = async function (data) {
+    let bal = await frc.balance.call(web3.fromAscii(data.platform), web3.fromAscii(data.platformId));
+    expect(bal.toNumber()).to.equal(data.value);
+  };
+
+  let fundRequest = async function (data) {
+    await frc.fund(web3.fromAscii(data.platform), web3.fromAscii(data.platformId), data.value);
   };
 
   it('should return 0 balance', async function () {
-    await expectBalance("github", "1", 0);
+    await expectBalance({
+      platform: "github",
+      platformId: "1",
+      value: 0
+    });
   });
 
-  it('should be able to fund an issue', async function () {
-    let value = 100;
-    let platform = "github";
-    await frc.fund(web3.fromAscii(platform), web3.fromAscii("1"), value);
-    await expectBalance(platform, "1", value);
+  let fundDefaultRequest = async function () {
+    let data = {
+      platform: "github",
+      platformId: "1",
+      value: 100
+    };
+    await fundRequest(data);
+    return data;
+  };
+  it('should be able to fund an issue which updates the balance', async function () {
+    let data = await fundDefaultRequest();
+    await expectBalance(data);
+  });
+
+  it('should update totalBalance when funding', async function () {
+    let data = await fundDefaultRequest();
     let totalBalance = await frc.totalBalance.call();
-    expect(totalBalance.toNumber()).to.equal(value);
-    let totalFunds = await frc.totalFunds.call();
-    expect(totalFunds.toNumber()).to.equal(value);
-    let totalPlatformBalances = await frc.totalPlatformBalances.call(web3.fromAscii(platform));
-    expect(totalPlatformBalances.toNumber()).to.equal(value);
-    let totalPlatformFunds = await frc.totalPlatformFunds.call(web3.fromAscii(platform));
-    expect(totalPlatformFunds.toNumber()).to.equal(value);
+    expect(totalBalance.toNumber()).to.equal(data.value);
+  });
+
+  it('should update totalFunded when funding', async function () {
+    let data = await fundDefaultRequest();
+    let totalFunded = await frc.totalFunded.call();
+    expect(totalFunded.toNumber()).to.equal(data.value);
+  });
+
+  it('should update totalNumberOfFunders when funding', async function () {
+    await fundDefaultRequest();
+    let totalNumberOfFunders = await frc.totalNumberOfFunders.call();
+    expect(totalNumberOfFunders.toNumber()).to.equal(1);
+  });
+
+  it('should update requestsFunded when funding', async function () {
+    await fundDefaultRequest();
+    let requestsFunded = await frc.requestsFunded.call();
+    expect(requestsFunded.toNumber()).to.equal(1);
   });
 });
