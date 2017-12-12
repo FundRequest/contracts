@@ -55,6 +55,20 @@ contract('FundRequestContract', function (accounts) {
     await expectBalance(data);
   });
 
+  it('should not be possible to fund 0 tokens', async function () {
+    let data = {
+      platform: "github",
+      platformId: "1",
+      value: 0
+    };
+    try {
+      await fundRequest(data);
+      assert.fail('should fail');
+    } catch (error) {
+      assertInvalidOpCode(error);
+    }
+  });
+
   it('should update totalBalance when funding', async function () {
     let data = await fundDefaultRequest();
     let totalBalance = await frc.totalBalance.call();
@@ -78,4 +92,11 @@ contract('FundRequestContract', function (accounts) {
     let requestsFunded = await frc.requestsFunded.call();
     expect(requestsFunded.toNumber()).to.equal(1);
   });
+
+  function assertInvalidOpCode(error) {
+    assert(
+      error.message.indexOf('invalid opcode') >= 0,
+      'transfer should throw an opCode exception.'
+    );
+  }
 });

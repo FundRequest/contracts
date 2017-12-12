@@ -38,6 +38,7 @@ contract FundRequestContract {
   }
 
   function fund(bytes32 _platform, bytes32 _platformId, uint256 _value) returns (bool success) {
+    require(_value > 0);
     require(token.transferFrom(msg.sender, address(this), _value));
     updateFunders(msg.sender, _platform, _platformId, _value);
     updateBalances(msg.sender, _platform, _platformId, _value);
