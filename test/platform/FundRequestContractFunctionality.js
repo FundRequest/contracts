@@ -30,7 +30,7 @@ contract('FundRequestContract', function (accounts) {
   };
 
   let fundRequest = async function (data) {
-    await frc.fund(web3.fromAscii(data.platform), web3.fromAscii(data.platformId), data.value);
+    await frc.fund(web3.fromAscii(data.platform), web3.fromAscii(data.platformId), data.url, data.value);
   };
 
   it('should return 0 balance', async function () {
@@ -45,7 +45,8 @@ contract('FundRequestContract', function (accounts) {
     let data = {
       platform: "github",
       platformId: "1",
-      value: 100
+      value: 100,
+      url: 'https://github.com'
     };
     await fundRequest(data);
     return data;
@@ -59,7 +60,8 @@ contract('FundRequestContract', function (accounts) {
     let data = {
       platform: "github",
       platformId: "1",
-      value: 0
+      value: 0,
+      url: 'https://github.com'
     };
     try {
       await fundRequest(data);
@@ -91,6 +93,14 @@ contract('FundRequestContract', function (accounts) {
     await fundDefaultRequest();
     let requestsFunded = await frc.requestsFunded.call();
     expect(requestsFunded.toNumber()).to.equal(1);
+  });
+
+  it('should be able to query the fund information', async function () {
+    let data = await fundDefaultRequest();
+    expect(data.platform).to.equal('github');
+    expect(data.platformId).to.equal('1');
+    expect(data.value).to.equal(100);
+    expect(data.url).to.equal('https://github.com');
   });
 
   function assertInvalidOpCode(error) {
