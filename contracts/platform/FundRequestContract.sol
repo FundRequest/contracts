@@ -3,9 +3,10 @@ pragma solidity ^0.4.13;
 
 import '../math/SafeMath.sol';
 import '../token/FundRequestToken.sol';
+import '../ownership/Owned.sol';
 
 
-contract FundRequestContract {
+contract FundRequestContract is Owned {
 
   using SafeMath for uint256;
 
@@ -34,6 +35,10 @@ contract FundRequestContract {
   mapping (bytes32 => mapping (bytes32 => Funding)) funds;
 
   function FundRequestContract(address _tokenAddress) {
+    setTokenAddress(_tokenAddress);
+  }
+
+  function setTokenAddress(address _tokenAddress) onlyOwner {
     token = FundRequestToken(_tokenAddress);
     assert(token.isFundRequestToken());
   }
@@ -51,9 +56,9 @@ contract FundRequestContract {
     return funds[_platform][_platformId].totalBalance;
   }
 
-  function getFundInfo(bytes32 _platform, bytes32 _platformId, address _funder) returns (uint256, uint256, uint256, string) {
+  function getFundInfo(bytes32 _platform, bytes32 _platformId) constant returns (uint256, uint256, uint256, string) {
     Funding funding = funds[_platform][_platformId];
-    return (funding.funders.length, funding.totalBalance, funding.balances[_funder], funding.url);
+    return (funding.funders.length, funding.totalBalance, funding.balances[msg.sender], funding.url);
   }
 
   function updateFunders(address _from, bytes32 _platform, bytes32 _platformId, uint256 _value) internal {
