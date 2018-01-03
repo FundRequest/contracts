@@ -30,4 +30,45 @@ contract('FundRequestToken', function (accounts) {
     let retOwner = await fnd.controller.call();
     expect(retOwner).to.equal(owner)
   });
+
+  it('should be possible to approve tokens', async function () {
+    await fnd.approve(accounts[0], 23, {from: accounts[1]});
+    let balance = await fnd.allowance.call(accounts[1], accounts[0]);
+    expect(balance.toString()).to.equal('23');
+  });
+
+  it('should be possible to approve tokens with already an approve balance', async function () {
+    await fnd.approve(accounts[0], 23, {from: accounts[1]});
+    await fnd.safeApprove(accounts[0], 23, 13, {from: accounts[1]});
+    let balance = await fnd.allowance.call(accounts[1], accounts[0]);
+    expect(balance.toString()).to.equal('13');
+  });
+
+  it('should be possible to approve tokens with already an approve balance with limited functionality', async function () {
+    await fnd.enableLimitedTransfers(true);
+    await fnd.updateLimitedTransferAddress(accounts[1], true);
+    await fnd.setContractAddress(accounts[0]);
+    await fnd.approve(accounts[0], 23, {from: accounts[1]});
+    await fnd.safeApprove(accounts[0], 23, 13, {from: accounts[1]});
+    let balance = await fnd.allowance.call(accounts[1], accounts[0]);
+    expect(balance.toString()).to.equal('13');
+  });
+
+  it('should not tbe possible to approve tokens with already an approve balance with limited functionality', async function () {
+    await fnd.enableLimitedTransfers(true);
+    try {
+      await fnd.safeApprove(accounts[0], 0, 13, {from: accounts[1]});
+      assert.fail('fnds should never have been approved');
+    } catch (error) {
+      assertInvalidOpCode(error);
+    }
+  });
+
+  function assertInvalidOpCode(error) {
+    assert(
+      error.message.indexOf('invalid opcode') >= 0,
+      'transfer should throw an opCode exception.'
+    );
+  }
+
 });
