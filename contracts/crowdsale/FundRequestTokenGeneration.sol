@@ -34,6 +34,9 @@ contract FundRequestTokenGeneration is Pausable {
   uint public maxCap;         // In wei
   uint256 public totalCollected;         // In wei
 
+  bool public personalCapActive = true;
+  uint256 public personalCap;
+
 
   function FundRequestTokenGeneration(
     address _tokenAddress, 
@@ -42,7 +45,8 @@ contract FundRequestTokenGeneration is Pausable {
     address _ecoSystemWallet, 
     address _coldStorageWallet, 
     uint _rate, 
-    uint _maxCap) public 
+    uint _maxCap,
+    uint256 _personalCap) public 
     {
     tokenContract = MiniMeToken(_tokenAddress);
     founderWallet = _founderWallet;
@@ -51,6 +55,7 @@ contract FundRequestTokenGeneration is Pausable {
     coldStorageWallet = _coldStorageWallet;
     rate = _rate;
     maxCap = _maxCap;
+    personalCap = _personalCap;
   }
 
   function() public payable whenNotPaused {
@@ -137,5 +142,13 @@ contract FundRequestTokenGeneration is Pausable {
 
   function setColdStorageWallet(address _coldStorageWallet) public onlyOwner {
     coldStorageWallet = _coldStorageWallet;
+  }
+
+  function setPersonalCap(uint256 _capInWei) public onlyOwner {
+    personalCap = _capInWei;
+  }
+
+  function setPersonalCapActive(bool _active) public onlyOwner {
+      personalCapActive = _active;
   }
 }

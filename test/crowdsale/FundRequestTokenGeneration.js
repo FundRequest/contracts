@@ -21,7 +21,7 @@ contract('FundRequestTokenGeneration', function (accounts) {
     tokenFactory = await TokenFactory.new();
     fnd = await FND.new(tokenFactory.address, 0x0, 0, "FundRequest", 18, "FND", true);
     await fnd.generateTokens(owner, 666000000000000000000);
-    tge = await TGE.new(fnd.address, founderWallet, advisorWallet, ecoSystemWallet, coldStorageWallet, 1800, getAmountInWei(20));
+    tge = await TGE.new(fnd.address, founderWallet, advisorWallet, ecoSystemWallet, coldStorageWallet, 1800, getAmountInWei(20), getAmountInWei(5));
     await fnd.changeController(tge.address);
   });
 
@@ -191,6 +191,39 @@ contract('FundRequestTokenGeneration', function (accounts) {
       assertInvalidOpCode(error);
     }
 });
+
+  it('should have a default personal cap and be active', async function() {
+    expect(await tge.personalCapActive.call()).to.be.true;
+    expect((await tge.personalCap.call()).toNumber()).to.equal(getAmountInWei(5));
+  });
+
+  it('should be possible to update maxCap as owner', async function() {
+    await tge.setPersonalCap(getAmountInWei(4), {from: owner});
+    expect((await tge.personalCap.call()).toNumber()).to.equal(getAmountInWei(4));
+  });
+
+  it('should be possible to update if personal cap is active or not as owner', async function() {
+    await tge.setPersonalCapActive(false, {from: owner});
+    expect(await tge.personalCapActive.call()).to.be.false;    
+  });
+
+  it('should not be possible to update if personal cap is active or not as non-owner', async function() {
+    try {
+      await tge.setPersonalCapActive(false, {from: accounts[2]});
+      assert.fail('should have failed');
+    } catch(error) {
+      assertInvalidOpCode(error);
+    }
+  });
+
+  it('should not be possible to update if personal cap is active or not as non-owner', async function() {
+    try {
+      await tge.setPersonalCap(getAmountInWei(3), {from: accounts[2]});
+      assertFail('should have failed');
+    } catch(error) {
+      assertInvalidOpCode(error);
+    }
+  });
 
   let buyTokens = async function (amountInEther) {
     await tge.allow(tokenBuyer, getAmountInWei(1));
