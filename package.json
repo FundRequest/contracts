@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "chai": "^3.5.0",
-    "truffle": "^3.4.6",
+    "truffle": "^4.0.4",
     "truffle-contract": "^2.0.4",
     "web3": "^0.20.0"
   }
