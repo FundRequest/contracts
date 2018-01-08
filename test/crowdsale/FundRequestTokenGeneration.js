@@ -40,9 +40,19 @@ contract('FundRequestTokenGeneration', function (accounts) {
     }
   });
 
-  it('should be possible to buy tokens', async function () {
+  it('should not be possible to buy tokens with a payment less than 0.01 eth', async function () {
     await buyTokens(1);
     await expectBalance(tokenBuyer, 1800);
+  });
+
+  it('should be possible to buy tokens', async function () {
+    try {
+      await buyTokens(0.001);
+      assert.fail("should have failed");
+    } catch(error) {
+      assertInvalidOpCode(error);
+      await expectBalance(tokenBuyer, 0);      
+    }
   });
 
   it('should not be possible to buy tokens when not whitelisted', async function () {

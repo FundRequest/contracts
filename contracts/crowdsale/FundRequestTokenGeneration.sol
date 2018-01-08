@@ -74,6 +74,7 @@ contract FundRequestTokenGeneration is Pausable {
   function doPayment(address beneficiary) whenNotPaused internal {
     require(validPurchase(beneficiary));
     require(maxCapNotReached());
+    require(personalCapNotReached(beneficiary));
     bool existing = deposits[beneficiary] > 0;
     uint256 weiAmount = msg.value;
     uint256 updatedWeiRaised = totalCollected.add(weiAmount);
@@ -121,6 +122,14 @@ contract FundRequestTokenGeneration is Pausable {
 
   function maxCapNotReached() internal view returns (bool) {
     return totalCollected.add(msg.value) <= maxCap;
+  }
+
+  function personalCapNotReached(address _beneficiary) internal view returns (bool) {
+    if (personalCapActive) {
+      return deposits[_beneficiary].add(msg.value) <= personalCap;
+    } else {
+      return true;
+    }
   }
 
   function setMaxCap(uint _maxCap) public onlyOwner {
