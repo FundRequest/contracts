@@ -11,7 +11,7 @@ import "./LimitedTransferMiniMeToken.sol";
  */
 contract FundRequestToken is LimitedTransferMiniMeToken {
 
-  function FundRequestToken(address _tokenFactory, address _parentToken, uint _parentSnapShotBlock, string _tokenName, uint8 _decimalUnits, string _tokenSymbol, bool _transfersEnabled) LimitedTransferMiniMeToken(_tokenFactory, _parentToken, _parentSnapShotBlock, _tokenName, _decimalUnits, _tokenSymbol, _transfersEnabled) {
+  function FundRequestToken(address _limitedTransferAgent, address _tokenFactory, address _parentToken, uint _parentSnapShotBlock, string _tokenName, uint8 _decimalUnits, string _tokenSymbol, bool _transfersEnabled) LimitedTransferMiniMeToken(_limitedTransferAgent, _tokenFactory, _parentToken, _parentSnapShotBlock, _tokenName, _decimalUnits, _tokenSymbol, _transfersEnabled) {
     //constructor
   }
 
