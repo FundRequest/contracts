@@ -122,4 +122,20 @@ contract FundRequestTokenGeneration is Pausable {
     maxCap = _maxCap;
   }
 
+  /* setters for wallets */
+  function setFounderWallet(address _founderWallet) public onlyOwner {
+      founderWallet = _founderWallet;
+  }
+
+  function setAdvisorWallet(address _advisorWallet) public onlyOwner {
+      advisorWallet = _advisorWallet;
+  }
+
+  function setEcoSystemWallet(address _ecoSystemWallet) public onlyOwner {
+    ecoSystemWallet = _ecoSystemWallet;
+  }
+
+  function setColdStorageWallet(address _coldStorageWallet) public onlyOwner {
+    coldStorageWallet = _coldStorageWallet;
+  }
 }

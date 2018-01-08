@@ -171,6 +171,27 @@ contract('FundRequestTokenGeneration', function (accounts) {
     }
   });
 
+  it('should be possible to update wallets as owner', async function() {
+      await tge.setFounderWallet(accounts[1], { from: owner });
+      await tge.setAdvisorWallet(accounts[2], { from: owner });
+      await tge.setEcoSystemWallet(accounts[3], { from: owner });
+      await tge.setColdStorageWallet(accounts[4], { from: owner });
+
+      expect(await tge.ecoSystemWallet.call()).to.equal(accounts[3]);
+      expect(await tge.founderWallet.call()).to.equal(accounts[1]);
+      expect(await tge.coldStorageWallet.call()).to.equal(accounts[4]);
+      expect(await tge.advisorWallet.call()).to.equal(accounts[2]);
+  });
+
+  it('should not be possible to update wallets as non-owner', async function() {
+    try {
+      await tge.setFounderWallet(accounts[1], {from: accounts[2]});
+      assert.fail('should fail');
+    } catch(error) {
+      assertInvalidOpCode(error);
+    }
+});
+
   let buyTokens = async function (amountInEther) {
     await tge.allow(tokenBuyer, getAmountInWei(1));
     amountInEther = amountInEther || 1;

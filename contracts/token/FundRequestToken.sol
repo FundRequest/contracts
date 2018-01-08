@@ -29,7 +29,8 @@ contract FundRequestToken is LimitedTransferMiniMeToken {
       _tokenName, 
       _decimalUnits, 
       _tokenSymbol, 
-      _transfersEnabled) {
+      _transfersEnabled) 
+  {
     //constructor
   }
 
