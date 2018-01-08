@@ -1,6 +1,6 @@
 {
   "name": "fundrequest-contracts",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "FundRequest Contracts",
   "scripts": {
     "test": "truffle test",
@@ -9,13 +9,9 @@
   "author": "FundRequest",
   "license": "MIT",
   "devDependencies": {
-    "copy": "^0.3.0",
-    "del": "^3.0.0",
-    "ethereumjs-testrpc": "^4.0.1",
-    "gulp": "^3.9.1",
-    "gulp-concat": "^2.6.1",
+    "ganache-cli": "^6.0.3",
     "mocha": "^2.2.5",
-    "solidity-coverage": "^0.2.1",
+    "solidity-coverage": "^0.4.8",
     "solium": "^0.5.4",
     "truffle-hdwallet-provider": "0.0.3"
   },
