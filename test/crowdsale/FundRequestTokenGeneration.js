@@ -225,6 +225,42 @@ contract('FundRequestTokenGeneration', function (accounts) {
     }
   });
 
+  it('should not be possible to immediately go over the personal cap during the first round', async function(){
+      try {
+        await buyTokens(6);
+        assert.fail('should have failed');
+      } catch(error) {
+        assertInvalidOpCode(error);
+      }
+  });
+
+  it('should not be possible to go over the personal cap in multiple tries during the first round', async function(){
+    await buyTokens(3);
+    expectBalance(tokenBuyer, 1800 * 3);
+    await buyTokens(2);
+    expectBalance(tokenBuyer, 1800 * 5);
+    try {
+      await buyTokens(1);
+      assert.fail('should have failed');
+    } catch(error) {
+      assertInvalidOpCode(error);
+    }
+});
+
+  it('should be possible to immediately go over the personal cap if were not in the personal cap round', async function() {
+    tge.setPersonalCapActive(false, { from: owner });
+    await buyTokens(10);
+    expectBalance(tokenBuyer, 1800 * 10);
+  });
+
+  it('should be possible to go over the personal cap in multiple tries if were not in the personal cap round', async function() {
+    tge.setPersonalCapActive(false, { from: owner });
+    await buyTokens(2);
+    await buyTokens(3);
+    await buyTokens(1);
+    expectBalance(tokenBuyer, 1800 * 6);
+  });
+
   let buyTokens = async function (amountInEther) {
     await tge.allow(tokenBuyer);
     amountInEther = amountInEther || 1;
