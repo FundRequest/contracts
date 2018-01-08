@@ -1,4 +1,4 @@
-pragma solidity ^0.4.13;
+pragma solidity ^0.4.18;
 
 /*
     Copyright 2016, Jordi Baylina
@@ -41,11 +41,10 @@ contract MiniMeToken is Controlled {
     string public symbol;              //An identifier: e.g. REP
     string public version = "1.0.0"; 
 
-
     /// @dev `Checkpoint` is the structure that attaches a block number to a
     ///  given value, the block number attached is the one that last changed the
     ///  value
-    struct  Checkpoint {
+    struct Checkpoint {
 
         // `fromBlock` is the block number that the value was generated from
         uint128 fromBlock;

@@ -14,10 +14,10 @@ contract FundRequestContract {
   FundRequestToken public token;
 
   struct Funding {
-  address[] funders;
-  mapping (address => uint256) balances;
-  uint256 totalBalance;
-  string url;
+    address[] funders;
+    mapping (address => uint256) balances;
+    uint256 totalBalance;
+    string url;
   }
 
   uint256 public totalBalance;
