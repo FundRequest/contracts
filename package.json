@@ -12,7 +12,7 @@
     "ganache-cli": "^6.0.3",
     "mocha": "^2.2.5",
     "solidity-coverage": "^0.4.8",
-    "solium": "^0.5.4",
+    "solium": "^1.1.2",
     "truffle-hdwallet-provider": "0.0.3"
   },
   "dependencies": {
