@@ -1,8 +1,8 @@
 pragma solidity ^0.4.13;
 
 
-import '../math/SafeMath.sol';
-import '../pause/Pausable.sol';
+import "../math/SafeMath.sol";
+import "../pause/Pausable.sol";
 import "../token/MiniMeToken.sol";
 
 

@@ -18,7 +18,7 @@ contract DefaultLimitedTransferAgent is LimitedTransferAgent, Owned {
 
   mapping (address => bool) public limitedTransferAddresses;
 
-  function DefaultLimitedTransferAgent()  {
+  function DefaultLimitedTransferAgent() {
     //constructor
   }
 
@@ -40,11 +40,9 @@ contract DefaultLimitedTransferAgent is LimitedTransferAgent, Owned {
     if (limitedTransfersEnabled) {
       return
       (
-      (limitedTransferAddresses[_from] == true && _to == contractAddress)
-      || _from == contractAddress
-      );
+      (limitedTransferAddresses[_from] == true && _to == contractAddress) || 
+      _from == contractAddress);
     }
     return true;
   }
-
 }

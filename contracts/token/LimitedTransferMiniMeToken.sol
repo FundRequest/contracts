@@ -14,7 +14,24 @@ contract LimitedTransferMiniMeToken is MiniMeToken {
 
   LimitedTransferAgent public limitedTransferAgent;
 
-  function LimitedTransferMiniMeToken(address _limitedTransferAgent, address _tokenFactory, address _parentToken, uint _parentSnapShotBlock, string _tokenName, uint8 _decimalUnits, string _tokenSymbol, bool _transfersEnabled) MiniMeToken(_tokenFactory, _parentToken, _parentSnapShotBlock, _tokenName, _decimalUnits, _tokenSymbol, _transfersEnabled) {
+  function LimitedTransferMiniMeToken(
+      address _limitedTransferAgent, 
+      address _tokenFactory, 
+      address _parentToken, 
+      uint _parentSnapShotBlock, 
+      string _tokenName, 
+      uint8 _decimalUnits, 
+      string _tokenSymbol, 
+      bool _transfersEnabled) 
+      MiniMeToken(
+        _tokenFactory, 
+        _parentToken, 
+        _parentSnapShotBlock, 
+        _tokenName, 
+        _decimalUnits, 
+        _tokenSymbol, 
+        _transfersEnabled) 
+  {
     limitedTransferAgent = LimitedTransferAgent(_limitedTransferAgent);
   }
 
