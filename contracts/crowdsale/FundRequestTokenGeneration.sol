@@ -27,7 +27,7 @@ contract FundRequestTokenGeneration is Pausable {
 
   uint public investorCount;
 
-  mapping (address => uint) public allowed;
+  mapping (address => bool) public allowed;
 
   MiniMeToken public tokenContract;
 
@@ -105,7 +105,7 @@ contract FundRequestTokenGeneration is Pausable {
   function validPurchase(address beneficiary) internal view returns (bool) {
     require(tokenContract.controller() != 0);
     require(msg.value >= 0.01 ether);
-    require(msg.value <= allowed[beneficiary]);
+    require(allowed[beneficiary] == true);
     return true;
   }
 
@@ -115,8 +115,8 @@ contract FundRequestTokenGeneration is Pausable {
     return true;
   }
 
-  function allow(address beneficiary, uint _cap) public onlyOwner {
-    allowed[beneficiary] = _cap;
+  function allow(address beneficiary) public onlyOwner {
+    allowed[beneficiary] = true;
   }
 
   function maxCapNotReached() internal view returns (bool) {

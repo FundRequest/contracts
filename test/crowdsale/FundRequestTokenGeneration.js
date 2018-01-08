@@ -26,14 +26,14 @@ contract('FundRequestTokenGeneration', function (accounts) {
   });
 
   it('should be possible to whitelist', async function () {
-    await tge.allow(tokenBuyer, getAmountInWei(1));
-    let personalCap = await tge.allowed.call(tokenBuyer);
-    expect(personalCap.toNumber()).to.equal(getAmountInWei(1));
+    await tge.allow(tokenBuyer);
+    let allowed = await tge.allowed.call(tokenBuyer);
+    expect(allowed).to.be.true;
   });
 
   it('should only be possible by owner to whitelist', async function () {
     try {
-      await tge.allow(tokenBuyer, getAmountInWei(1), {from: tokenBuyer});
+      await tge.allow(tokenBuyer, {from: tokenBuyer});
       assert.fail('should fail');
     } catch (error) {
       assertInvalidOpCode(error);
@@ -48,16 +48,6 @@ contract('FundRequestTokenGeneration', function (accounts) {
   it('should not be possible to buy tokens when not whitelisted', async function () {
     try {
       await tge.proxyPayment(tokenBuyer, {value: getAmountInWei(1)});
-      assert.fail('should fail');
-    } catch (error) {
-      assertInvalidOpCode(error);
-    }
-  });
-
-  it('should not be possible to go over personal cap', async function () {
-    try {
-      await tge.allow(tokenBuyer, getAmountInWei(1));
-      await tge.proxyPayment(tokenBuyer, {value: getAmountInWei(2)});
       assert.fail('should fail');
     } catch (error) {
       assertInvalidOpCode(error);
@@ -226,7 +216,7 @@ contract('FundRequestTokenGeneration', function (accounts) {
   });
 
   let buyTokens = async function (amountInEther) {
-    await tge.allow(tokenBuyer, getAmountInWei(1));
+    await tge.allow(tokenBuyer);
     amountInEther = amountInEther || 1;
     await tge.proxyPayment(tokenBuyer, {value: getAmountInWei(amountInEther)});
   };
