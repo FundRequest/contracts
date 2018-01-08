@@ -20,7 +20,6 @@ contract('FundRequestTokenGeneration', function (accounts) {
   beforeEach(async function () {
     tokenFactory = await TokenFactory.new();
     fnd = await FND.new(tokenFactory.address, 0x0, 0, "FundRequest", 18, "FND", true);
-    await fnd.changeController(owner);
     await fnd.generateTokens(owner, 666000000000000000000);
     tge = await TGE.new(fnd.address, founderWallet, advisorWallet, ecoSystemWallet, coldStorageWallet, 1800, getAmountInWei(20));
     await fnd.changeController(tge.address);
@@ -190,10 +189,8 @@ contract('FundRequestTokenGeneration', function (accounts) {
 
   function assertInvalidOpCode(error) {
     assert(
-      error.message.indexOf('invalid opcode') >= 0,
-      'transfer should throw an opCode exception.'
+      error.message.indexOf('VM Exception while processing transaction: revert') >= 0,
+      'Method should have reverted'
     );
   }
-
-
 });
