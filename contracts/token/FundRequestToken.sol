@@ -1,4 +1,4 @@
-pragma solidity ^0.4.13;
+pragma solidity ^0.4.18;
 
 
 import "./LimitedTransferMiniMeToken.sol";
@@ -11,7 +11,25 @@ import "./LimitedTransferMiniMeToken.sol";
  */
 contract FundRequestToken is LimitedTransferMiniMeToken {
 
-  function FundRequestToken(address _limitedTransferAgent, address _tokenFactory, address _parentToken, uint _parentSnapShotBlock, string _tokenName, uint8 _decimalUnits, string _tokenSymbol, bool _transfersEnabled) LimitedTransferMiniMeToken(_limitedTransferAgent, _tokenFactory, _parentToken, _parentSnapShotBlock, _tokenName, _decimalUnits, _tokenSymbol, _transfersEnabled) {
+  function FundRequestToken(
+    address _limitedTransferAgent, 
+    address _tokenFactory, 
+    address _parentToken, 
+    uint _parentSnapShotBlock, 
+    string _tokenName, 
+    uint8 _decimalUnits, 
+    string _tokenSymbol, 
+    bool _transfersEnabled) 
+    public 
+    LimitedTransferMiniMeToken(
+      _limitedTransferAgent, 
+      _tokenFactory, 
+      _parentToken, 
+      _parentSnapShotBlock, 
+      _tokenName, 
+      _decimalUnits, 
+      _tokenSymbol, 
+      _transfersEnabled) {
     //constructor
   }
 
@@ -20,7 +38,7 @@ contract FundRequestToken is LimitedTransferMiniMeToken {
     return doApprove(_spender, _amount);
   }
 
-  function isFundRequestToken() constant returns (bool) {
+  function isFundRequestToken() public pure returns (bool) {
     return true;
   }
 }

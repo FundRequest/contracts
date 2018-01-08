@@ -1,4 +1,4 @@
-pragma solidity ^0.4.13;
+pragma solidity ^0.4.18;
 
 
 import "./LimitedTransferAgent.sol";
@@ -18,7 +18,7 @@ contract DefaultLimitedTransferAgent is LimitedTransferAgent, Owned {
 
   mapping (address => bool) public limitedTransferAddresses;
 
-  function DefaultLimitedTransferAgent() {
+  function DefaultLimitedTransferAgent() public {
     //constructor
   }
 
@@ -36,7 +36,7 @@ contract DefaultLimitedTransferAgent is LimitedTransferAgent, Owned {
     return true;
   }
 
-  function isTransferEnabled(address _from, address _to) returns (bool enabled) {
+  function isTransferEnabled(address _from, address _to) public returns (bool enabled) {
     if (limitedTransfersEnabled) {
       return
       (

@@ -33,12 +33,12 @@ contract FundRequestContract {
 
   mapping (bytes32 => mapping (bytes32 => Funding)) funds;
 
-  function FundRequestContract(address _tokenAddress) {
+  function FundRequestContract(address _tokenAddress) public {
     token = FundRequestToken(_tokenAddress);
     assert(token.isFundRequestToken());
   }
 
-  function fund(bytes32 _platform, bytes32 _platformId, string _url, uint256 _value) returns (bool success) {
+  function fund(bytes32 _platform, bytes32 _platformId, string _url, uint256 _value) public returns (bool success) {
     require(_value > 0);
     require(token.transferFrom(msg.sender, address(this), _value));
     updateFunders(msg.sender, _platform, _platformId, _value);
@@ -47,13 +47,8 @@ contract FundRequestContract {
     return true;
   }
 
-  function balance(bytes32 _platform, bytes32 _platformId) constant returns (uint256) {
+  function balance(bytes32 _platform, bytes32 _platformId) view public returns (uint256) {
     return funds[_platform][_platformId].totalBalance;
-  }
-
-  function getFundInfo(bytes32 _platform, bytes32 _platformId, address _funder) returns (uint256, uint256, uint256, string) {
-    Funding funding = funds[_platform][_platformId];
-    return (funding.funders.length, funding.totalBalance, funding.balances[_funder], funding.url);
   }
 
   function updateFunders(address _from, bytes32 _platform, bytes32 _platformId, uint256 _value) internal {
@@ -78,4 +73,8 @@ contract FundRequestContract {
     totalFunded = totalFunded.add(_value);
   }
 
+    function getFundInfo(bytes32 _platform, bytes32 _platformId, address _funder) public view returns (uint256, uint256, uint256, string) {
+      Funding storage funding = funds[_platform][_platformId];
+      return (funding.funders.length, funding.totalBalance, funding.balances[_funder], funding.url);
+  }
 }

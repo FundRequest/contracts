@@ -1,4 +1,4 @@
-pragma solidity ^0.4.13;
+pragma solidity ^0.4.18;
 
 
 import "./MiniMeToken.sol";
@@ -23,6 +23,7 @@ contract LimitedTransferMiniMeToken is MiniMeToken {
       uint8 _decimalUnits, 
       string _tokenSymbol, 
       bool _transfersEnabled) 
+      public 
       MiniMeToken(
         _tokenFactory, 
         _parentToken, 
@@ -46,7 +47,8 @@ contract LimitedTransferMiniMeToken is MiniMeToken {
   }
 
   function transferFrom(address _from, address _to, uint256 _amount
-  ) public canTransfer(msg.sender, _to) returns (bool success) {
+  ) public canTransfer(msg.sender, _to) returns (bool success) 
+  {
     require(super.transferFrom(_from, _to, _amount));
     return true;
   }

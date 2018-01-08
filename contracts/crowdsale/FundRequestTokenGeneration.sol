@@ -1,4 +1,4 @@
-pragma solidity ^0.4.13;
+pragma solidity ^0.4.18;
 
 
 import "../math/SafeMath.sol";
@@ -35,7 +35,15 @@ contract FundRequestTokenGeneration is Pausable {
   uint256 public totalCollected;         // In wei
 
 
-  function FundRequestTokenGeneration(address _tokenAddress, address _founderWallet, address _advisorWallet, address _ecoSystemWallet, address _coldStorageWallet, uint _rate, uint _maxCap) {
+  function FundRequestTokenGeneration(
+    address _tokenAddress, 
+    address _founderWallet, 
+    address _advisorWallet, 
+    address _ecoSystemWallet, 
+    address _coldStorageWallet, 
+    uint _rate, 
+    uint _maxCap) public 
+    {
     tokenContract = MiniMeToken(_tokenAddress);
     founderWallet = _founderWallet;
     advisorWallet = _advisorWallet;
@@ -45,7 +53,7 @@ contract FundRequestTokenGeneration is Pausable {
     maxCap = _maxCap;
   }
 
-  function() payable whenNotPaused {
+  function() public payable whenNotPaused {
     doPayment(msg.sender);
   }
 
@@ -53,7 +61,7 @@ contract FundRequestTokenGeneration is Pausable {
   /// have the tokens created in an address of their choosing
   /// @param _owner The address that will hold the newly created tokens
 
-  function proxyPayment(address _owner) payable whenNotPaused returns (bool) {
+  function proxyPayment(address _owner) public payable whenNotPaused returns (bool) {
     doPayment(_owner);
     return true;
   }
@@ -76,7 +84,7 @@ contract FundRequestTokenGeneration is Pausable {
     return;
   }
 
-  function allocateTokens(address beneficiary, uint256 tokensSold) whenNotPaused onlyOwner {
+  function allocateTokens(address beneficiary, uint256 tokensSold) public whenNotPaused onlyOwner {
     distributeTokens(beneficiary, tokensSold);
   }
 
@@ -89,7 +97,7 @@ contract FundRequestTokenGeneration is Pausable {
     require(generateTokens(totalTokensInWei, coldStorageWallet, 10));
   }
 
-  function validPurchase(address beneficiary) internal returns (bool) {
+  function validPurchase(address beneficiary) internal view returns (bool) {
     require(tokenContract.controller() != 0);
     require(msg.value >= 0.01 ether);
     require(msg.value <= allowed[beneficiary]);
@@ -102,15 +110,15 @@ contract FundRequestTokenGeneration is Pausable {
     return true;
   }
 
-  function allow(address beneficiary, uint _cap) onlyOwner {
+  function allow(address beneficiary, uint _cap) public onlyOwner {
     allowed[beneficiary] = _cap;
   }
 
-  function maxCapNotReached() internal returns (bool) {
+  function maxCapNotReached() internal view returns (bool) {
     return totalCollected.add(msg.value) <= maxCap;
   }
 
-  function setMaxCap(uint _maxCap) onlyOwner {
+  function setMaxCap(uint _maxCap) public onlyOwner {
     maxCap = _maxCap;
   }
 
