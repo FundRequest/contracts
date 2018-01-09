@@ -14,7 +14,7 @@ compiler:
 env:
 - CXX=g++-4.8
 script: 
-  - ./node_modules/.bin/testrpc-sc&
+  - ./node_modules/.bin/ganache-cli&
   - ./node_modules/.bin/truffle test
 addons:
   apt:

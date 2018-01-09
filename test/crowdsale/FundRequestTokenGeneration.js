@@ -20,45 +20,44 @@ contract('FundRequestTokenGeneration', function (accounts) {
   beforeEach(async function () {
     tokenFactory = await TokenFactory.new();
     fnd = await FND.new(tokenFactory.address, 0x0, 0, "FundRequest", 18, "FND", true);
-    await fnd.changeController(owner);
     await fnd.generateTokens(owner, 666000000000000000000);
-    tge = await TGE.new(fnd.address, founderWallet, advisorWallet, ecoSystemWallet, coldStorageWallet, 1800, getAmountInWei(20));
+    tge = await TGE.new(fnd.address, founderWallet, advisorWallet, ecoSystemWallet, coldStorageWallet, 1800, getAmountInWei(20), getAmountInWei(5));
     await fnd.changeController(tge.address);
   });
 
   it('should be possible to whitelist', async function () {
-    await tge.allow(tokenBuyer, getAmountInWei(1));
-    let personalCap = await tge.allowed.call(tokenBuyer);
-    expect(personalCap.toNumber()).to.equal(getAmountInWei(1));
+    await tge.allow(tokenBuyer);
+    let allowed = await tge.allowed.call(tokenBuyer);
+    expect(allowed).to.be.true;
   });
 
   it('should only be possible by owner to whitelist', async function () {
     try {
-      await tge.allow(tokenBuyer, getAmountInWei(1), {from: tokenBuyer});
+      await tge.allow(tokenBuyer, {from: tokenBuyer});
       assert.fail('should fail');
     } catch (error) {
       assertInvalidOpCode(error);
     }
   });
 
-  it('should be possible to buy tokens', async function () {
+  it('should not be possible to buy tokens with a payment less than 0.01 eth', async function () {
     await buyTokens(1);
     await expectBalance(tokenBuyer, 1800);
+  });
+
+  it('should be possible to buy tokens', async function () {
+    try {
+      await buyTokens(0.001);
+      assert.fail("should have failed");
+    } catch(error) {
+      assertInvalidOpCode(error);
+      await expectBalance(tokenBuyer, 0);      
+    }
   });
 
   it('should not be possible to buy tokens when not whitelisted', async function () {
     try {
       await tge.proxyPayment(tokenBuyer, {value: getAmountInWei(1)});
-      assert.fail('should fail');
-    } catch (error) {
-      assertInvalidOpCode(error);
-    }
-  });
-
-  it('should not be possible to go over personal cap', async function () {
-    try {
-      await tge.allow(tokenBuyer, getAmountInWei(1));
-      await tge.proxyPayment(tokenBuyer, {value: getAmountInWei(2)});
       assert.fail('should fail');
     } catch (error) {
       assertInvalidOpCode(error);
@@ -172,8 +171,98 @@ contract('FundRequestTokenGeneration', function (accounts) {
     }
   });
 
+  it('should be possible to update wallets as owner', async function() {
+      await tge.setFounderWallet(accounts[1], { from: owner });
+      await tge.setAdvisorWallet(accounts[2], { from: owner });
+      await tge.setEcoSystemWallet(accounts[3], { from: owner });
+      await tge.setColdStorageWallet(accounts[4], { from: owner });
+
+      expect(await tge.ecoSystemWallet.call()).to.equal(accounts[3]);
+      expect(await tge.founderWallet.call()).to.equal(accounts[1]);
+      expect(await tge.coldStorageWallet.call()).to.equal(accounts[4]);
+      expect(await tge.advisorWallet.call()).to.equal(accounts[2]);
+  });
+
+  it('should not be possible to update wallets as non-owner', async function() {
+    try {
+      await tge.setFounderWallet(accounts[1], {from: accounts[2]});
+      assert.fail('should fail');
+    } catch(error) {
+      assertInvalidOpCode(error);
+    }
+});
+
+  it('should have a default personal cap and be active', async function() {
+    expect(await tge.personalCapActive.call()).to.be.true;
+    expect((await tge.personalCap.call()).toNumber()).to.equal(getAmountInWei(5));
+  });
+
+  it('should be possible to update maxCap as owner', async function() {
+    await tge.setPersonalCap(getAmountInWei(4), {from: owner});
+    expect((await tge.personalCap.call()).toNumber()).to.equal(getAmountInWei(4));
+  });
+
+  it('should be possible to update if personal cap is active or not as owner', async function() {
+    await tge.setPersonalCapActive(false, {from: owner});
+    expect(await tge.personalCapActive.call()).to.be.false;    
+  });
+
+  it('should not be possible to update if personal cap is active or not as non-owner', async function() {
+    try {
+      await tge.setPersonalCapActive(false, {from: accounts[2]});
+      assert.fail('should have failed');
+    } catch(error) {
+      assertInvalidOpCode(error);
+    }
+  });
+
+  it('should not be possible to update if personal cap is active or not as non-owner', async function() {
+    try {
+      await tge.setPersonalCap(getAmountInWei(3), {from: accounts[2]});
+      assertFail('should have failed');
+    } catch(error) {
+      assertInvalidOpCode(error);
+    }
+  });
+
+  it('should not be possible to immediately go over the personal cap during the first round', async function(){
+      try {
+        await buyTokens(6);
+        assert.fail('should have failed');
+      } catch(error) {
+        assertInvalidOpCode(error);
+      }
+  });
+
+  it('should not be possible to go over the personal cap in multiple tries during the first round', async function(){
+    await buyTokens(3);
+    expectBalance(tokenBuyer, 1800 * 3);
+    await buyTokens(2);
+    expectBalance(tokenBuyer, 1800 * 5);
+    try {
+      await buyTokens(1);
+      assert.fail('should have failed');
+    } catch(error) {
+      assertInvalidOpCode(error);
+    }
+});
+
+  it('should be possible to immediately go over the personal cap if were not in the personal cap round', async function() {
+    tge.setPersonalCapActive(false, { from: owner });
+    await buyTokens(10);
+    expectBalance(tokenBuyer, 1800 * 10);
+  });
+
+  it('should be possible to go over the personal cap in multiple tries if were not in the personal cap round', async function() {
+    tge.setPersonalCapActive(false, { from: owner });
+    await buyTokens(2);
+    await buyTokens(3);
+    await buyTokens(1);
+    expectBalance(tokenBuyer, 1800 * 6);
+  });
+
   let buyTokens = async function (amountInEther) {
-    await tge.allow(tokenBuyer, getAmountInWei(1));
+    await tge.allow(tokenBuyer);
     amountInEther = amountInEther || 1;
     await tge.proxyPayment(tokenBuyer, {value: getAmountInWei(amountInEther)});
   };
@@ -190,10 +279,8 @@ contract('FundRequestTokenGeneration', function (accounts) {
 
   function assertInvalidOpCode(error) {
     assert(
-      error.message.indexOf('invalid opcode') >= 0,
-      'transfer should throw an opCode exception.'
+      error.message.indexOf('VM Exception while processing transaction: revert') >= 0,
+      'Method should have reverted'
     );
   }
-
-
 });

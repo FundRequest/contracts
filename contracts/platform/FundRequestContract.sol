@@ -1,8 +1,8 @@
 pragma solidity ^0.4.13;
 
 
-import '../math/SafeMath.sol';
-import '../token/FundRequestToken.sol';
+import "../math/SafeMath.sol";
+import "../token/FundRequestToken.sol";
 import '../ownership/Owned.sol';
 
 
@@ -17,10 +17,10 @@ contract FundRequestContract is Owned {
   FundRequestToken public token;
 
   struct Funding {
-  address[] funders;
-  mapping (address => uint256) balances;
-  uint256 totalBalance;
-  string url;
+    address[] funders;
+    mapping (address => uint256) balances;
+    uint256 totalBalance;
+    string url;
   }
 
   uint256 public totalBalance;
@@ -36,7 +36,7 @@ contract FundRequestContract is Owned {
 
   mapping (bytes32 => mapping (bytes32 => Funding)) funds;
 
-  function FundRequestContract(address _tokenAddress) {
+  function FundRequestContract(address _tokenAddress) public {
     setTokenAddress(_tokenAddress);
   }
 
@@ -45,7 +45,7 @@ contract FundRequestContract is Owned {
     assert(token.isFundRequestToken());
   }
 
-  function fund(bytes32 _platform, bytes32 _platformId, string _url, uint256 _value) returns (bool success) {
+  function fund(bytes32 _platform, bytes32 _platformId, string _url, uint256 _value) public returns (bool success) {
     require(_value > 0);
     require(token.transferFrom(msg.sender, address(this), _value));
     updateFunders(msg.sender, _platform, _platformId, _value);
@@ -54,7 +54,7 @@ contract FundRequestContract is Owned {
     return true;
   }
 
-  function balance(bytes32 _platform, bytes32 _platformId) constant returns (uint256) {
+  function balance(bytes32 _platform, bytes32 _platformId) view public returns (uint256) {
     return funds[_platform][_platformId].totalBalance;
   }
 

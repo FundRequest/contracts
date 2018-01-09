@@ -5,7 +5,7 @@
 Contracts for FundRequest (token, crowdsale and platform contracts)
 
 
-### Development
+### Development [![Build Status](https://travis-ci.org/FundRequest/contracts.svg?branch=develop)](https://travis-ci.org/FundRequest/contracts)
 
 **Using the Facuet**
 

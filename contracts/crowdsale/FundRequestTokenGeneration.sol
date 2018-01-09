@@ -1,8 +1,8 @@
-pragma solidity ^0.4.13;
+pragma solidity ^0.4.18;
 
 
-import '../math/SafeMath.sol';
-import '../pause/Pausable.sol';
+import "../math/SafeMath.sol";
+import "../pause/Pausable.sol";
 import "../token/MiniMeToken.sol";
 
 
@@ -27,15 +27,27 @@ contract FundRequestTokenGeneration is Pausable {
 
   uint public investorCount;
 
-  mapping (address => uint) public allowed;
+  mapping (address => bool) public allowed;
 
   MiniMeToken public tokenContract;
 
   uint public maxCap;         // In wei
   uint256 public totalCollected;         // In wei
 
+  bool public personalCapActive = true;
+  uint256 public personalCap;
 
-  function FundRequestTokenGeneration(address _tokenAddress, address _founderWallet, address _advisorWallet, address _ecoSystemWallet, address _coldStorageWallet, uint _rate, uint _maxCap) {
+
+  function FundRequestTokenGeneration(
+    address _tokenAddress, 
+    address _founderWallet, 
+    address _advisorWallet, 
+    address _ecoSystemWallet, 
+    address _coldStorageWallet, 
+    uint _rate, 
+    uint _maxCap,
+    uint256 _personalCap) public 
+    {
     tokenContract = MiniMeToken(_tokenAddress);
     founderWallet = _founderWallet;
     advisorWallet = _advisorWallet;
@@ -43,9 +55,10 @@ contract FundRequestTokenGeneration is Pausable {
     coldStorageWallet = _coldStorageWallet;
     rate = _rate;
     maxCap = _maxCap;
+    personalCap = _personalCap;
   }
 
-  function() payable whenNotPaused {
+  function() public payable whenNotPaused {
     doPayment(msg.sender);
   }
 
@@ -53,7 +66,7 @@ contract FundRequestTokenGeneration is Pausable {
   /// have the tokens created in an address of their choosing
   /// @param _owner The address that will hold the newly created tokens
 
-  function proxyPayment(address _owner) payable whenNotPaused returns (bool) {
+  function proxyPayment(address _owner) public payable whenNotPaused returns (bool) {
     doPayment(_owner);
     return true;
   }
@@ -61,6 +74,7 @@ contract FundRequestTokenGeneration is Pausable {
   function doPayment(address beneficiary) whenNotPaused internal {
     require(validPurchase(beneficiary));
     require(maxCapNotReached());
+    require(personalCapNotReached(beneficiary));
     bool existing = deposits[beneficiary] > 0;
     uint256 weiAmount = msg.value;
     uint256 updatedWeiRaised = totalCollected.add(weiAmount);
@@ -76,7 +90,7 @@ contract FundRequestTokenGeneration is Pausable {
     return;
   }
 
-  function allocateTokens(address beneficiary, uint256 tokensSold) whenNotPaused onlyOwner {
+  function allocateTokens(address beneficiary, uint256 tokensSold) public whenNotPaused onlyOwner {
     distributeTokens(beneficiary, tokensSold);
   }
 
@@ -89,10 +103,10 @@ contract FundRequestTokenGeneration is Pausable {
     require(generateTokens(totalTokensInWei, coldStorageWallet, 10));
   }
 
-  function validPurchase(address beneficiary) internal returns (bool) {
+  function validPurchase(address beneficiary) internal view returns (bool) {
     require(tokenContract.controller() != 0);
     require(msg.value >= 0.01 ether);
-    require(msg.value <= allowed[beneficiary]);
+    require(allowed[beneficiary] == true);
     return true;
   }
 
@@ -102,16 +116,48 @@ contract FundRequestTokenGeneration is Pausable {
     return true;
   }
 
-  function allow(address beneficiary, uint _cap) onlyOwner {
-    allowed[beneficiary] = _cap;
+  function allow(address beneficiary) public onlyOwner {
+    allowed[beneficiary] = true;
   }
 
-  function maxCapNotReached() internal returns (bool) {
+  function maxCapNotReached() internal view returns (bool) {
     return totalCollected.add(msg.value) <= maxCap;
   }
 
-  function setMaxCap(uint _maxCap) onlyOwner {
+  function personalCapNotReached(address _beneficiary) internal view returns (bool) {
+    if (personalCapActive) {
+      return deposits[_beneficiary].add(msg.value) <= personalCap;
+    } else {
+      return true;
+    }
+  }
+
+  function setMaxCap(uint _maxCap) public onlyOwner {
     maxCap = _maxCap;
   }
 
+  /* setters for wallets */
+  function setFounderWallet(address _founderWallet) public onlyOwner {
+      founderWallet = _founderWallet;
+  }
+
+  function setAdvisorWallet(address _advisorWallet) public onlyOwner {
+      advisorWallet = _advisorWallet;
+  }
+
+  function setEcoSystemWallet(address _ecoSystemWallet) public onlyOwner {
+    ecoSystemWallet = _ecoSystemWallet;
+  }
+
+  function setColdStorageWallet(address _coldStorageWallet) public onlyOwner {
+    coldStorageWallet = _coldStorageWallet;
+  }
+
+  function setPersonalCap(uint256 _capInWei) public onlyOwner {
+    personalCap = _capInWei;
+  }
+
+  function setPersonalCapActive(bool _active) public onlyOwner {
+      personalCapActive = _active;
+  }
 }

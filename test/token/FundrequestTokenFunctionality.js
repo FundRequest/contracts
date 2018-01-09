@@ -70,8 +70,8 @@ contract('FundRequestToken', function (accounts) {
 
   function assertInvalidOpCode(error) {
     assert(
-      error.message.indexOf('invalid opcode') >= 0,
-      'transfer should throw an opCode exception.'
+      error.message.indexOf('VM Exception while processing transaction: revert') >= 0,
+      'This should fail'
     );
   }
 
