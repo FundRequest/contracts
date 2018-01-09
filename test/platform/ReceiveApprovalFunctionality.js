@@ -22,19 +22,19 @@ contract('FundRequestContract', function (accounts) {
 		frc = await FRC.new(fnd.address);
 	})
 
-	/*it('should not be able to receive a different token to be approved by the fndContract', async function () {
+	it('should not be able to receive a different token to be approved by the fndContract', async function () {
 		try {
 			let fnd2 = await FND.new(lta.address, tokenFactory.address, 0x0, 0, "FundRequest2", 18, "FND", true);
 			await fnd.changeController(owner);
 			await fnd2.generateTokens(owner, 666000000000000000000);
 
-			await fnd2.approveAndCall(frc.address, 1 * Math.pow(10, 18), web3.fromAscii("github|1|https://github.com"));
+			await fnd2.approveAndCall(frc.address, tokens(1), web3.fromAscii("github|1|https://github.com"));
 
 			assert.fail('should have failed');
 		} catch(error) {
 			assertInvalidOpCode(error);
 		}
-	}) */
+	})
 
 	it('should be possible to come in with approveAndCall', async function() {
 		let amount = tokens(1);
