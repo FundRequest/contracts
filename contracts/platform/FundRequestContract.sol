@@ -17,10 +17,10 @@ contract FundRequestContract is Owned {
   FundRequestToken public token;
 
   struct Funding {
-    address[] funders;
-    mapping (address => uint256) balances;
-    uint256 totalBalance;
-    string url;
+  address[] funders;
+  mapping (address => uint256) balances;
+  uint256 totalBalance;
+  string url;
   }
 
   uint256 public totalBalance;
@@ -40,7 +40,7 @@ contract FundRequestContract is Owned {
     setTokenAddress(_tokenAddress);
   }
 
-  function setTokenAddress(address _tokenAddress) onlyOwner {
+  function setTokenAddress(address _tokenAddress) public onlyOwner {
     token = FundRequestToken(_tokenAddress);
     assert(token.isFundRequestToken());
   }
@@ -58,7 +58,7 @@ contract FundRequestContract is Owned {
     return funds[_platform][_platformId].totalBalance;
   }
 
-  function getFundInfo(bytes32 _platform, bytes32 _platformId) constant returns (uint256, uint256, uint256, string) {
+  function getFundInfo(bytes32 _platform, bytes32 _platformId) public constant returns (uint256, uint256, uint256, string) {
     Funding funding = funds[_platform][_platformId];
     return (funding.funders.length, funding.totalBalance, funding.balances[msg.sender], funding.url);
   }
@@ -88,12 +88,11 @@ contract FundRequestContract is Owned {
 
   address public claimSignerAddress;
 
-  function setClaimSignerAddress(address _claimSignerAddress) {
+  function setClaimSignerAddress(address _claimSignerAddress) public {
     claimSignerAddress = _claimSignerAddress;
   }
 
-  function claim(bytes32 platform, bytes32 platformId, string solver, address solverAddress, bytes32 r, bytes32 s, uint8 v)
-  returns (bool) {
+  function claim(bytes32 platform, bytes32 platformId, string solver, address solverAddress, bytes32 r, bytes32 s, uint8 v) public returns (bool) {
     require(validClaim(platform, platformId, solver, solverAddress, r, s, v));
     var funding = funds[platform][platformId];
     var requestBalance = funding.totalBalance;
@@ -110,43 +109,43 @@ contract FundRequestContract is Owned {
     return true;
   }
 
-  function validClaim(bytes32 platform, bytes32 platformId, string solver, address solverAddress, bytes32 r, bytes32 s, uint8 v) internal returns (bool) {
-    var msg = strConcat(
+  function validClaim(bytes32 platform, bytes32 platformId, string solver, address solverAddress, bytes32 r, bytes32 s, uint8 v) internal view returns (bool) {
+    var claimMsg = strConcat(
     strConcat(bytes32ToString(platform), "_"),
     strConcat(bytes32ToString(platformId), "_"),
     strConcat(solver, "_"),
     strConcat("0x", toAsciiString(solverAddress))
     );
-    var h = sha3(msg);
+    var h = sha3(claimMsg);
     address signerAddress = ecrecover(h, v, r, s);
     return claimSignerAddress == signerAddress;
   }
 
 
-  function toAsciiString(address x) constant returns (string) {
+  function toAsciiString(address x) internal pure returns (string) {
     bytes memory s = new bytes(40);
     for (uint i = 0; i < 20; i++) {
       byte b = byte(uint8(uint(x) / (2 ** (8 * (19 - i)))));
       byte hi = byte(uint8(b) / 16);
       byte lo = byte(uint8(b) - 16 * uint8(hi));
-      s[2 * i] = char(hi);
-      s[2 * i + 1] = char(lo);
+      s[2 * i] = charToByte(hi);
+      s[2 * i + 1] = charToByte(lo);
     }
     return string(s);
   }
 
-  function char(byte b) constant returns (byte c) {
+  function charToByte(byte b) internal pure returns (byte c) {
     if (b < 10) return byte(uint8(b) + 0x30);
     else return byte(uint8(b) + 0x57);
   }
 
-  function bytes32ToString(bytes32 x) internal constant returns (string) {
+  function bytes32ToString(bytes32 x) internal pure returns (string) {
     bytes memory bytesString = new bytes(32);
     uint charCount = 0;
     for (uint j = 0; j < 32; j++) {
-      byte char = byte(bytes32(uint(x) * 2 ** (8 * j)));
-      if (char != 0) {
-        bytesString[charCount] = char;
+      byte ch = byte(bytes32(uint(x) * 2 ** (8 * j)));
+      if (ch != 0) {
+        bytesString[charCount] = ch;
         charCount++;
       }
     }
@@ -157,7 +156,7 @@ contract FundRequestContract is Owned {
     return string(bytesStringTrimmed);
   }
 
-  function strConcat(string _a, string _b, string _c, string _d, string _e) internal returns (string){
+  function strConcat(string _a, string _b, string _c, string _d, string _e) internal pure returns (string){
     bytes memory _ba = bytes(_a);
     bytes memory _bb = bytes(_b);
     bytes memory _bc = bytes(_c);
@@ -174,15 +173,15 @@ contract FundRequestContract is Owned {
     return string(babcde);
   }
 
-  function strConcat(string _a, string _b, string _c, string _d) internal returns (string) {
+  function strConcat(string _a, string _b, string _c, string _d) internal pure returns (string) {
     return strConcat(_a, _b, _c, _d, "");
   }
 
-  function strConcat(string _a, string _b, string _c) internal returns (string) {
+  function strConcat(string _a, string _b, string _c) internal pure returns (string) {
     return strConcat(_a, _b, _c, "", "");
   }
 
-  function strConcat(string _a, string _b) internal returns (string) {
+  function strConcat(string _a, string _b) internal pure returns (string) {
     return strConcat(_a, _b, "", "", "");
   }
 
