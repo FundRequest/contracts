@@ -22,7 +22,7 @@ contract('FundRequestContract', function (accounts) {
     await fnd.generateTokens(owner, 666000000000000000000);
     frc = await FRC.new(fnd.address);
     await fnd.approve(frc.address, 10000);
-    await frc.setClaimSignerAddress(accounts[0]);
+    await frc.setClaimSignerAddress('0xc31eb6e317054a79bb5e442d686cb9b225670c1d');
   });
 
 
