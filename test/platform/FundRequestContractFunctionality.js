@@ -97,7 +97,7 @@ contract('FundRequestContract', function (accounts) {
 
   it('should be able to query the fund information', async function () {
     let data = await fundDefaultRequest();
-    let result = await frc.getFundInfo.call(web3.fromAscii(data.platform), web3.fromAscii(data.platformId));
+    let result = await frc.getFundInfo.call(web3.fromAscii(data.platform), web3.fromAscii(data.platformId), accounts[0]);
     expect(result[0].toNumber()).to.equal(1);
     expect(result[1].toNumber()).to.equal(100);
     expect(result[2].toNumber()).to.equal(100);

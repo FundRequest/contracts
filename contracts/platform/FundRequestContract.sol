@@ -4,17 +4,27 @@ pragma solidity ^0.4.13;
 import "../math/SafeMath.sol";
 import "../token/FundRequestToken.sol";
 import '../ownership/Owned.sol';
+import "../token/ApproveAndCallFallback.sol";
+import "../utils/strings.sol";
 
 
-contract FundRequestContract is Owned {
+/*
+ * Main FundRequest Contract
+ * Davy Van Roy
+ * Quinten De Swaef
+ */
+contract FundRequestContract is Owned, ApproveAndCallFallBack {
 
   using SafeMath for uint256;
+  using strings for *;
 
   event Funded(address indexed from, bytes32 platform, bytes32 platformId, string url, uint256 value);
 
-  event Claimed(address indexed solver, bytes32 platform, bytes32 platformId, string url, uint256 value);
+  event LOG(string logdata);
 
   FundRequestToken public token;
+
+  event Claimed(address indexed solver, bytes32 platform, bytes32 platformId, string url, uint256 value);
 
   struct Funding {
   address[] funders;
@@ -45,22 +55,30 @@ contract FundRequestContract is Owned {
     assert(token.isFundRequestToken());
   }
 
+  //entrypoints
+
   function fund(bytes32 _platform, bytes32 _platformId, string _url, uint256 _value) public returns (bool success) {
-    require(_value > 0);
-    require(token.transferFrom(msg.sender, address(this), _value));
-    updateFunders(msg.sender, _platform, _platformId, _value);
-    updateBalances(msg.sender, _platform, _platformId, _url, _value);
-    Funded(msg.sender, _platform, _platformId, _url, _value);
+    require(doFunding(_platform, _platformId, _url, _value, msg.sender));
     return true;
   }
 
-  function balance(bytes32 _platform, bytes32 _platformId) view public returns (uint256) {
-    return funds[_platform][_platformId].totalBalance;
+  function receiveApproval(address _from, uint _amount, address _token, bytes _data) public {
+    //first iteration, we only allow fnd tokens to be sent here
+    require(_token == address(token));
+    var sliced = string(_data).toSlice();
+    var platform = sliced.split("|".toSlice());
+    var platformId = sliced.split("|".toSlice());
+    var url = sliced.split("|".toSlice());
+    require(doFunding(platform.toBytes32(), platformId.toBytes32(), url.toString(), _amount, _from));
   }
 
-  function getFundInfo(bytes32 _platform, bytes32 _platformId) public constant returns (uint256, uint256, uint256, string) {
-    Funding funding = funds[_platform][_platformId];
-    return (funding.funders.length, funding.totalBalance, funding.balances[msg.sender], funding.url);
+  function doFunding(bytes32 _platform, bytes32 _platformId, string _url, uint256 _value, address _funder) internal returns (bool success){
+    require(_value > 0);
+    require(token.transferFrom(_funder, address(this), _value));
+    updateFunders(_funder, _platform, _platformId, _value);
+    updateBalances(_funder, _platform, _platformId, _url, _value);
+    Funded(_funder, _platform, _platformId, _url, _value);
+    return true;
   }
 
   function updateFunders(address _from, bytes32 _platform, bytes32 _platformId, uint256 _value) internal {
@@ -85,6 +103,16 @@ contract FundRequestContract is Owned {
     totalFunded = totalFunded.add(_value);
   }
 
+  // constant methods
+
+  function balance(bytes32 _platform, bytes32 _platformId) view public returns (uint256) {
+    return funds[_platform][_platformId].totalBalance;
+  }
+
+  function getFundInfo(bytes32 _platform, bytes32 _platformId, address _funder) public view returns (uint256, uint256, uint256, string) {
+    Funding storage funding = funds[_platform][_platformId];
+    return (funding.funders.length, funding.totalBalance, funding.balances[_funder], funding.url);
+  }
 
   address public claimSignerAddress;
 
