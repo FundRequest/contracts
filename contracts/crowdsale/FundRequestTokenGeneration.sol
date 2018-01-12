@@ -27,7 +27,7 @@ contract FundRequestTokenGeneration is Pausable {
 
     uint public investorCount;
 
-    mapping (address => bool) public allowed;
+    mapping (address => Countries) public allowed;
 
     MiniMeToken public tokenContract;
 
@@ -38,6 +38,9 @@ contract FundRequestTokenGeneration is Pausable {
 
     uint256 public personalCap;
 
+    enum Countries {NOT_WHITELISTED, CHINA, KOREA, USA, OTHER}
+
+    mapping (uint => bool) public allowedCountries;
 
     function FundRequestTokenGeneration(
     address _tokenAddress,
@@ -57,6 +60,11 @@ contract FundRequestTokenGeneration is Pausable {
         rate = _rate;
         maxCap = _maxCap;
         personalCap = _personalCap;
+
+        allowedCountries[uint(Countries.CHINA)] = true;
+        allowedCountries[uint(Countries.KOREA)] = true;
+        allowedCountries[uint(Countries.USA)] = true;
+        allowedCountries[uint(Countries.OTHER)] = true;
     }
 
     function() public payable whenNotPaused {
@@ -107,7 +115,14 @@ contract FundRequestTokenGeneration is Pausable {
     function validPurchase(address beneficiary) internal view returns (bool) {
         require(tokenContract.controller() != 0);
         require(msg.value >= 0.01 ether);
-        require(allowed[beneficiary] == true);
+
+        Countries beneficiaryCountry = allowed[beneficiary];
+
+        /* the country needs to > 0 (whitelisted) */
+        require(uint(beneficiaryCountry) > uint(Countries.NOT_WHITELISTED));
+
+        /* country needs to be allowed */
+        require(allowedCountries[uint(beneficiaryCountry)] == true);
         return true;
     }
 
@@ -117,8 +132,13 @@ contract FundRequestTokenGeneration is Pausable {
         return true;
     }
 
-    function allow(address beneficiary) public onlyOwner {
-        allowed[beneficiary] = true;
+    function allow(address beneficiary, Countries _country) public onlyOwner {
+        allowed[beneficiary] = _country;
+    }
+
+    function allowCountry(Countries _country, bool _allowed) public onlyOwner {
+        require(uint(_country) > 0);
+        allowedCountries[uint(_country)] = _allowed;
     }
 
     function maxCapNotReached() internal view returns (bool) {
