@@ -70,6 +70,7 @@ contract('FundRequestTokenGeneration', function (accounts) {
 		await tge.allowCountry(1, false); //CHINA
 		try {
 			await buyTokens(1, 1); //china
+			assert.fail('should fail');
 		} catch(error) {
 			assertInvalidOpCode(error);
 		}

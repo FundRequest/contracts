@@ -11,7 +11,6 @@ contract('FundRequestContract', function (accounts) {
   let lta;
   let tokenFactory;
   const owner = accounts[0];
-  const funder = accounts[1];
 
   beforeEach(async function () {
     tokenFactory = await TokenFactory.new();

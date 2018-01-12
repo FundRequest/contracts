@@ -20,7 +20,7 @@ contract('FundRequestContract', function (accounts) {
 		await fnd.changeController(owner);
 		await fnd.generateTokens(owner, tokens(666));
 		frc = await FRC.new(fnd.address);
-	})
+	});
 
 	it('should not be able to receive a different token to be approved by the fndContract', async function () {
 		try {
@@ -31,22 +31,22 @@ contract('FundRequestContract', function (accounts) {
 			await fnd2.approveAndCall(frc.address, tokens(1), web3.fromAscii("github|1|https://github.com"));
 
 			assert.fail('should have failed');
-		} catch(error) {
+		} catch (error) {
 			assertInvalidOpCode(error);
 		}
-	})
+	});
 
-	it('should be possible to come in with approveAndCall', async function() {
+	it('should be possible to come in with approveAndCall', async function () {
 		let amount = tokens(1);
 		let platform = "github";
 		let platformId = "1";
 		let url = "https://github.com";
 
-		await fnd.approveAndCall(frc.address, amount, web3.fromAscii(platform + "|" + platformId + "|" + url), { from: owner });
+		await fnd.approveAndCall(frc.address, amount, web3.fromAscii(platform + "|" + platformId + "|" + url), {from: owner});
 
 		let bal = await frc.balance.call(web3.fromAscii(platform), web3.fromAscii(platformId));
 		expect(bal.toNumber()).to.equal(amount)
-	})
+	});
 
 	function tokens(_amount) {
 		return _amount * Math.pow(10, 18);
