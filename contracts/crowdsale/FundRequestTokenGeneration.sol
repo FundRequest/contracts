@@ -7,163 +7,165 @@ import "../token/MiniMeToken.sol";
 
 
 contract FundRequestTokenGeneration is Pausable {
-  using SafeMath for uint256;
+    using SafeMath for uint256;
 
-  address public founderWallet;
+    address public founderWallet;
 
-  address public advisorWallet;
+    address public advisorWallet;
 
-  address public ecoSystemWallet;
+    address public ecoSystemWallet;
 
-  address public coldStorageWallet;
+    address public coldStorageWallet;
 
-  uint public rate;
+    uint public rate;
 
-  mapping (address => uint) public deposits;
+    mapping (address => uint) public deposits;
 
-  mapping (address => uint) public balances;
+    mapping (address => uint) public balances;
 
-  address[] public investors;
+    address[] public investors;
 
-  uint public investorCount;
+    uint public investorCount;
 
-  mapping (address => bool) public allowed;
+    mapping (address => bool) public allowed;
 
-  MiniMeToken public tokenContract;
+    MiniMeToken public tokenContract;
 
-  uint public maxCap;         // In wei
-  uint256 public totalCollected;         // In wei
+    uint public maxCap;         // In wei
+    uint256 public totalCollected;         // In wei
 
-  bool public personalCapActive = true;
-  uint256 public personalCap;
+    bool public personalCapActive = true;
+
+    uint256 public personalCap;
 
 
-  function FundRequestTokenGeneration(
-    address _tokenAddress, 
-    address _founderWallet, 
-    address _advisorWallet, 
-    address _ecoSystemWallet, 
-    address _coldStorageWallet, 
-    uint _rate, 
+    function FundRequestTokenGeneration(
+    address _tokenAddress,
+    address _founderWallet,
+    address _advisorWallet,
+    address _ecoSystemWallet,
+    address _coldStorageWallet,
+    uint _rate,
     uint _maxCap,
-    uint256 _personalCap) public 
+    uint256 _personalCap) public
     {
-    tokenContract = MiniMeToken(_tokenAddress);
-    founderWallet = _founderWallet;
-    advisorWallet = _advisorWallet;
-    ecoSystemWallet = _ecoSystemWallet;
-    coldStorageWallet = _coldStorageWallet;
-    rate = _rate;
-    maxCap = _maxCap;
-    personalCap = _personalCap;
-  }
-
-  function() public payable whenNotPaused {
-    doPayment(msg.sender);
-  }
-
-  /// @notice `proxyPayment()` allows the caller to send ether to the Campaign and
-  /// have the tokens created in an address of their choosing
-  /// @param _owner The address that will hold the newly created tokens
-
-  function proxyPayment(address _owner) public payable whenNotPaused returns (bool) {
-    doPayment(_owner);
-    return true;
-  }
-
-  function doPayment(address beneficiary) whenNotPaused internal {
-    require(validPurchase(beneficiary));
-    require(maxCapNotReached());
-    require(personalCapNotReached(beneficiary));
-    bool existing = deposits[beneficiary] > 0;
-    uint256 weiAmount = msg.value;
-    uint256 updatedWeiRaised = totalCollected.add(weiAmount);
-    uint256 tokensInWei = weiAmount.mul(rate);
-    totalCollected = updatedWeiRaised;
-    deposits[beneficiary] = deposits[beneficiary].add(msg.value);
-    balances[beneficiary] = balances[beneficiary].add(tokensInWei);
-    if (!existing) {
-      investors.push(beneficiary);
-      investorCount++;
+        tokenContract = MiniMeToken(_tokenAddress);
+        founderWallet = _founderWallet;
+        advisorWallet = _advisorWallet;
+        ecoSystemWallet = _ecoSystemWallet;
+        coldStorageWallet = _coldStorageWallet;
+        rate = _rate;
+        maxCap = _maxCap;
+        personalCap = _personalCap;
     }
-    distributeTokens(beneficiary, tokensInWei);
-    return;
-  }
 
-  function allocateTokens(address beneficiary, uint256 tokensSold) public whenNotPaused onlyOwner {
-    distributeTokens(beneficiary, tokensSold);
-  }
-
-  function distributeTokens(address beneficiary, uint256 tokensSold) internal {
-    uint256 totalTokensInWei = tokensSold.mul(100).div(40);
-    require(generateTokens(totalTokensInWei, beneficiary, 40));
-    require(generateTokens(totalTokensInWei, founderWallet, 18));
-    require(generateTokens(totalTokensInWei, advisorWallet, 2));
-    require(generateTokens(totalTokensInWei, ecoSystemWallet, 30));
-    require(generateTokens(totalTokensInWei, coldStorageWallet, 10));
-  }
-
-  function validPurchase(address beneficiary) internal view returns (bool) {
-    require(tokenContract.controller() != 0);
-    require(msg.value >= 0.01 ether);
-    require(allowed[beneficiary] == true);
-    return true;
-  }
-
-  function generateTokens(uint256 _total, address _owner, uint _pct) internal returns (bool) {
-    uint256 tokensInWei = _total.div(100).mul(_pct);
-    require(tokenContract.generateTokens(_owner, tokensInWei));
-    return true;
-  }
-
-  function allow(address beneficiary) public onlyOwner {
-    allowed[beneficiary] = true;
-  }
-
-  function maxCapNotReached() internal view returns (bool) {
-    return totalCollected.add(msg.value) <= maxCap;
-  }
-
-  function personalCapNotReached(address _beneficiary) internal view returns (bool) {
-    if (personalCapActive) {
-      return deposits[_beneficiary].add(msg.value) <= personalCap;
-    } else {
-      return true;
+    function() public payable whenNotPaused {
+        doPayment(msg.sender);
     }
-  }
 
-  function setMaxCap(uint _maxCap) public onlyOwner {
-    maxCap = _maxCap;
-  }
+    /// @notice `proxyPayment()` allows the caller to send ether to the Campaign and
+    /// have the tokens created in an address of their choosing
+    /// @param _owner The address that will hold the newly created tokens
 
-  /* setters for wallets */
-  function setFounderWallet(address _founderWallet) public onlyOwner {
-      founderWallet = _founderWallet;
-  }
+    function proxyPayment(address _owner) public payable whenNotPaused returns (bool) {
+        doPayment(_owner);
+        return true;
+    }
 
-  function setAdvisorWallet(address _advisorWallet) public onlyOwner {
-      advisorWallet = _advisorWallet;
-  }
+    function doPayment(address beneficiary) whenNotPaused internal {
+        require(validPurchase(beneficiary));
+        require(maxCapNotReached());
+        require(personalCapNotReached(beneficiary));
+        bool existing = deposits[beneficiary] > 0;
+        uint256 weiAmount = msg.value;
+        uint256 updatedWeiRaised = totalCollected.add(weiAmount);
+        uint256 tokensInWei = weiAmount.mul(rate);
+        totalCollected = updatedWeiRaised;
+        deposits[beneficiary] = deposits[beneficiary].add(msg.value);
+        balances[beneficiary] = balances[beneficiary].add(tokensInWei);
+        if (!existing) {
+            investors.push(beneficiary);
+            investorCount++;
+        }
+        distributeTokens(beneficiary, tokensInWei);
+        return;
+    }
 
-  function setEcoSystemWallet(address _ecoSystemWallet) public onlyOwner {
-    ecoSystemWallet = _ecoSystemWallet;
-  }
+    function allocateTokens(address beneficiary, uint256 tokensSold) public whenNotPaused onlyOwner {
+        distributeTokens(beneficiary, tokensSold);
+    }
 
-  function setColdStorageWallet(address _coldStorageWallet) public onlyOwner {
-    coldStorageWallet = _coldStorageWallet;
-  }
+    function distributeTokens(address beneficiary, uint256 tokensSold) internal {
+        uint256 totalTokensInWei = tokensSold.mul(100).div(40);
+        require(generateTokens(totalTokensInWei, beneficiary, 40));
+        require(generateTokens(totalTokensInWei, founderWallet, 18));
+        require(generateTokens(totalTokensInWei, advisorWallet, 2));
+        require(generateTokens(totalTokensInWei, ecoSystemWallet, 30));
+        require(generateTokens(totalTokensInWei, coldStorageWallet, 10));
+    }
 
-  function setPersonalCap(uint256 _capInWei) public onlyOwner {
-    personalCap = _capInWei;
-  }
+    function validPurchase(address beneficiary) internal view returns (bool) {
+        require(tokenContract.controller() != 0);
+        require(msg.value >= 0.01 ether);
+        require(allowed[beneficiary] == true);
+        return true;
+    }
 
-  function setPersonalCapActive(bool _active) public onlyOwner {
-      personalCapActive = _active;
-  }
+    function generateTokens(uint256 _total, address _owner, uint _pct) internal returns (bool) {
+        uint256 tokensInWei = _total.div(100).mul(_pct);
+        require(tokenContract.generateTokens(_owner, tokensInWei));
+        return true;
+    }
 
-  /* fix for accidental token sending */
-  function withdrawToken(address _token, uint256 _amount) public onlyOwner {
-    require(MiniMeToken(_token).transfer(owner, _amount));
-  }
+    function allow(address beneficiary) public onlyOwner {
+        allowed[beneficiary] = true;
+    }
+
+    function maxCapNotReached() internal view returns (bool) {
+        return totalCollected.add(msg.value) <= maxCap;
+    }
+
+    function personalCapNotReached(address _beneficiary) internal view returns (bool) {
+        if (personalCapActive) {
+            return deposits[_beneficiary].add(msg.value) <= personalCap;
+        }
+        else {
+            return true;
+        }
+    }
+
+    function setMaxCap(uint _maxCap) public onlyOwner {
+        maxCap = _maxCap;
+    }
+
+    /* setters for wallets */
+    function setFounderWallet(address _founderWallet) public onlyOwner {
+        founderWallet = _founderWallet;
+    }
+
+    function setAdvisorWallet(address _advisorWallet) public onlyOwner {
+        advisorWallet = _advisorWallet;
+    }
+
+    function setEcoSystemWallet(address _ecoSystemWallet) public onlyOwner {
+        ecoSystemWallet = _ecoSystemWallet;
+    }
+
+    function setColdStorageWallet(address _coldStorageWallet) public onlyOwner {
+        coldStorageWallet = _coldStorageWallet;
+    }
+
+    function setPersonalCap(uint256 _capInWei) public onlyOwner {
+        personalCap = _capInWei;
+    }
+
+    function setPersonalCapActive(bool _active) public onlyOwner {
+        personalCapActive = _active;
+    }
+
+    /* fix for accidental token sending */
+    function withdrawToken(address _token, uint256 _amount) public onlyOwner {
+        require(MiniMeToken(_token).transfer(owner, _amount));
+    }
 
 }
