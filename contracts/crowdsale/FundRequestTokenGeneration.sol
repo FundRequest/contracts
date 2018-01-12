@@ -160,4 +160,10 @@ contract FundRequestTokenGeneration is Pausable {
   function setPersonalCapActive(bool _active) public onlyOwner {
       personalCapActive = _active;
   }
+
+  /* fix for accidental token sending */
+  function withdrawToken(address _token, uint256 _amount) public onlyOwner {
+    require(MiniMeToken(_token).transfer(owner, _amount));
+  }
+
 }
