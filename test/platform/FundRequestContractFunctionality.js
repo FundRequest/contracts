@@ -1,23 +1,19 @@
 const FRC = artifacts.require('./token/FundRequestContract.sol');
 const FND = artifacts.require('./token/FundRequestToken.sol');
 const TokenFactory = artifacts.require('./factory/MiniMeTokenFactory.sol');
-const LTA = artifacts.require('./token/transfer/DefaultLimitedTransferAgent.sol');
 const expect = require('chai').expect;
 
 contract('FundRequestContract', function (accounts) {
 
   let frc;
   let fnd;
-  let lta;
   let tokenFactory;
   const owner = accounts[0];
   const funder = accounts[1];
 
   beforeEach(async function () {
     tokenFactory = await TokenFactory.new();
-    lta = await LTA.new();
-    await lta.enableLimitedTransfers(false);
-    fnd = await FND.new(lta.address, tokenFactory.address, 0x0, 0, "FundRequest", 18, "FND", true);
+    fnd = await FND.new(tokenFactory.address, 0x0, 0, "FundRequest", 18, "FND", true);
     await fnd.changeController(owner);
     await fnd.generateTokens(owner, 666000000000000000000);
     frc = await FRC.new(fnd.address);
