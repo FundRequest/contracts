@@ -74,5 +74,4 @@ contract('FundRequestToken', function (accounts) {
 			'This should fail'
 		);
 	}
-
 });

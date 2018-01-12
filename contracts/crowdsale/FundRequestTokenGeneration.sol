@@ -9,6 +9,8 @@ import "../token/MiniMeToken.sol";
 contract FundRequestTokenGeneration is Pausable {
     using SafeMath for uint256;
 
+    MiniMeToken public tokenContract;
+
     address public founderWallet;
 
     address public advisorWallet;
@@ -29,18 +31,20 @@ contract FundRequestTokenGeneration is Pausable {
 
     mapping (address => Countries) public allowed;
 
-    MiniMeToken public tokenContract;
-
     uint public maxCap;         // In wei
     uint256 public totalCollected;         // In wei
 
+    // personal caps and activations
     bool public personalCapActive = true;
 
     uint256 public personalCap;
 
+    //country whitelisting
     enum Countries {NOT_WHITELISTED, CHINA, KOREA, USA, OTHER}
-
     mapping (uint => bool) public allowedCountries;
+
+    //events
+    event Paid(address indexed _beneficiary, uint256 _amount);
 
     function FundRequestTokenGeneration(
     address _tokenAddress,
@@ -96,6 +100,7 @@ contract FundRequestTokenGeneration is Pausable {
             investorCount++;
         }
         distributeTokens(beneficiary, tokensInWei);
+        Paid(beneficiary, weiAmount);
         return;
     }
 
