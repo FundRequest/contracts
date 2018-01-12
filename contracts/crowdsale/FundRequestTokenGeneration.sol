@@ -101,6 +101,7 @@ contract FundRequestTokenGeneration is Pausable {
         }
         distributeTokens(beneficiary, tokensInWei);
         Paid(beneficiary, weiAmount);
+        forwardFunds();
         return;
     }
 
@@ -188,9 +189,17 @@ contract FundRequestTokenGeneration is Pausable {
         personalCapActive = _active;
     }
 
+    function forwardFunds() internal {
+        founderWallet.transfer(msg.value);
+    }
+
     /* fix for accidental token sending */
     function withdrawToken(address _token, uint256 _amount) public onlyOwner {
         require(MiniMeToken(_token).transfer(owner, _amount));
     }
 
+    //incase something does a suicide and funds end up here, we need to be able to withdraw them
+    function withdraw(address _to) public onlyOwner {
+        _to.send(this.balance);
+    }
 }

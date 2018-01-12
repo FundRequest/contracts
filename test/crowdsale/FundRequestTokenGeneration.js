@@ -255,6 +255,16 @@ contract('FundRequestTokenGeneration', function (accounts) {
 		expectBalance(tokenBuyer, 1800 * 6);
 	});
 
+	it('investing should send the funds to the wallet', async function () {
+		let newFounderWallet = '0x6c3f822f95e5bf7f95afce66e3d5ed20b40f8533';
+		tge.setPersonalCapActive(false, {from: owner});
+		await tge.setFounderWallet(newFounderWallet, { from: owner })
+		await tge.allow('0x0f38b3dee21bcb6ea1ebb8a33badc338f739b80c', 1); //allow him for china
+		await tge.proxyPayment('0x0f38b3dee21bcb6ea1ebb8a33badc338f739b80c', {value: getAmountInWei(1)});
+		expect((await web3.eth.getBalance(newFounderWallet)).toNumber()).to.equal(getAmountInWei(1));
+	});
+
+
 	let buyTokens = async function (amountInEther) {
 		await tge.allow(tokenBuyer, 1); //allow him for china
 		amountInEther = amountInEther || 1;
