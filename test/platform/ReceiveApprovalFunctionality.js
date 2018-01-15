@@ -3,7 +3,7 @@ const FND = artifacts.require('./token/FundRequestToken.sol');
 const TokenFactory = artifacts.require('./factory/MiniMeTokenFactory.sol');
 const expect = require('chai').expect;
 
-contract('FundRequestContract', function (accounts) {
+contract('ReceiveApprovalFunctionality', function (accounts) {
 
 	let frc;
 	let fnd;
