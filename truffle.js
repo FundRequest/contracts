@@ -17,7 +17,6 @@ const getSecret = function () {
   try {
     return fs.readFileSync('./config/secrets/infura-token.js').toString();
   } catch (ex) {
-    console.log(ex);
     return "";
   }
 };
