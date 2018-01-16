@@ -46,7 +46,7 @@ contract('ReceiveApprovalFunctionality', function (accounts) {
     expect(fundInfo[0].toNumber()).to.equal(1);
     expect(fundInfo[1].toNumber()).to.equal(amount);
     expect(fundInfo[2].toNumber()).to.equal(amount);
-    expect(fundInfo[3]).to.equal('');
+    expect(fundInfo[3]).to.equal('https://github.com');
 
 
 	});

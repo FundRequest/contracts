@@ -24,7 +24,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
 
   FundRequestToken public token;
 
-  event Claimed(address indexed solver, bytes32 platform, bytes32 platformId, string solver, uint256 value);
+  event Claimed(address indexed solverAddress, bytes32 platform, bytes32 platformId, string solver, uint256 value);
 
   struct Funding {
   address[] funders;
