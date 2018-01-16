@@ -1,72 +1,47 @@
 const FND = artifacts.require('./token/FundRequestToken.sol');
-const LTA = artifacts.require('./token/transfer/DefaultLimitedTransferAgent.sol');
 const TokenFactory = artifacts.require('./factory/MiniMeTokenFactory.sol');
 
 const expect = require('chai').expect;
-const log = console.log;
 
 contract('FundRequestToken', function (accounts) {
 
   let fnd;
-  let lta;
-  let tokenFactory;  
+  let tokenFactory;
   let owner = accounts[0];
 
   beforeEach(async function () {
     tokenFactory = await TokenFactory.new();
-    lta = await LTA.new();
-    await lta.enableLimitedTransfers(false);
-    fnd = await FND.new(lta.address, tokenFactory.address, 0x0, 0, "FundRequest", 18, "FND", true);
+    fnd = await FND.new(tokenFactory.address, 0x0, 0, "FundRequest", 18, "FND", true);
     await fnd.changeController(owner);
     await fnd.generateTokens(owner, 666000000000000000000);
   });
 
-  it('contract should be set', function () {
-    expect(fnd).to.not.be.null;
-  });
+	it('contract should be set', function () {
+		expect(fnd).to.not.be.null;
+	});
 
-  it('should be a fundrequest token', async function () {
-    let isFndToken = await fnd.isFundRequestToken.call();
-    expect(isFndToken).to.be.true;
-  });
+	it('should be a fundrequest token', async function () {
+		let isFndToken = await fnd.isFundRequestToken.call();
+		expect(isFndToken).to.be.true;
+	});
 
-  it('should have correct controller', async function () {
-    let retOwner = await fnd.controller.call();
-    expect(retOwner).to.equal(owner)
-  });
+	it('should have correct controller', async function () {
+		let retOwner = await fnd.controller.call();
+		expect(retOwner).to.equal(owner)
+	});
 
-  it('should be possible to approve tokens', async function () {
-    await fnd.approve(accounts[0], 23, {from: accounts[1]});
-    let balance = await fnd.allowance.call(accounts[1], accounts[0]);
-    expect(balance.toString()).to.equal('23');
-  });
+	it('should be possible to approve tokens', async function () {
+		await fnd.approve(accounts[0], 23, {from: accounts[1]});
+		let balance = await fnd.allowance.call(accounts[1], accounts[0]);
+		expect(balance.toString()).to.equal('23');
+	});
 
-  it('should be possible to approve tokens with already an approve balance', async function () {
-    await fnd.approve(accounts[0], 23, {from: accounts[1]});
-    await fnd.safeApprove(accounts[0], 23, 13, {from: accounts[1]});
-    let balance = await fnd.allowance.call(accounts[1], accounts[0]);
-    expect(balance.toString()).to.equal('13');
-  });
-
-  it('should be possible to approve tokens with already an approve balance with limited functionality', async function () {
-    await lta.enableLimitedTransfers(true);
-    await lta.updateLimitedTransferAddress(accounts[1], true);
-    await lta.setContractAddress(accounts[0]);
-    await fnd.approve(accounts[0], 23, {from: accounts[1]});
-    await fnd.safeApprove(accounts[0], 23, 13, {from: accounts[1]});
-    let balance = await fnd.allowance.call(accounts[1], accounts[0]);
-    expect(balance.toString()).to.equal('13');
-  });
-
-  it('should not tbe possible to approve tokens with already an approve balance with limited functionality', async function () {
-    await lta.enableLimitedTransfers(true);
-    try {
-      await fnd.safeApprove(accounts[0], 0, 13, {from: accounts[1]});
-      assert.fail('fnds should never have been approved');
-    } catch (error) {
-      assertInvalidOpCode(error);
-    }
-  });
+	it('should be possible to approve tokens with already an approve balance', async function () {
+		await fnd.approve(accounts[0], 23, {from: accounts[1]});
+		await fnd.safeApprove(accounts[0], 23, 13, {from: accounts[1]});
+		let balance = await fnd.allowance.call(accounts[1], accounts[0]);
+		expect(balance.toString()).to.equal('13');
+	});
 
   function assertInvalidOpCode(error) {
     assert(
@@ -74,5 +49,4 @@ contract('FundRequestToken', function (accounts) {
       'This should fail'
     );
   }
-
 });
