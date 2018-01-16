@@ -27,7 +27,7 @@ module.exports = {
     development: {
       network_id: '*',
       host: "localhost",
-      port: 8545
+      port: 8545,
     },
     local: {
       provider: new HDWalletProvider(getMnemonic('local'), "http://localhost:8545/"),

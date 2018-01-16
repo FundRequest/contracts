@@ -1,22 +1,18 @@
 const FRC = artifacts.require('./token/FundRequestContract.sol');
 const FND = artifacts.require('./token/FundRequestToken.sol');
 const TokenFactory = artifacts.require('./factory/MiniMeTokenFactory.sol');
-const LTA = artifacts.require('./token/transfer/DefaultLimitedTransferAgent.sol');
 const expect = require('chai').expect;
 
 contract('FundRequestContract', function (accounts) {
 
   let frc;
   let fnd;
-  let lta;
   let tokenFactory;
   const owner = accounts[0];
 
   beforeEach(async function () {
     tokenFactory = await TokenFactory.new();
-    lta = await LTA.new();
-    await lta.enableLimitedTransfers(false);
-    fnd = await FND.new(lta.address, tokenFactory.address, 0x0, 0, "FundRequest", 18, "FND", true);
+    fnd = await FND.new(tokenFactory.address, 0x0, 0, "FundRequest", 18, "FND", true);
     await fnd.changeController(owner);
     await fnd.generateTokens(owner, 666000000000000000000);
     frc = await FRC.new(fnd.address);
@@ -95,12 +91,12 @@ contract('FundRequestContract', function (accounts) {
   });
 
   it('should be able to query the fund information', async function () {
-    //TODO: this does not query the fund information
     let data = await fundDefaultRequest();
-    expect(data.platform).to.equal('github');
-    expect(data.platformId).to.equal('1');
-    expect(data.value).to.equal(100);
-    expect(data.url).to.equal('https://github.com');
+    let result = await frc.getFundInfo.call(web3.fromAscii(data.platform), web3.fromAscii(data.platformId), accounts[0]);
+    expect(result[0].toNumber()).to.equal(1);
+    expect(result[1].toNumber()).to.equal(100);
+    expect(result[2].toNumber()).to.equal(100);
+    expect(result[3]).to.equal(data.url);
   });
 
   function assertInvalidOpCode(error) {
