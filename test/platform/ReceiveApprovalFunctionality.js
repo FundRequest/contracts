@@ -20,7 +20,7 @@ contract('FundRequestContract', function (accounts) {
 		await fnd.changeController(owner);
 		await fnd.generateTokens(owner, tokens(666));
 		frc = await FRC.new(fnd.address);
-	})
+	});
 
 	it('should not be able to receive a different token to be approved by the fndContract', async function () {
 		try {
@@ -34,7 +34,7 @@ contract('FundRequestContract', function (accounts) {
 		} catch(error) {
 			assertInvalidOpCode(error);
 		}
-	})
+	});
 
 	it('should be possible to come in with approveAndCall', async function() {
 		let amount = tokens(1);
@@ -45,8 +45,15 @@ contract('FundRequestContract', function (accounts) {
 		await fnd.approveAndCall(frc.address, amount, web3.fromAscii(platform + "|" + platformId + "|" + url), { from: owner });
 
 		let bal = await frc.balance.call(web3.fromAscii(platform), web3.fromAscii(platformId));
-		expect(bal.toNumber()).to.equal(amount)
-	})
+		expect(bal.toNumber()).to.equal(amount);
+    let fundInfo = await frc.getFundInfo.call(web3.fromAscii(platform), web3.fromAscii(platformId), owner);
+    expect(fundInfo[0].toNumber()).to.equal(1);
+    expect(fundInfo[1].toNumber()).to.equal(amount);
+    expect(fundInfo[2].toNumber()).to.equal(amount);
+    expect(fundInfo[3]).to.equal('');
+
+
+	});
 
 	function tokens(_amount) {
 		return _amount * Math.pow(10, 18);

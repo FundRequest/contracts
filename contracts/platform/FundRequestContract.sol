@@ -24,7 +24,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
 
   FundRequestToken public token;
 
-  event Claimed(address indexed solver, bytes32 platform, bytes32 platformId, string url, uint256 value);
+  event Claimed(address indexed solver, bytes32 platform, bytes32 platformId, string solver, uint256 value);
 
   struct Funding {
   address[] funders;
@@ -133,7 +133,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     delete (funds[platform][platformId]);
 
     require(token.transfer(solverAddress, requestBalance));
-    Claimed(solverAddress, platform, platformId, url, requestBalance);
+    Claimed(solverAddress, platform, platformId, solver, requestBalance);
     return true;
   }
 
