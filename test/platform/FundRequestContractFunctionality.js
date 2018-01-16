@@ -91,12 +91,12 @@ contract('FundRequestContract', function (accounts) {
   });
 
   it('should be able to query the fund information', async function () {
-    //TODO: this does not query the fund information
     let data = await fundDefaultRequest();
-    expect(data.platform).to.equal('github');
-    expect(data.platformId).to.equal('1');
-    expect(data.value).to.equal(100);
-    expect(data.url).to.equal('https://github.com');
+    let result = await frc.getFundInfo.call(web3.fromAscii(data.platform), web3.fromAscii(data.platformId), accounts[0]);
+    expect(result[0].toNumber()).to.equal(1);
+    expect(result[1].toNumber()).to.equal(100);
+    expect(result[2].toNumber()).to.equal(100);
+    expect(result[3]).to.equal(data.url);
   });
 
   function assertInvalidOpCode(error) {
