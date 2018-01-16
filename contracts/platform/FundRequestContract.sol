@@ -116,7 +116,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
 
   address public claimSignerAddress;
 
-  function setClaimSignerAddress(address _claimSignerAddress) public {
+  function setClaimSignerAddress(address _claimSignerAddress) public onlyOwner {
     claimSignerAddress = _claimSignerAddress;
   }
 
