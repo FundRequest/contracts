@@ -13,12 +13,13 @@
     "mocha": "^2.2.5",
     "solidity-coverage": "^0.4.8",
     "solium": "^1.1.2",
-    "truffle-hdwallet-provider": "0.0.3"
+    "truffle-hdwallet-provider": "0.0.3",
+    "web3": "git://github.com/perissology/web3.js.git#all_fixes"
   },
   "dependencies": {
     "chai": "^3.5.0",
     "truffle": "^4.0.4",
     "truffle-contract": "^2.0.4",
-    "web3": "^0.20.0"
+    "eth-contract-class": "0.0.6"
   }
 }
