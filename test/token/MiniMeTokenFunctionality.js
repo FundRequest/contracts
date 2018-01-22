@@ -2,7 +2,6 @@ const FND = artifacts.require('./token/FundRequestToken.sol');
 const TokenFactory = artifacts.require('./factory/MiniMeTokenFactory.sol');
 
 const expect = require('chai').expect;
-const log = console.log;
 
 contract('MiniMeToken', function (accounts) {
 
