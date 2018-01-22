@@ -1,3 +1,10 @@
+pragma solidity ^0.4.18;
+
+
+import '../../ownership/Owned.sol';
+import "../../math/SafeMath.sol";
+
+
 /*
  * Database Contract
  * Davy Van Roy
@@ -5,6 +12,8 @@
  */
 
 contract FundRepository is Owned {
+
+    using SafeMath for uint256;
 
     uint256 public totalNumberOfFunders;
 
@@ -24,7 +33,7 @@ contract FundRepository is Owned {
     address[] funders;
     mapping (address => uint256) balances;
     uint256 totalBalance;
-    string url;
+    bytes32 url;
     }
 
     //modifiers
@@ -33,7 +42,11 @@ contract FundRepository is Owned {
         _;
     }
 
-    function updateFunders(address _from, bytes32 _platform, bytes32 _platformId, uint256 _value) onlyCaller {
+    function FundRepository() {
+        //constructor
+    }
+
+    function updateFunders(address _from, bytes32 _platform, bytes32 _platformId, uint256 _value) public onlyCaller {
         bool existing = funds[_platform][_platformId].balances[_from] > 0;
         if (!existing) {
             funds[_platform][_platformId].funders.push(_from);
@@ -44,7 +57,7 @@ contract FundRepository is Owned {
         }
     }
 
-    function updateBalances(address _from, bytes32 _platform, bytes32 _platformId, string _url, uint256 _value) onlyCaller {
+    function updateBalances(address _from, bytes32 _platform, bytes32 _platformId, bytes32 _url, uint256 _value) public onlyCaller {
         if (funds[_platform][_platformId].totalBalance <= 0) {
             requestsFunded = requestsFunded.add(1);
         }
@@ -55,7 +68,7 @@ contract FundRepository is Owned {
         totalFunded = totalFunded.add(_value);
     }
 
-    function doClaim(bytes32 platform, bytes32 platformId) onlyCaller {
+    function doClaim(bytes32 platform, bytes32 platformId) public onlyCaller returns (uint) {
         var funding = funds[platform][platformId];
         var requestBalance = funding.totalBalance;
         totalBalance = totalBalance.sub(requestBalance);
@@ -64,13 +77,19 @@ contract FundRepository is Owned {
             delete (funding.balances[funder]);
         }
         delete (funds[platform][platformId]);
-        return true;
+        return requestBalance;
     }
 
-    //constants
-    function getFundInfo(bytes32 _platform, bytes32 _platformId, address _funder) public view returns (uint256, uint256, uint256, string) {
-        Funding storage funding = funds[_platform][_platformId];
-        return (funding.funders.length, funding.totalBalance, funding.balances[_funder], funding.url);
+    function getFunderCount(bytes32 _platform, bytes32 _platformId) public view returns (uint){
+        return funds[_platform][_platformId].funders.length;
+    }
+
+    function getFundBalanceOfFunder(bytes32 _platform, bytes32 _platformId, address _funder) public view returns (uint256){
+        return funds[_platform][_platformId].balances[_funder];
+    }
+
+    function getFundUrl(bytes32 _platform, bytes32 _platformId) public view returns (bytes32) {
+        return funds[_platform][_platformId].url;
     }
 
     function balance(bytes32 _platform, bytes32 _platformId) view public returns (uint256) {
@@ -78,7 +97,7 @@ contract FundRepository is Owned {
     }
 
     //management of the repositories
-    function updateCaller(address _caller, bool allowed) onlyOwner {
+    function updateCaller(address _caller, bool allowed) public onlyOwner {
         callers[_caller] = allowed;
     }
 }

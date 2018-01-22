@@ -200,6 +200,6 @@ contract FundRequestTokenGeneration is Pausable {
 
     //incase something does a suicide and funds end up here, we need to be able to withdraw them
     function withdraw(address _to) public onlyOwner {
-        _to.send(this.balance);
+        _to.transfer(this.balance);
     }
 }
