@@ -1,6 +1,7 @@
 const FRC = artifacts.require('./platform/FundRequestContract.sol');
 const FND = artifacts.require('./token/FundRequestToken.sol');
-const FRC_REPO = artifacts.require('./token/repository/FundRepository.sol');
+const FRC_FUND_REPO = artifacts.require('./token/repository/FundRepository.sol');
+const FRC_CLAIM_REPO = artifacts.require('./token/repository/ClaimRepository.sol');
 const TokenFactory = artifacts.require('./factory/MiniMeTokenFactory.sol');
 const expect = require('chai').expect;
 
@@ -8,7 +9,8 @@ contract('FundRequestContract', function (accounts) {
 
 	let frc;
 	let fnd;
-	let repository;
+	let fundRepository;
+	let claimRepository;
 	let tokenFactory;
 	const owner = accounts[0];
 
@@ -22,20 +24,22 @@ contract('FundRequestContract', function (accounts) {
 	beforeEach(async function () {
 		await createToken();
 
-		repository = await FRC_REPO.new();
-		frc = await FRC.new(fnd.address, repository.address);
+		fundRepository = await FRC_FUND_REPO.new();
+		claimRepository = await FRC_CLAIM_REPO.new();
+		frc = await FRC.new(fnd.address, fundRepository.address, claimRepository.address);
 
-		await repository.updateCaller(frc.address, true, {from: owner});
+		await fundRepository.updateCaller(frc.address, true, {from: owner});
+		await claimRepository.updateCaller(frc.address, true, {from: owner});
 		await fnd.approve(frc.address, 1000);
 	});
 
 	let expectBalance = async function (data) {
-		let bal = await frc.balance.call(web3.fromAscii(data.platform), web3.fromAscii(data.platformId));
+		let bal = await fundRepository.balance.call(web3.fromAscii(data.platform), web3.fromAscii(data.platformId));
 		expect(bal.toNumber()).to.equal(data.value);
 	};
 
 	let fundRequest = async function (data) {
-		await frc.fund(web3.fromAscii(data.platform), web3.fromAscii(data.platformId), data.url, data.value);
+		await frc.fund(web3.fromAscii(data.platform), web3.fromAscii(data.platformId), data.value);
 	};
 
 	it('should return 0 balance', async function () {
@@ -50,8 +54,7 @@ contract('FundRequestContract', function (accounts) {
 		let data = {
 			platform: "github",
 			platformId: "1",
-			value: 100,
-			url: 'https://github.com'
+			value: 100
 		};
 		await fundRequest(data);
 		return data;
@@ -65,8 +68,7 @@ contract('FundRequestContract', function (accounts) {
 		let data = {
 			platform: "github",
 			platformId: "1",
-			value: 0,
-			url: 'https://github.com'
+			value: 0
 		};
 		try {
 			await fundRequest(data);
@@ -78,35 +80,34 @@ contract('FundRequestContract', function (accounts) {
 
 	it('should update totalBalance when funding', async function () {
 		let data = await fundDefaultRequest();
-		let totalBalance = await frc.totalBalance();
+		let totalBalance = await fundRepository.totalBalance();
 		expect(totalBalance.toNumber()).to.equal(data.value);
 	});
 
 	it('should update totalFunded when funding', async function () {
 		let data = await fundDefaultRequest();
-		let totalFunded = await frc.totalFunded.call();
+		let totalFunded = await fundRepository.totalFunded.call();
 		expect(totalFunded.toNumber()).to.equal(data.value);
 	});
 
 	it('should update totalNumberOfFunders when funding', async function () {
 		await fundDefaultRequest();
-		let totalNumberOfFunders = await frc.totalNumberOfFunders.call();
+		let totalNumberOfFunders = await fundRepository.totalNumberOfFunders.call();
 		expect(totalNumberOfFunders.toNumber()).to.equal(1);
 	});
 
 	it('should update requestsFunded when funding', async function () {
 		await fundDefaultRequest();
-		let requestsFunded = await frc.requestsFunded.call();
+		let requestsFunded = await fundRepository.requestsFunded.call();
 		expect(requestsFunded.toNumber()).to.equal(1);
 	});
 
 	it('should be able to query the fund information', async function () {
 		let data = await fundDefaultRequest();
-		let result = await frc.getFundInfo.call(web3.fromAscii(data.platform), web3.fromAscii(data.platformId), accounts[0]);
+		let result = await fundRepository.getFundInfo.call(web3.fromAscii(data.platform), web3.fromAscii(data.platformId), accounts[0]);
 		expect(result[0].toNumber()).to.equal(1);
 		expect(result[1].toNumber()).to.equal(100);
 		expect(result[2].toNumber()).to.equal(100);
-		expect(web3.toUtf8(result[3]).trim()).to.equal(data.url);
 	});
 
 	function assertInvalidOpCode(error) {

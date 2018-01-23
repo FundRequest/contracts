@@ -1,6 +1,7 @@
 const FRC = artifacts.require('./token/FundRequestContract.sol');
 const FND = artifacts.require('./token/FundRequestToken.sol');
-const FRC_REPO = artifacts.require('./token/repository/FundRepository.sol');
+const FRC_FUND_REPO = artifacts.require('./token/repository/FundRepository.sol');
+const FRC_CLAIM_REPO = artifacts.require('./token/repository/ClaimRepository.sol');
 const TokenFactory = artifacts.require('./factory/MiniMeTokenFactory.sol');
 const expect = require('chai').expect;
 
@@ -8,7 +9,8 @@ contract('ReceiveApprovalFunctionality', function (accounts) {
 
 	let frc;
 	let fnd;
-	let repository;
+	let fundRepository;
+	let claimRepository;
 	let tokenFactory;
 	const owner = accounts[0];
 
@@ -22,9 +24,11 @@ contract('ReceiveApprovalFunctionality', function (accounts) {
 	beforeEach(async function () {
 		await createToken();
 
-		repository = await FRC_REPO.new();
-		frc = await FRC.new(fnd.address, repository.address);
-		await repository.updateCaller(frc.address, true, {from: owner});
+		fundRepository = await FRC_FUND_REPO.new();
+		claimRepository = await FRC_CLAIM_REPO.new();
+		frc = await FRC.new(fnd.address, fundRepository.address, claimRepository.address);
+		await fundRepository.updateCaller(frc.address, true, {from: owner});
+		await claimRepository.updateCaller(frc.address, true, {from: owner});
 	});
 
 	it('should not be able to receive a different token to be approved by the fndContract', async function () {
@@ -47,15 +51,14 @@ contract('ReceiveApprovalFunctionality', function (accounts) {
 		let platformId = "1";
 		let url = "https://github.com";
 
-		await fnd.approveAndCall(frc.address, amount, web3.fromAscii(platform + "|" + platformId + "|" + url), {from: owner});
+		await fnd.approveAndCall(frc.address, amount, web3.fromAscii(platform + "|AAC|" + platformId), {from: owner});
 
-		let bal = await frc.balance.call(web3.fromAscii(platform), web3.fromAscii(platformId));
+		let bal = await fundRepository.balance.call(web3.fromAscii(platform), web3.fromAscii(platformId));
 		expect(bal.toNumber()).to.equal(amount);
-		let fundInfo = await frc.getFundInfo.call(web3.fromAscii(platform), web3.fromAscii(platformId), owner);
+		let fundInfo = await fundRepository.getFundInfo.call(web3.fromAscii(platform), web3.fromAscii(platformId), owner);
 		expect(fundInfo[0].toNumber()).to.equal(1);
 		expect(fundInfo[1].toNumber()).to.equal(amount);
 		expect(fundInfo[2].toNumber()).to.equal(amount);
-		expect(web3.toUtf8(fundInfo[3])).to.equal('https://github.com');
 	});
 
 	function tokens(_amount) {

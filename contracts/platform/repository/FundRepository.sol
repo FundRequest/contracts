@@ -10,7 +10,6 @@ import "../../math/SafeMath.sol";
  * Davy Van Roy
  * Quinten De Swaef
  */
-
 contract FundRepository is Owned {
 
     using SafeMath for uint256;
@@ -30,10 +29,9 @@ contract FundRepository is Owned {
     mapping (address => bool) callers;
 
     struct Funding {
-    address[] funders;
-    mapping (address => uint256) balances;
-    uint256 totalBalance;
-    bytes32 url;
+        address[] funders;
+        mapping (address => uint256) balances;
+        uint256 totalBalance;
     }
 
     //modifiers
@@ -57,18 +55,17 @@ contract FundRepository is Owned {
         }
     }
 
-    function updateBalances(address _from, bytes32 _platform, bytes32 _platformId, bytes32 _url, uint256 _value) public onlyCaller {
+    function updateBalances(address _from, bytes32 _platform, bytes32 _platformId, uint256 _value) public onlyCaller {
         if (funds[_platform][_platformId].totalBalance <= 0) {
             requestsFunded = requestsFunded.add(1);
         }
         funds[_platform][_platformId].balances[_from] = funds[_platform][_platformId].balances[_from].add(_value);
         funds[_platform][_platformId].totalBalance = funds[_platform][_platformId].totalBalance.add(_value);
-        funds[_platform][_platformId].url = _url;
         totalBalance = totalBalance.add(_value);
         totalFunded = totalFunded.add(_value);
     }
 
-    function doClaim(bytes32 platform, bytes32 platformId) public onlyCaller returns (uint) {
+    function resolveFund(bytes32 platform, bytes32 platformId) public onlyCaller returns (uint) {
         var funding = funds[platform][platformId];
         var requestBalance = funding.totalBalance;
         totalBalance = totalBalance.sub(requestBalance);
@@ -80,16 +77,21 @@ contract FundRepository is Owned {
         return requestBalance;
     }
 
+
+    function getFundInfo(bytes32 _platform, bytes32 _platformId, address _funder) public view returns (uint256, uint256, uint256) {
+        return (
+        getFunderCount(_platform, _platformId),
+        balance(_platform, _platformId),
+        amountFunded(_platform, _platformId, _funder)
+        );
+    }
+
     function getFunderCount(bytes32 _platform, bytes32 _platformId) public view returns (uint){
         return funds[_platform][_platformId].funders.length;
     }
 
-    function getFundBalanceOfFunder(bytes32 _platform, bytes32 _platformId, address _funder) public view returns (uint256){
+    function amountFunded(bytes32 _platform, bytes32 _platformId, address _funder) public view returns (uint256){
         return funds[_platform][_platformId].balances[_funder];
-    }
-
-    function getFundUrl(bytes32 _platform, bytes32 _platformId) public view returns (bytes32) {
-        return funds[_platform][_platformId].url;
     }
 
     function balance(bytes32 _platform, bytes32 _platformId) view public returns (uint256) {
