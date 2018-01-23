@@ -24,7 +24,7 @@ contract FundRepository is Owned {
 
     uint256 public totalBalance;
 
-    mapping (bytes32 => mapping (bytes32 => Funding)) funds;
+    mapping (bytes32 => mapping (string => Funding)) funds;
 
     mapping (address => bool) callers;
 
@@ -44,7 +44,7 @@ contract FundRepository is Owned {
         //constructor
     }
 
-    function updateFunders(address _from, bytes32 _platform, bytes32 _platformId, uint256 _value) public onlyCaller {
+    function updateFunders(address _from, bytes32 _platform, string _platformId, uint256 _value) public onlyCaller {
         bool existing = funds[_platform][_platformId].balances[_from] > 0;
         if (!existing) {
             funds[_platform][_platformId].funders.push(_from);
@@ -55,7 +55,7 @@ contract FundRepository is Owned {
         }
     }
 
-    function updateBalances(address _from, bytes32 _platform, bytes32 _platformId, uint256 _value) public onlyCaller {
+    function updateBalances(address _from, bytes32 _platform, string _platformId, uint256 _value) public onlyCaller {
         if (funds[_platform][_platformId].totalBalance <= 0) {
             requestsFunded = requestsFunded.add(1);
         }
@@ -65,7 +65,7 @@ contract FundRepository is Owned {
         totalFunded = totalFunded.add(_value);
     }
 
-    function resolveFund(bytes32 platform, bytes32 platformId) public onlyCaller returns (uint) {
+    function resolveFund(bytes32 platform, string platformId) public onlyCaller returns (uint) {
         var funding = funds[platform][platformId];
         var requestBalance = funding.totalBalance;
         totalBalance = totalBalance.sub(requestBalance);
@@ -77,8 +77,9 @@ contract FundRepository is Owned {
         return requestBalance;
     }
 
+    //constants
 
-    function getFundInfo(bytes32 _platform, bytes32 _platformId, address _funder) public view returns (uint256, uint256, uint256) {
+    function getFundInfo(bytes32 _platform, string _platformId, address _funder) public view returns (uint256, uint256, uint256) {
         return (
         getFunderCount(_platform, _platformId),
         balance(_platform, _platformId),
@@ -86,15 +87,15 @@ contract FundRepository is Owned {
         );
     }
 
-    function getFunderCount(bytes32 _platform, bytes32 _platformId) public view returns (uint){
+    function getFunderCount(bytes32 _platform, string _platformId) public view returns (uint){
         return funds[_platform][_platformId].funders.length;
     }
 
-    function amountFunded(bytes32 _platform, bytes32 _platformId, address _funder) public view returns (uint256){
+    function amountFunded(bytes32 _platform, string _platformId, address _funder) public view returns (uint256){
         return funds[_platform][_platformId].balances[_funder];
     }
 
-    function balance(bytes32 _platform, bytes32 _platformId) view public returns (uint256) {
+    function balance(bytes32 _platform, string _platformId) view public returns (uint256) {
         return funds[_platform][_platformId].totalBalance;
     }
 

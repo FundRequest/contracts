@@ -44,12 +44,12 @@ contract('FundRequestContract', function (accounts) {
 			platformId: '38',
 			value: 1000
 		};
-		await frc.fund(web3.fromAscii(fundData.platform), web3.fromAscii(fundData.platformId), fundData.value);
+		await frc.fund(web3.fromAscii(fundData.platform), fundData.platformId, fundData.value);
 		let solverAddress = '0x35d80d4729993a4b288fd1e83bfa16b3533df524';
 
 		await frc.claim(
 			web3.fromAscii(fundData.platform),
-			web3.fromAscii(fundData.platformId),
+			fundData.platformId,
 			'davyvanroy',
 			solverAddress,
 			'0xdc440aac3d6057083e194dc26750c897790c63282f92dd1d7421b6e401de7178',

@@ -34,12 +34,12 @@ contract('FundRequestContract', function (accounts) {
 	});
 
 	let expectBalance = async function (data) {
-		let bal = await fundRepository.balance.call(web3.fromAscii(data.platform), web3.fromAscii(data.platformId));
+		let bal = await fundRepository.balance.call(web3.fromAscii(data.platform), data.platformId);
 		expect(bal.toNumber()).to.equal(data.value);
 	};
 
 	let fundRequest = async function (data) {
-		await frc.fund(web3.fromAscii(data.platform), web3.fromAscii(data.platformId), data.value);
+		await frc.fund(web3.fromAscii(data.platform), data.platformId, data.value);
 	};
 
 	it('should return 0 balance', async function () {
@@ -104,7 +104,7 @@ contract('FundRequestContract', function (accounts) {
 
 	it('should be able to query the fund information', async function () {
 		let data = await fundDefaultRequest();
-		let result = await fundRepository.getFundInfo.call(web3.fromAscii(data.platform), web3.fromAscii(data.platformId), accounts[0]);
+		let result = await fundRepository.getFundInfo.call(web3.fromAscii(data.platform), data.platformId, accounts[0]);
 		expect(result[0].toNumber()).to.equal(1);
 		expect(result[1].toNumber()).to.equal(100);
 		expect(result[2].toNumber()).to.equal(100);

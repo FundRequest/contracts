@@ -49,13 +49,12 @@ contract('ReceiveApprovalFunctionality', function (accounts) {
 		let amount = tokens(1);
 		let platform = "github";
 		let platformId = "1";
-		let url = "https://github.com";
 
 		await fnd.approveAndCall(frc.address, amount, web3.fromAscii(platform + "|AAC|" + platformId), {from: owner});
 
-		let bal = await fundRepository.balance.call(web3.fromAscii(platform), web3.fromAscii(platformId));
+		let bal = await fundRepository.balance.call(web3.fromAscii(platform), platformId);
 		expect(bal.toNumber()).to.equal(amount);
-		let fundInfo = await fundRepository.getFundInfo.call(web3.fromAscii(platform), web3.fromAscii(platformId), owner);
+		let fundInfo = await fundRepository.getFundInfo.call(web3.fromAscii(platform), platformId, owner);
 		expect(fundInfo[0].toNumber()).to.equal(1);
 		expect(fundInfo[1].toNumber()).to.equal(amount);
 		expect(fundInfo[2].toNumber()).to.equal(amount);
