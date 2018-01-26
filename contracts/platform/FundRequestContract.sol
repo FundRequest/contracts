@@ -24,8 +24,6 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
 
     event Claimed(address indexed solverAddress, bytes32 platform, string platformId, string solver, uint256 value);
 
-    event LOG(string i);
-
     FundRequestToken public token;
 
     //repositories
@@ -61,7 +59,6 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
         var sliced = string(_data).toSlice();
         var platform = sliced.split("|AAC|".toSlice());
         var platformId = sliced.split("|AAC|".toSlice());
-        LOG(platformId.toString());
         require(doFunding(platform.toBytes32(), platformId.toString(), _amount, _from));
     }
 
