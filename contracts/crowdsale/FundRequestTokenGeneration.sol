@@ -142,6 +142,12 @@ contract FundRequestTokenGeneration is Pausable {
         allowed[beneficiary] = _country;
     }
 
+    function allowMultiple(address[] _beneficiaries, Countries _country) public onlyOwner {
+        for(uint b = 0; b < _beneficiaries.length; b++) {
+            allow(_beneficiaries[b], _country);
+        }
+    }
+
     function allowCountry(Countries _country, bool _allowed) public onlyOwner {
         require(uint(_country) > 0);
         allowedCountries[uint(_country)] = _allowed;
