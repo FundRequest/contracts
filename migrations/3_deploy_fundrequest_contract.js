@@ -6,13 +6,18 @@ const FundRepository = artifacts.require('./platform/repository/FundRepository.s
 const ClaimRepository = artifacts.require('./platform/repository/ClaimRepository.sol');
 
 module.exports = function (deployer) {
-	deployer.deploy(SafeMath);
-	deployer.deploy(Strings);
-	deployer.link(SafeMath, FundRepository);
-	deployer.deploy(FundRepository);
-	deployer.link(SafeMath, ClaimRepository);
-	deployer.deploy(ClaimRepository);
-	deployer.link(SafeMath, FundRequestContract);
-	deployer.link(Strings, FundRequestContract);
-	deployer.deploy(FundRequestContract, FundRequestToken.address, 0, 0);
+  deployer.deploy(SafeMath).then(function() {
+    return deployer.deploy(Strings);
+  }).then(function() {
+    deployer.link(SafeMath, FundRepository);
+    return deployer.deploy(FundRepository);
+  }).then(function() {
+    deployer.link(SafeMath, ClaimRepository);
+    return deployer.deploy(ClaimRepository);
+  }).then(function() {
+    deployer.link(SafeMath, FundRequestContract);
+    deployer.link(Strings, FundRequestContract);
+    console.log('The address: ' + FundRepository.address);
+    return deployer.deploy(FundRequestContract, FundRequestToken.address, FundRepository.address, ClaimRepository.address);
+  });
 };
