@@ -6,7 +6,7 @@ contract ClaimRepository is Owned {
 
     mapping (bytes32 => mapping (string => Claim)) claims;
 
-    mapping (address => bool) callers;
+    mapping public (address => bool) callers;
 
     uint256 public totalBalanceClaimed;
     uint256 public totalClaims;
