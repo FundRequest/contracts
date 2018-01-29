@@ -4,13 +4,15 @@
   "description": "FundRequest Contracts",
   "scripts": {
     "test": "truffle test",
-    "coverage": "solidity-coverage"
+    "coverage": "solidity-coverage",
+    "build-contracts": "sol-merger './contracts/**/*.sol' ./build_merged"
   },
   "author": "FundRequest",
   "license": "MIT",
   "devDependencies": {
     "ganache-cli": "^6.0.3",
     "mocha": "^5.0.0",
+    "sol-merger": "^0.1.2",
     "solidity-coverage": "^0.4.8",
     "solium": "^1.1.3",
     "truffle-hdwallet-provider": "0.0.3"
