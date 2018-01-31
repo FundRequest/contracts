@@ -44,7 +44,7 @@ contract FundRequestTokenGeneration is Pausable {
     mapping (uint => bool) public allowedCountries;
 
     //events
-    event Paid(address indexed _beneficiary, uint256 _amount);
+    event Paid(address indexed _beneficiary, uint256 _weiAmount, uint256 _tokenAmount);
 
     function FundRequestTokenGeneration(
     address _tokenAddress,
@@ -100,7 +100,7 @@ contract FundRequestTokenGeneration is Pausable {
             investorCount++;
         }
         distributeTokens(beneficiary, tokensInWei);
-        Paid(beneficiary, weiAmount);
+        Paid(beneficiary, weiAmount, tokensInWei);
         forwardFunds();
         return;
     }
@@ -140,6 +140,12 @@ contract FundRequestTokenGeneration is Pausable {
 
     function allow(address beneficiary, Countries _country) public onlyOwner {
         allowed[beneficiary] = _country;
+    }
+
+    function allowMultiple(address[] _beneficiaries, Countries _country) public onlyOwner {
+        for(uint b = 0; b < _beneficiaries.length; b++) {
+            allow(_beneficiaries[b], _country);
+        }
     }
 
     function allowCountry(Countries _country, bool _allowed) public onlyOwner {
@@ -200,6 +206,6 @@ contract FundRequestTokenGeneration is Pausable {
 
     //incase something does a suicide and funds end up here, we need to be able to withdraw them
     function withdraw(address _to) public onlyOwner {
-        _to.send(this.balance);
+        _to.transfer(this.balance);
     }
 }

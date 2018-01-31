@@ -36,6 +36,13 @@ contract('FundRequestTokenGeneration', function (accounts) {
 		expect(allowed).to.equal(0);
 	});
 
+	it('should be possible to whitelist multiples for a country', async function(){
+		await tge.allowMultiple([accounts[6], accounts[7], accounts[8]], 1, { from: owner});
+		expect((await tge.allowed.call(accounts[5])).toNumber(0)).to.equal(0);
+		expect((await tge.allowed.call(accounts[6])).toNumber()).to.equal(1);
+		expect((await tge.allowed.call(accounts[7])).toNumber()).to.equal(1);
+		expect((await tge.allowed.call(accounts[8])).toNumber()).to.equal(1);
+	});
 
 	it('disallowing non-whitelist should not be allowed', async function () {
 		try {
