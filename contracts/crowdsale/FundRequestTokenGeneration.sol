@@ -109,6 +109,11 @@ contract FundRequestTokenGeneration is Pausable {
         distributeTokens(beneficiary, tokensSold);
     }
 
+    function finalizeTokenSale() public onlyOwner {
+        pause();
+        tokenContract.changeController(owner);
+    }
+
     function distributeTokens(address beneficiary, uint256 tokensSold) internal {
         uint256 totalTokensInWei = tokensSold.mul(100).div(40);
         require(generateTokens(totalTokensInWei, beneficiary, 40));
