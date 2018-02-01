@@ -11,13 +11,9 @@ contract FundRequestTokenGeneration is Pausable {
 
     MiniMeToken public tokenContract;
 
+    address public tokensaleWallet;
+
     address public founderWallet;
-
-    address public advisorWallet;
-
-    address public ecoSystemWallet;
-
-    address public coldStorageWallet;
 
     uint public rate;
 
@@ -49,18 +45,15 @@ contract FundRequestTokenGeneration is Pausable {
     function FundRequestTokenGeneration(
     address _tokenAddress,
     address _founderWallet,
-    address _advisorWallet,
-    address _ecoSystemWallet,
-    address _coldStorageWallet,
+    address _tokensaleWallet,
     uint _rate,
     uint _maxCap,
     uint256 _personalCap) public
     {
         tokenContract = MiniMeToken(_tokenAddress);
+        tokensaleWallet = _tokensaleWallet;
         founderWallet = _founderWallet;
-        advisorWallet = _advisorWallet;
-        ecoSystemWallet = _ecoSystemWallet;
-        coldStorageWallet = _coldStorageWallet;
+
         rate = _rate;
         maxCap = _maxCap;
         personalCap = _personalCap;
@@ -116,11 +109,8 @@ contract FundRequestTokenGeneration is Pausable {
 
     function distributeTokens(address beneficiary, uint256 tokensSold) internal {
         uint256 totalTokensInWei = tokensSold.mul(100).div(40);
-        require(generateTokens(totalTokensInWei, beneficiary, 40));
-        require(generateTokens(totalTokensInWei, founderWallet, 18));
-        require(generateTokens(totalTokensInWei, advisorWallet, 2));
-        require(generateTokens(totalTokensInWei, ecoSystemWallet, 30));
-        require(generateTokens(totalTokensInWei, coldStorageWallet, 10));
+        require(tokenContract.generateTokens(beneficiary, tokensSold));
+        require(generateExtraTokens(totalTokensInWei, tokensaleWallet, 60));
     }
 
     function validPurchase(address beneficiary) internal view returns (bool) {
@@ -137,7 +127,7 @@ contract FundRequestTokenGeneration is Pausable {
         return true;
     }
 
-    function generateTokens(uint256 _total, address _owner, uint _pct) internal returns (bool) {
+    function generateExtraTokens(uint256 _total, address _owner, uint _pct) internal returns (bool) {
         uint256 tokensInWei = _total.div(100).mul(_pct);
         require(tokenContract.generateTokens(_owner, tokensInWei));
         return true;
@@ -148,7 +138,7 @@ contract FundRequestTokenGeneration is Pausable {
     }
 
     function allowMultiple(address[] _beneficiaries, Countries _country) public onlyOwner {
-        for(uint b = 0; b < _beneficiaries.length; b++) {
+        for (uint b = 0; b < _beneficiaries.length; b++) {
             allow(_beneficiaries[b], _country);
         }
     }
@@ -176,21 +166,14 @@ contract FundRequestTokenGeneration is Pausable {
     }
 
     /* setters for wallets */
+    function setTokensaleWallet(address _tokensaleWallet) public onlyOwner {
+        tokensaleWallet = _tokensaleWallet;
+    }
+
     function setFounderWallet(address _founderWallet) public onlyOwner {
         founderWallet = _founderWallet;
     }
 
-    function setAdvisorWallet(address _advisorWallet) public onlyOwner {
-        advisorWallet = _advisorWallet;
-    }
-
-    function setEcoSystemWallet(address _ecoSystemWallet) public onlyOwner {
-        ecoSystemWallet = _ecoSystemWallet;
-    }
-
-    function setColdStorageWallet(address _coldStorageWallet) public onlyOwner {
-        coldStorageWallet = _coldStorageWallet;
-    }
 
     function setPersonalCap(uint256 _capInWei) public onlyOwner {
         personalCap = _capInWei;

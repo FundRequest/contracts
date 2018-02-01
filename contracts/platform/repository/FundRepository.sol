@@ -26,7 +26,7 @@ contract FundRepository is Owned {
 
     mapping (bytes32 => mapping (string => Funding)) funds;
 
-    mapping public (address => bool) callers;
+    mapping(address => bool) public callers;
 
     struct Funding {
         address[] funders;

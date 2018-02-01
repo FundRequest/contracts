@@ -40,8 +40,9 @@ module.exports = {
 		},
 		ropsten: {
 			network_id: '3',
-			host: "https://ropsten.infura.io/",
-			provider: new HDWalletProvider(getMnemonic('ropsten'), "https://ropsten.infura.io/" + getSecret())
+			host: "https://ropsten.fundrequest.io/",
+			provider: new HDWalletProvider(getMnemonic('ropsten'), "https://ropsten.infura.io/" + getSecret()),
+			gas: 4612388
 		},
 		rinkeby: {
 			network_id: '4',
