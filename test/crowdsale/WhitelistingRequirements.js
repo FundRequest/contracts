@@ -12,16 +12,13 @@ contract('FundRequestTokenGeneration', function (accounts) {
 	let tokenFactory;
 	let owner = accounts[0];
 	let founderWallet = accounts[1];
-	let advisorWallet = accounts[2];
-	let ecoSystemWallet = accounts[3];
-	let coldStorageWallet = accounts[4];
+	let tokensaleWallet = accounts[2];
 	let tokenBuyer = accounts[5];
 
 	beforeEach(async function () {
 		tokenFactory = await TokenFactory.new();
 		fnd = await FND.new(tokenFactory.address, 0x0, 0, "FundRequest", 18, "FND", true);
-		await fnd.generateTokens(owner, 666000000000000000000);
-		tge = await TGE.new(fnd.address, founderWallet, advisorWallet, ecoSystemWallet, coldStorageWallet, 1800, getAmountInWei(20), getAmountInWei(5));
+		tge = await TGE.new(fnd.address, founderWallet, tokensaleWallet, 1800, getAmountInWei(20), getAmountInWei(5));
 		await fnd.changeController(tge.address);
 	});
 
