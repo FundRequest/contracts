@@ -12,16 +12,13 @@ contract('FundRequestTokenGeneration', function (accounts) {
 	let tokenFactory;
 	let owner = accounts[0];
 	let founderWallet = accounts[1];
-	let advisorWallet = accounts[2];
-	let ecoSystemWallet = accounts[3];
-	let coldStorageWallet = accounts[4];
+	let tokensaleWallet = accounts[2];
 	let tokenBuyer = accounts[5];
 
 	beforeEach(async function () {
 		tokenFactory = await TokenFactory.new();
 		fnd = await FND.new(tokenFactory.address, 0x0, 0, "FundRequest", 18, "FND", true);
-		await fnd.generateTokens(owner, 666000000000000000000);
-		tge = await TGE.new(fnd.address, founderWallet, advisorWallet, ecoSystemWallet, coldStorageWallet, 1800, getAmountInWei(20), getAmountInWei(5));
+		tge = await TGE.new(fnd.address, founderWallet, tokensaleWallet, 1800, getAmountInWei(20), getAmountInWei(5));
 		await fnd.changeController(tge.address);
 	});
 
@@ -93,24 +90,9 @@ contract('FundRequestTokenGeneration', function (accounts) {
 		}
 	});
 
-	it('should mint founder tokens when tokens are bought', async function () {
+	it('should mint 60% of tokens extra when tokens are bought', async function () {
 		await buyTokens(1);
-		await expectBalance(founderWallet, 810);
-	});
-
-	it('should mint advisor tokens when tokens are bought', async function () {
-		await buyTokens(1);
-		await expectBalance(advisorWallet, 90);
-	});
-
-	it('should mint ecosystem tokens when tokens are bought', async function () {
-		await buyTokens(1);
-		await expectBalance(ecoSystemWallet, 1350);
-	});
-
-	it('should mint cold storage tokens when tokens are bought', async function () {
-		await buyTokens(1);
-		await expectBalance(coldStorageWallet, 450);
+		await expectBalance(tokensaleWallet, ((1800 / 40) * 60));
 	});
 
 	it('should update deposits when tokens are bought', async function () {
@@ -140,10 +122,7 @@ contract('FundRequestTokenGeneration', function (accounts) {
 	it('should be possible to allocate tokens from previous rounds', async function () {
 		await tge.allocateTokens(tokenBuyer, getAmountInWei(1800));
 		await expectBalance(tokenBuyer, 1800);
-		await expectBalance(founderWallet, 810);
-		await expectBalance(advisorWallet, 90);
-		await expectBalance(ecoSystemWallet, 1350);
-		await expectBalance(coldStorageWallet, 450);
+		await expectBalance(tokensaleWallet, 810 + 90 + 1350 + 450);
 	});
 
 	it('only owner can assign tokens from previous rounds', async function () {
@@ -167,14 +146,10 @@ contract('FundRequestTokenGeneration', function (accounts) {
 
 	it('should be possible to update wallets as owner', async function () {
 		await tge.setFounderWallet(accounts[1], {from: owner});
-		await tge.setAdvisorWallet(accounts[2], {from: owner});
-		await tge.setEcoSystemWallet(accounts[3], {from: owner});
-		await tge.setColdStorageWallet(accounts[4], {from: owner});
+		await tge.setTokensaleWallet(accounts[3], {from: owner});
 
-		expect(await tge.ecoSystemWallet.call()).to.equal(accounts[3]);
+		expect(await tge.tokensaleWallet.call()).to.equal(accounts[3]);
 		expect(await tge.founderWallet.call()).to.equal(accounts[1]);
-		expect(await tge.coldStorageWallet.call()).to.equal(accounts[4]);
-		expect(await tge.advisorWallet.call()).to.equal(accounts[2]);
 	});
 
 	it('should not be possible to update wallets as non-owner', async function () {
@@ -258,12 +233,13 @@ contract('FundRequestTokenGeneration', function (accounts) {
 	it('investing should send the funds to the wallet', async function () {
 		let newFounderWallet = '0x6c3f822f95e5bf7f95afce66e3d5ed20b40f8533';
 		tge.setPersonalCapActive(false, {from: owner});
-		await tge.setFounderWallet(newFounderWallet, { from: owner })
+		await tge.setFounderWallet(newFounderWallet, {from: owner});
+		expect((await web3.eth.getBalance(newFounderWallet)).toNumber()).to.equal(getAmountInWei(0));
+
 		await tge.allow('0x0f38b3dee21bcb6ea1ebb8a33badc338f739b80c', 1); //allow him for china
 		await tge.proxyPayment('0x0f38b3dee21bcb6ea1ebb8a33badc338f739b80c', {value: getAmountInWei(1)});
 		expect((await web3.eth.getBalance(newFounderWallet)).toNumber()).to.equal(getAmountInWei(1));
 	});
-
 
 	let buyTokens = async function (amountInEther) {
 		await tge.allow(tokenBuyer, 1); //allow him for china
