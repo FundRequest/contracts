@@ -17,7 +17,6 @@ module.exports = function (deployer) {
   }).then(function() {
     deployer.link(SafeMath, FundRequestContract);
     deployer.link(Strings, FundRequestContract);
-    console.log('The address: ' + FundRepository.address);
     return deployer.deploy(FundRequestContract, FundRequestToken.address, FundRepository.address, ClaimRepository.address);
   });
 };
