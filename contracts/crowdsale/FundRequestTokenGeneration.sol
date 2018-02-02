@@ -19,12 +19,6 @@ contract FundRequestTokenGeneration is Pausable {
 
     mapping (address => uint) public deposits;
 
-    mapping (address => uint) public balances;
-
-    address[] public investors;
-
-    uint public investorCount;
-
     mapping (address => Countries) public allowed;
 
     uint public maxCap;         // In wei
@@ -81,17 +75,11 @@ contract FundRequestTokenGeneration is Pausable {
         require(validPurchase(beneficiary));
         require(maxCapNotReached());
         require(personalCapNotReached(beneficiary));
-        bool existing = deposits[beneficiary] > 0;
         uint256 weiAmount = msg.value;
         uint256 updatedWeiRaised = totalCollected.add(weiAmount);
         uint256 tokensInWei = weiAmount.mul(rate);
         totalCollected = updatedWeiRaised;
         deposits[beneficiary] = deposits[beneficiary].add(msg.value);
-        balances[beneficiary] = balances[beneficiary].add(tokensInWei);
-        if (!existing) {
-            investors.push(beneficiary);
-            investorCount++;
-        }
         distributeTokens(beneficiary, tokensInWei);
         Paid(beneficiary, weiAmount, tokensInWei);
         forwardFunds();
