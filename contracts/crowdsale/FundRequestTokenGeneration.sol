@@ -34,7 +34,7 @@ contract FundRequestTokenGeneration is Pausable {
     mapping (uint => bool) public allowedCountries;
 
     //events
-    event Paid(address indexed _beneficiary, uint256 _weiAmount, uint256 _tokenAmount);
+    event Paid(address indexed _beneficiary, uint256 _weiAmount, uint256 _tokenAmount, bool _personalCapActive);
 
     function FundRequestTokenGeneration(
     address _tokenAddress,
@@ -81,7 +81,7 @@ contract FundRequestTokenGeneration is Pausable {
         totalCollected = updatedWeiRaised;
         deposits[beneficiary] = deposits[beneficiary].add(msg.value);
         distributeTokens(beneficiary, tokensInWei);
-        Paid(beneficiary, weiAmount, tokensInWei);
+        Paid(beneficiary, weiAmount, tokensInWei, personalCapActive);
         forwardFunds();
         return;
     }
