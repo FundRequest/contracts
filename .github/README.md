@@ -74,3 +74,8 @@ Saving successful migration to network...
 Saving artifacts...
 
 ```
+```
+FundRequestContract: 0x0a0d468e58a8ddb2817635fe4bef039046de8a14
+FundRequestToken: 0x5a481b10a0138e0db94126e9b6ca2188a18cb21c
+FundRequestTokenGeneration: 0x4c17c90a35e9eab07c4832dfa4522cfeafdc8560
+```
