@@ -4,9 +4,10 @@ pragma solidity ^0.4.18;
 import "../math/SafeMath.sol";
 import "../pause/Pausable.sol";
 import "../token/MiniMeToken.sol";
+import "../control/TokenController.sol";
 
 
-contract FundRequestTokenGeneration is Pausable {
+contract FundRequestTokenGeneration is Pausable, TokenController {
     using SafeMath for uint256;
 
     MiniMeToken public tokenContract;
@@ -183,5 +184,13 @@ contract FundRequestTokenGeneration is Pausable {
     //incase something does a suicide and funds end up here, we need to be able to withdraw them
     function withdraw(address _to) public onlyOwner {
         _to.transfer(this.balance);
+    }
+
+    function onTransfer(address _from, address _to, uint _amount) public returns (bool) {
+        return true;
+    }
+
+    function onApprove(address _owner, address _spender, uint _amount) public returns (bool) {
+        return true;
     }
 }
