@@ -23,3 +23,6 @@ config/ropsten/
 coverageEnv/
 scTopics
 coverage.json
+
+.env
+csv/
