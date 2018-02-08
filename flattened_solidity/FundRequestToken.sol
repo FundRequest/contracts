@@ -1,108 +1,17 @@
 pragma solidity ^0.4.18;
 
+// FundRequest Token
+//
+// @authors:
+// Davy Van Roy <davy.van.roy@gmail.com>
+// Quinten De Swaef <quintendeswaef@gmail.com>
+//
+// Security audit performed by LeastAuthority:
+// https://github.com/FundRequest/audit-reports/raw/master/2018-02-06 - Least Authority - ICO Contracts Audit Report.pdf
 
 contract ApproveAndCallFallBack {
     function receiveApproval(address from, uint256 _amount, address _token, bytes _data) public;
 }
-
-/// @dev `Owned` is a base level contract that assigns an `owner` that can be
-///  later changed
-contract Owned {
-    /// @dev `owner` is the only address that can call a function with this
-    /// modifier
-    modifier onlyOwner { require (msg.sender == owner); _; }
-
-    address public owner;
-
-    /// @notice The Constructor assigns the message sender to be `owner`
-    function Owned() public { owner = msg.sender;}
-
-    /// @notice `owner` can step down and assign some other address to this role
-    /// @param _newOwner The address of the new owner. 0x0 can be used to create
-    ///  an unowned neutral vault, however that cannot be undone
-    function changeOwner(address _newOwner) public onlyOwner {
-        owner = _newOwner;
-    }
-}
-
-
-
-/**
- * @title SafeMath
- * @dev Math operations with safety checks that throw on error
- */
-library SafeMath {
-    function mul(uint256 a, uint256 b) internal pure returns (uint256) {
-        uint256 c = a * b;
-        assert(a == 0 || c / a == b);
-        return c;
-    }
-
-    function div(uint256 a, uint256 b) internal pure returns (uint256) {
-        // assert(b > 0); // Solidity automatically throws when dividing by 0
-        uint256 c = a / b;
-        // assert(a == b * c + a % b); // There is no case in which this doesn't hold
-        return c;
-    }
-
-    function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-        assert(b <= a);
-        return a - b;
-    }
-
-    function add(uint256 a, uint256 b) internal pure returns (uint256) {
-        uint256 c = a + b;
-        assert(c >= a);
-        return c;
-    }
-}
-
-
-/**
- * @title Pausable
- * @dev Base contract which allows children to implement an emergency stop mechanism.
- */
-contract Pausable is Owned {
-    event Pause();
-    event Unpause();
-
-    bool public paused = false;
-
-
-    /**
-     * @dev modifier to allow actions only when the contract IS paused
-     */
-    modifier whenNotPaused() {
-        require(!paused);
-        _;
-    }
-
-    /**
-     * @dev modifier to allow actions only when the contract IS NOT paused
-     */
-    modifier whenPaused() {
-        require(paused);
-        _;
-    }
-
-    /**
-     * @dev called by the owner to pause, triggers stopped state
-     */
-    function pause() public onlyOwner whenNotPaused {
-        paused = true;
-        Pause();
-    }
-
-    /**
-     * @dev called by the owner to unpause, returns to normal state
-     */
-    function unpause() public onlyOwner whenPaused {
-        paused = false;
-        Unpause();
-    }
-}
-
-
 
 contract Controlled {
     /// @notice The address of the controller is the only address that can call
@@ -118,32 +27,6 @@ contract Controlled {
     function changeController(address _newController) public onlyController {
         controller = _newController;
     }
-}
-
-/// @dev The token controller contract must implement these functions
-contract TokenController {
-    /// @notice Called when `_owner` sends ether to the MiniMe Token contract
-    /// @param _owner The address that sent the ether to create tokens
-    /// @return True if the ether is accepted, false if it throws
-    function proxyPayment(address _owner) public payable returns(bool);
-
-    /// @notice Notifies the controller about a token transfer allowing the
-    ///  controller to react if desired
-    /// @param _from The origin of the transfer
-    /// @param _to The destination of the transfer
-    /// @param _amount The amount of the transfer
-    /// @return False if the controller does not authorize the transfer
-    function onTransfer(address _from, address _to, uint _amount) public returns(bool);
-
-    /// @notice Notifies the controller about an approval allowing the
-    ///  controller to react if desired
-    /// @param _owner The address that calls `approve()`
-    /// @param _spender The spender in the `approve()` call
-    /// @param _amount The amount in the `approve()` call
-    /// @return False if the controller does not authorize the approval
-    function onApprove(address _owner, address _spender, uint _amount)
-    public
-    returns(bool);
 }
 
 
@@ -210,13 +93,6 @@ contract MiniMeTokenFactory {
 ///  and DApps to upgrade their features in a decentralized manner without
 ///  affecting the original token
 /// @dev It is ERC20 compliant, but still needs to under go further testing.
-
-
-
-
-
-
-
 /// @dev The actual token contract, the default controller is the msg.sender
 ///  that deploys the contract, so usually this token will be deployed by a
 ///  token controller contract, which Giveth will call a "Campaign"
@@ -724,183 +600,69 @@ contract MiniMeToken is Controlled {
 
 }
 
+/// @dev The token controller contract must implement these functions
+contract TokenController {
+    /// @notice Called when `_owner` sends ether to the MiniMe Token contract
+    /// @param _owner The address that sent the ether to create tokens
+    /// @return True if the ether is accepted, false if it throws
+    function proxyPayment(address _owner) public payable returns(bool);
 
-contract FundRequestTokenGeneration is Pausable {
-    using SafeMath for uint256;
+    /// @notice Notifies the controller about a token transfer allowing the
+    ///  controller to react if desired
+    /// @param _from The origin of the transfer
+    /// @param _to The destination of the transfer
+    /// @param _amount The amount of the transfer
+    /// @return False if the controller does not authorize the transfer
+    function onTransfer(address _from, address _to, uint _amount) public returns(bool);
 
-    MiniMeToken public tokenContract;
+    /// @notice Notifies the controller about an approval allowing the
+    ///  controller to react if desired
+    /// @param _owner The address that calls `approve()`
+    /// @param _spender The spender in the `approve()` call
+    /// @param _amount The amount in the `approve()` call
+    /// @return False if the controller does not authorize the approval
+    function onApprove(address _owner, address _spender, uint _amount)
+    public
+    returns(bool);
+}
 
-    address public tokensaleWallet;
+// FundRequest Token
+//
+// @authors:
+// Davy Van Roy <davy.van.roy@gmail.com>
+// Quinten De Swaef <quinten.de.swaef@gmail.com>
+//
+// Security audit performed by LeastAuthority:
+// https://github.com/FundRequest/audit-reports/raw/master/2018-02-06 - Least Authority - ICO Contracts Audit Report.pdf
+contract FundRequestToken is MiniMeToken {
 
-    address public founderWallet;
-
-    uint public rate;
-
-    mapping (address => uint) public deposits;
-
-    mapping (address => Countries) public allowed;
-
-    uint public maxCap;         // In wei
-    uint256 public totalCollected;         // In wei
-
-    // personal caps and activations
-    bool public personalCapActive = true;
-
-    uint256 public personalCap;
-
-    //country whitelisting
-    enum Countries {NOT_WHITELISTED, CHINA, KOREA, USA, OTHER}
-    mapping (uint => bool) public allowedCountries;
-
-    //events
-    event Paid(address indexed _beneficiary, uint256 _weiAmount, uint256 _tokenAmount, bool _personalCapActive);
-
-    function FundRequestTokenGeneration(
-    address _tokenAddress,
-    address _founderWallet,
-    address _tokensaleWallet,
-    uint _rate,
-    uint _maxCap,
-    uint256 _personalCap) public
+    function FundRequestToken(
+    address _tokenFactory,
+    address _parentToken,
+    uint _parentSnapShotBlock,
+    string _tokenName,
+    uint8 _decimalUnits,
+    string _tokenSymbol,
+    bool _transfersEnabled)
+    public
+    MiniMeToken(
+    _tokenFactory,
+    _parentToken,
+    _parentSnapShotBlock,
+    _tokenName,
+    _decimalUnits,
+    _tokenSymbol,
+    _transfersEnabled)
     {
-        tokenContract = MiniMeToken(_tokenAddress);
-        tokensaleWallet = _tokensaleWallet;
-        founderWallet = _founderWallet;
-
-        rate = _rate;
-        maxCap = _maxCap;
-        personalCap = _personalCap;
-
-        allowedCountries[uint(Countries.CHINA)] = true;
-        allowedCountries[uint(Countries.KOREA)] = true;
-        allowedCountries[uint(Countries.USA)] = true;
-        allowedCountries[uint(Countries.OTHER)] = true;
+        //constructor
     }
 
-    function() public payable whenNotPaused {
-        doPayment(msg.sender);
+    function safeApprove(address _spender, uint256 _currentValue, uint256 _amount) public returns (bool success) {
+        require(allowed[msg.sender][_spender] == _currentValue);
+        return doApprove(_spender, _amount);
     }
 
-    /// @notice `proxyPayment()` allows the caller to send ether to the Campaign and
-    /// have the tokens created in an address of their choosing
-    /// @param _owner The address that will hold the newly created tokens
-
-    function proxyPayment(address _owner) public payable whenNotPaused returns (bool) {
-        doPayment(_owner);
+    function isFundRequestToken() public pure returns (bool) {
         return true;
-    }
-
-    function doPayment(address beneficiary) whenNotPaused internal {
-        require(validPurchase(beneficiary));
-        require(maxCapNotReached());
-        require(personalCapNotReached(beneficiary));
-        uint256 weiAmount = msg.value;
-        uint256 updatedWeiRaised = totalCollected.add(weiAmount);
-        uint256 tokensInWei = weiAmount.mul(rate);
-        totalCollected = updatedWeiRaised;
-        deposits[beneficiary] = deposits[beneficiary].add(msg.value);
-        distributeTokens(beneficiary, tokensInWei);
-        Paid(beneficiary, weiAmount, tokensInWei, personalCapActive);
-        forwardFunds();
-        return;
-    }
-
-    function allocateTokens(address beneficiary, uint256 tokensSold) public whenNotPaused onlyOwner {
-        distributeTokens(beneficiary, tokensSold);
-    }
-
-    function finalizeTokenSale() public onlyOwner {
-        pause();
-        tokenContract.changeController(owner);
-    }
-
-    function distributeTokens(address beneficiary, uint256 tokensSold) internal {
-        uint256 totalTokensInWei = tokensSold.mul(100).div(40);
-        require(tokenContract.generateTokens(beneficiary, tokensSold));
-        require(generateExtraTokens(totalTokensInWei, tokensaleWallet, 60));
-    }
-
-    function validPurchase(address beneficiary) internal view returns (bool) {
-        require(tokenContract.controller() != 0);
-        require(msg.value >= 0.01 ether);
-
-        Countries beneficiaryCountry = allowed[beneficiary];
-
-        /* the country needs to > 0 (whitelisted) */
-        require(uint(beneficiaryCountry) > uint(Countries.NOT_WHITELISTED));
-
-        /* country needs to be allowed */
-        require(allowedCountries[uint(beneficiaryCountry)] == true);
-        return true;
-    }
-
-    function generateExtraTokens(uint256 _total, address _owner, uint _pct) internal returns (bool) {
-        uint256 tokensInWei = _total.div(100).mul(_pct);
-        require(tokenContract.generateTokens(_owner, tokensInWei));
-        return true;
-    }
-
-    function allow(address beneficiary, Countries _country) public onlyOwner {
-        allowed[beneficiary] = _country;
-    }
-
-    function allowMultiple(address[] _beneficiaries, Countries _country) public onlyOwner {
-        for (uint b = 0; b < _beneficiaries.length; b++) {
-            allow(_beneficiaries[b], _country);
-        }
-    }
-
-    function allowCountry(Countries _country, bool _allowed) public onlyOwner {
-        require(uint(_country) > 0);
-        allowedCountries[uint(_country)] = _allowed;
-    }
-
-    function maxCapNotReached() internal view returns (bool) {
-        return totalCollected.add(msg.value) <= maxCap;
-    }
-
-    function personalCapNotReached(address _beneficiary) internal view returns (bool) {
-        if (personalCapActive) {
-            return deposits[_beneficiary].add(msg.value) <= personalCap;
-        }
-        else {
-            return true;
-        }
-    }
-
-    function setMaxCap(uint _maxCap) public onlyOwner {
-        maxCap = _maxCap;
-    }
-
-    /* setters for wallets */
-    function setTokensaleWallet(address _tokensaleWallet) public onlyOwner {
-        tokensaleWallet = _tokensaleWallet;
-    }
-
-    function setFounderWallet(address _founderWallet) public onlyOwner {
-        founderWallet = _founderWallet;
-    }
-
-
-    function setPersonalCap(uint256 _capInWei) public onlyOwner {
-        personalCap = _capInWei;
-    }
-
-    function setPersonalCapActive(bool _active) public onlyOwner {
-        personalCapActive = _active;
-    }
-
-    function forwardFunds() internal {
-        founderWallet.transfer(msg.value);
-    }
-
-    /* fix for accidental token sending */
-    function withdrawToken(address _token, uint256 _amount) public onlyOwner {
-        require(MiniMeToken(_token).transfer(owner, _amount));
-    }
-
-    //incase something does a suicide and funds end up here, we need to be able to withdraw them
-    function withdraw(address _to) public onlyOwner {
-        _to.transfer(this.balance);
     }
 }
