@@ -4,11 +4,15 @@ pragma solidity ^0.4.18;
 import "./MiniMeToken.sol";
 
 
-/**
- * Fundrequest Token as deployed by https://fundrequest.io
- * Davy Van Roy
- * Quinten De Swaef
- */
+// FundRequest Token
+//
+// @authors:
+// Davy Van Roy <davy.van.roy@gmail.com>
+// Quinten De Swaef <quinten.de.swaef@gmail.com>
+//
+// Security audit performed by LeastAuthority:
+// https://github.com/FundRequest/audit-reports/raw/master/2018-02-06 - Least Authority - ICO Contracts Audit Report.pdf
+
 contract FundRequestToken is MiniMeToken {
 
   function FundRequestToken(

@@ -1,5 +1,17 @@
 pragma solidity ^0.4.18;
 
+// FundRequest Token Sale
+//
+// @authors:
+// Davy Van Roy <davy.van.roy@gmail.com>
+// Quinten De Swaef <quinten.de.swaef@gmail.com>
+//
+// By sending ETH to this contract, you agree to the terms and conditions for participating in the FundRequest Token Sale:
+// https://sale.fundrequest.io/assets/Terms-Conditions.pdf
+//
+// Security audit performed by LeastAuthority:
+// https://github.com/FundRequest/audit-reports/raw/master/2018-02-06 - Least Authority - ICO Contracts Audit Report.pdf
+
 
 import "../math/SafeMath.sol";
 import "../pause/Pausable.sol";
