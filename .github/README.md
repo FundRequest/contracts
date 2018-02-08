@@ -8,10 +8,41 @@ Contracts for FundRequest (token, crowdsale and platform contracts)
 ### Development [![Build Status](https://travis-ci.org/FundRequest/contracts.svg?branch=develop)](https://travis-ci.org/FundRequest/contracts)
 
 
+### Migrations
 
+#### Mainnet
+
+```
+Using network 'main'.
+
+Running migration: 1_migrations.js
+  Deploying Migrations...
+  ... 0x13909c1ad07d1e9015b9ad09f67b64a6511618a7be0c613ea1434065aac65b16
+  Migrations: 0xa74241f33518390bb490f3f8bdee50037405e859
+Saving successful migration to network...
+  ... 0x76ec17736348ad975f537604d26ed5df8b4c932cd24f8753df2c93a1cfc68324
+Saving artifacts...
+Running migration: 2_deploy_token_contract.js
+  Deploying MiniMeTokenFactory...
+  ... 0x703aad2c1f996daa589db79723742975e0abd33745f9fe3ae4e67e6e28faada9
+  MiniMeTokenFactory: 0x8b0b13d43122eaba2b2318387dc6a368ce398f6a
+  Deploying FundRequestToken...
+  ... 0x6b2b067e4325a34afb2f51178b6d2a2a90277babd39d85de17baa4e70d3e7c77
+  FundRequestToken: 0x4df47b4969b2911c966506e3592c41389493953b
+Saving successful migration to network...
+  ... 0xc3a3d4de5b0d9dc28431dacb7a422f5cd7e6f46499c44b110bb286f2ba926199
+Saving artifacts...
+Running migration: 3_TGE.js
+  Deploying FundRequestTokenGeneration...
+  ... 0xbf8296b277c9eddb5a5ae80b112450c5e2340ddc3936f05b8f9d838a1d2ba4ea
+  FundRequestTokenGeneration: 0xbcc546eb5a290977180f85cafaa712019893729c
+Saving successful migration to network...
+  ... 0xeb62da5dc986fc36bf48df6a24351924675e4a09281c6b0c9ba78720a5ccc60b
+Saving artifacts...
+```
 ---
 
-**Latest Migration**
+#### Ropsten
 
 ``
 Running migration: 1_migrations.js
