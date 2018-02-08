@@ -87,7 +87,7 @@ contract FundRequestTokenGeneration is Pausable, TokenController {
         return;
     }
 
-    function allocateTokens(address beneficiary, uint256 tokensSold) public whenNotPaused onlyOwner {
+    function allocateTokens(address beneficiary, uint256 tokensSold) public onlyOwner {
         distributeTokens(beneficiary, tokensSold);
     }
 
