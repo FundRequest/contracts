@@ -1,10 +1,31 @@
 pragma solidity ^0.4.18;
 
 
-
 contract ApproveAndCallFallBack {
     function receiveApproval(address from, uint256 _amount, address _token, bytes _data) public;
 }
+
+/// @dev `Owned` is a base level contract that assigns an `owner` that can be
+///  later changed
+contract Owned {
+    /// @dev `owner` is the only address that can call a function with this
+    /// modifier
+    modifier onlyOwner { require (msg.sender == owner); _; }
+
+    address public owner;
+
+    /// @notice The Constructor assigns the message sender to be `owner`
+    function Owned() public { owner = msg.sender;}
+
+    /// @notice `owner` can step down and assign some other address to this role
+    /// @param _newOwner The address of the new owner. 0x0 can be used to create
+    ///  an unowned neutral vault, however that cannot be undone
+    function changeOwner(address _newOwner) public onlyOwner {
+        owner = _newOwner;
+    }
+}
+
+
 
 /**
  * @title SafeMath
@@ -33,28 +54,6 @@ library SafeMath {
         uint256 c = a + b;
         assert(c >= a);
         return c;
-    }
-}
-
-
-
-/// @dev `Owned` is a base level contract that assigns an `owner` that can be
-///  later changed
-contract Owned {
-    /// @dev `owner` is the only address that can call a function with this
-    /// modifier
-    modifier onlyOwner { require (msg.sender == owner); _; }
-
-    address public owner;
-
-    /// @notice The Constructor assigns the message sender to be `owner`
-    function Owned() public { owner = msg.sender;}
-
-    /// @notice `owner` can step down and assign some other address to this role
-    /// @param _newOwner The address of the new owner. 0x0 can be used to create
-    ///  an unowned neutral vault, however that cannot be undone
-    function changeOwner(address _newOwner) public onlyOwner {
-        owner = _newOwner;
     }
 }
 
@@ -104,32 +103,6 @@ contract Pausable is Owned {
 }
 
 
-/*
-    Copyright 2016, Jordi Baylina
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/// @title MiniMeToken Contract
-/// @author Jordi Baylina
-/// @dev This token contract's goal is to make it easy for anyone to clone this
-///  token using the token distribution at a given block, this will allow DAO's
-///  and DApps to upgrade their features in a decentralized manner without
-///  affecting the original token
-/// @dev It is ERC20 compliant, but still needs to under go further testing.
-
-
 
 contract Controlled {
     /// @notice The address of the controller is the only address that can call
@@ -173,6 +146,7 @@ contract TokenController {
     returns(bool);
 }
 
+
 /// @dev This contract is used to generate clone contracts from a contract.
 ///  In solidity this is the way to create a contract from a contract of the
 ///  same class
@@ -211,6 +185,37 @@ contract MiniMeTokenFactory {
         return newToken;
     }
 }
+
+/*
+    Copyright 2016, Jordi Baylina
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/// @title MiniMeToken Contract
+/// @author Jordi Baylina
+/// @dev This token contract's goal is to make it easy for anyone to clone this
+///  token using the token distribution at a given block, this will allow DAO's
+///  and DApps to upgrade their features in a decentralized manner without
+///  affecting the original token
+/// @dev It is ERC20 compliant, but still needs to under go further testing.
+
+
+
+
+
+
 
 /// @dev The actual token contract, the default controller is the msg.sender
 ///  that deploys the contract, so usually this token will be deployed by a
@@ -733,12 +738,6 @@ contract FundRequestTokenGeneration is Pausable {
 
     mapping (address => uint) public deposits;
 
-    mapping (address => uint) public balances;
-
-    address[] public investors;
-
-    uint public investorCount;
-
     mapping (address => Countries) public allowed;
 
     uint public maxCap;         // In wei
@@ -754,7 +753,7 @@ contract FundRequestTokenGeneration is Pausable {
     mapping (uint => bool) public allowedCountries;
 
     //events
-    event Paid(address indexed _beneficiary, uint256 _weiAmount, uint256 _tokenAmount);
+    event Paid(address indexed _beneficiary, uint256 _weiAmount, uint256 _tokenAmount, bool _personalCapActive);
 
     function FundRequestTokenGeneration(
     address _tokenAddress,
@@ -795,19 +794,13 @@ contract FundRequestTokenGeneration is Pausable {
         require(validPurchase(beneficiary));
         require(maxCapNotReached());
         require(personalCapNotReached(beneficiary));
-        bool existing = deposits[beneficiary] > 0;
         uint256 weiAmount = msg.value;
         uint256 updatedWeiRaised = totalCollected.add(weiAmount);
         uint256 tokensInWei = weiAmount.mul(rate);
         totalCollected = updatedWeiRaised;
         deposits[beneficiary] = deposits[beneficiary].add(msg.value);
-        balances[beneficiary] = balances[beneficiary].add(tokensInWei);
-        if (!existing) {
-            investors.push(beneficiary);
-            investorCount++;
-        }
         distributeTokens(beneficiary, tokensInWei);
-        Paid(beneficiary, weiAmount, tokensInWei);
+        Paid(beneficiary, weiAmount, tokensInWei, personalCapActive);
         forwardFunds();
         return;
     }

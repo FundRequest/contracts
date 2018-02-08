@@ -1,3 +1,5 @@
+pragma solidity ^0.4.18;
+
 import '../../ownership/Owned.sol';
 import "../../math/SafeMath.sol";
 
