@@ -122,14 +122,11 @@ contract('FundRequestTokenGeneration', function (accounts) {
 		}
 	});
 
-	it('should not be possible to allocate tokens when contract is paused', async function () {
-		try {
+	it('should be possible to allocate tokens when contract is paused', async function () {
 			await tge.pause();
-			await tge.allocateTokens(tokenBuyer, getAmountInWei(1800));
-			assert.fail('should fail');
-		} catch (error) {
-			assertInvalidOpCode(error);
-		}
+      await tge.allocateTokens(tokenBuyer, getAmountInWei(1800));
+      await expectBalance(tokenBuyer, 1800);
+      await expectBalance(tokensaleWallet, 810 + 90 + 1350 + 450);
 	});
 
 	it('should be possible to update wallets as owner', async function () {
