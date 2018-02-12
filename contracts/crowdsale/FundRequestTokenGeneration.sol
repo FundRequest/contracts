@@ -1,12 +1,25 @@
 pragma solidity ^0.4.18;
 
+// FundRequest Token Sale
+//
+// @authors:
+// Davy Van Roy <davy.van.roy@gmail.com>
+// Quinten De Swaef <quinten.de.swaef@gmail.com>
+//
+// By sending ETH to this contract, you agree to the terms and conditions for participating in the FundRequest Token Sale:
+// https://sale.fundrequest.io/assets/Terms-Conditions.pdf
+//
+// Security audit performed by LeastAuthority:
+// https://github.com/FundRequest/audit-reports/raw/master/2018-02-06 - Least Authority - ICO Contracts Audit Report.pdf
+
 
 import "../math/SafeMath.sol";
 import "../pause/Pausable.sol";
 import "../token/MiniMeToken.sol";
+import "../control/TokenController.sol";
 
 
-contract FundRequestTokenGeneration is Pausable {
+contract FundRequestTokenGeneration is Pausable, TokenController {
     using SafeMath for uint256;
 
     MiniMeToken public tokenContract;
@@ -34,7 +47,7 @@ contract FundRequestTokenGeneration is Pausable {
     mapping (uint => bool) public allowedCountries;
 
     //events
-    event Paid(address indexed _beneficiary, uint256 _weiAmount, uint256 _tokenAmount);
+    event Paid(address indexed _beneficiary, uint256 _weiAmount, uint256 _tokenAmount, bool _personalCapActive);
 
     function FundRequestTokenGeneration(
     address _tokenAddress,
@@ -81,12 +94,12 @@ contract FundRequestTokenGeneration is Pausable {
         totalCollected = updatedWeiRaised;
         deposits[beneficiary] = deposits[beneficiary].add(msg.value);
         distributeTokens(beneficiary, tokensInWei);
-        Paid(beneficiary, weiAmount, tokensInWei);
+        Paid(beneficiary, weiAmount, tokensInWei, personalCapActive);
         forwardFunds();
         return;
     }
 
-    function allocateTokens(address beneficiary, uint256 tokensSold) public whenNotPaused onlyOwner {
+    function allocateTokens(address beneficiary, uint256 tokensSold) public onlyOwner {
         distributeTokens(beneficiary, tokensSold);
     }
 
@@ -183,5 +196,13 @@ contract FundRequestTokenGeneration is Pausable {
     //incase something does a suicide and funds end up here, we need to be able to withdraw them
     function withdraw(address _to) public onlyOwner {
         _to.transfer(this.balance);
+    }
+
+    function onTransfer(address _from, address _to, uint _amount) public returns (bool) {
+        return true;
+    }
+
+    function onApprove(address _owner, address _spender, uint _amount) public returns (bool) {
+        return true;
     }
 }
