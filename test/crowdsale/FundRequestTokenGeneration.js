@@ -101,18 +101,6 @@ contract('FundRequestTokenGeneration', function (accounts) {
 		expect(deposits.toNumber()).to.equal(getAmountInWei(1));
 	});
 
-	it('should update investorsCount when tokens are bought', async function () {
-		await buyTokens(1);
-		let count = await tge.investorCount.call();
-		expect(count.toNumber()).to.equal(1);
-	});
-
-	it('should update investors when tokens are bought', async function () {
-		await buyTokens(1);
-		let investor = await tge.investors.call(0);
-		expect(investor).to.equal(tokenBuyer);
-	});
-
 	it('should update weiRaised count when tokens are bought', async function () {
 		await buyTokens(1);
 		let wei = await tge.totalCollected.call();
@@ -134,14 +122,11 @@ contract('FundRequestTokenGeneration', function (accounts) {
 		}
 	});
 
-	it('should not be possible to allocate tokens when contract is paused', async function () {
-		try {
+	it('should be possible to allocate tokens when contract is paused', async function () {
 			await tge.pause();
-			await tge.allocateTokens(tokenBuyer, getAmountInWei(1800));
-			assert.fail('should fail');
-		} catch (error) {
-			assertInvalidOpCode(error);
-		}
+      await tge.allocateTokens(tokenBuyer, getAmountInWei(1800));
+      await expectBalance(tokenBuyer, 1800);
+      await expectBalance(tokensaleWallet, 810 + 90 + 1350 + 450);
 	});
 
 	it('should be possible to update wallets as owner', async function () {
@@ -240,6 +225,17 @@ contract('FundRequestTokenGeneration', function (accounts) {
 		await tge.proxyPayment('0x0f38b3dee21bcb6ea1ebb8a33badc338f739b80c', {value: getAmountInWei(1)});
 		expect((await web3.eth.getBalance(newFounderWallet)).toNumber()).to.equal(getAmountInWei(1));
 	});
+
+  it('should return true onTransfer', async function () {
+    let result = await tge.onTransfer.call(accounts[0], accounts[1], 1);
+    expect(result).to.be.true;
+  });
+
+  it('should return true onApprove', async function () {
+    let result = await tge.onApprove.call(accounts[0], accounts[1], 1);
+    console.log(result);
+    expect(result).to.be.true;
+  });
 
 	let buyTokens = async function (amountInEther) {
 		await tge.allow(tokenBuyer, 1); //allow him for china
