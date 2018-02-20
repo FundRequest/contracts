@@ -26,7 +26,7 @@ const doThings = function (whitelisted, _callback) {
 			value: 0,
 			gas: 3000000,
 			data: payloadData,
-			gasPrice: 5000000000,
+			gasPrice: 30000000000,
 			nonce: nonce
 		}, p_key), function (_, txHash) {
 			if (_) {
@@ -59,7 +59,7 @@ let iterate = function (lines) {
 	})
 };
 
-fs.readFile('csv/others2.csv', 'utf8', function (err, data) {
+fs.readFile('csv/whitelist.csv', 'utf8', function (err, data) {
 	if (err) throw err;
 	iterate(data.split('\n'));
 });
