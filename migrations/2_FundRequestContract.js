@@ -1,14 +1,36 @@
-var Platform = artifacts.require("./platform/FundRequestContract.sol");
-var Strings = artifacts.require("./util/strings.sol");
-var SafeMath = artifacts.require("./math/SafeMath.sol");
+const FundrequestToken = artifacts.require("./token/FundRequestToken.sol");
 
-module.exports = function (deployer) {
+const FundRepository = artifacts.require('./platform/repository/FundRepository.sol');
+const ClaimRepository = artifacts.require('./platform/repository/ClaimRepository.sol');
+const Platform = artifacts.require("./platform/FundRequestContract.sol");
 
-	deployer.deploy(SafeMath).then(function () {
-		return deployer.deploy(Strings);
-	}).then(function () {
-		deployer.link(SafeMath, Platform);
-		deployer.link(Strings, Platform);
-		return deployer.deploy(Platform, '0x4df47b4969b2911c966506e3592c41389493953b', '0xda3493c713c99737c684e4ee5a97654a1aa80922', '0xe305312618fa07a8a95643f3d79e5950d0b865fd');
-	});
+const Strings = artifacts.require("./util/strings.sol");
+const SafeMath = artifacts.require("./math/SafeMath.sol");
+
+module.exports = async function (deployer) {
+
+	await deployer.deploy(FundrequestToken,
+		0x0,
+		0x0,
+		0,
+		'FundRequest',
+		18,
+		'FND',
+		true);
+
+
+	let token = await FundrequestToken.deployed();
+
+	await deployer.deploy(ClaimRepository);
+	await deployer.deploy(FundRepository);
+
+	let claim = await ClaimRepository.deployed();
+	let fund = await FundRepository.deployed();
+
+
+	await deployer.deploy(Platform,
+		token.address,
+		fund.address,
+		claim.address
+	)
 };
