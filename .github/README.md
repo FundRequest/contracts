@@ -8,65 +8,41 @@ Contracts for FundRequest (token, crowdsale and platform contracts)
 ### Development [![Build Status](https://travis-ci.org/FundRequest/contracts.svg?branch=develop)](https://travis-ci.org/FundRequest/contracts)
 
 
-### Migrations
-
 #### Mainnet
 
+| First Header  | Second Header |
+| ------------- | ------------- |
+| MiniMeTokenFactory  | 0x8b0b13d43122eaba2b2318387dc6a368ce398f6a  |
+| FundRequestToken  | 0x4df47b4969b2911c966506e3592c41389493953b  |
+| FundRequestTokenGeneration  | 0xbcc546eb5a290977180f85cafaa712019893729c  |
+
+
+### Ropsten
+
 ```
-Using network 'main'.
+Using network 'ropsten'.
 
 Running migration: 1_migrations.js
   Deploying Migrations...
-  ... 0x13909c1ad07d1e9015b9ad09f67b64a6511618a7be0c613ea1434065aac65b16
-  Migrations: 0xa74241f33518390bb490f3f8bdee50037405e859
+  ... 0xc01861023ccd4baf537d71ab2890951bb66fe1c60183b22162fa34f271bf084e
+  Migrations: 0xeab7c95ee0088f96314d846411cdf241ae9f5b6a
 Saving successful migration to network...
-  ... 0x76ec17736348ad975f537604d26ed5df8b4c932cd24f8753df2c93a1cfc68324
+  ... 0x2b15274db34d70163dfd7ff73f457ec172a8be46309f502968250f22e1955fbf
 Saving artifacts...
-Running migration: 2_deploy_token_contract.js
-  Deploying MiniMeTokenFactory...
-  ... 0x703aad2c1f996daa589db79723742975e0abd33745f9fe3ae4e67e6e28faada9
-  MiniMeTokenFactory: 0x8b0b13d43122eaba2b2318387dc6a368ce398f6a
+Running migration: 2_FundRequestContract.js
   Deploying FundRequestToken...
-  ... 0x6b2b067e4325a34afb2f51178b6d2a2a90277babd39d85de17baa4e70d3e7c77
-  FundRequestToken: 0x4df47b4969b2911c966506e3592c41389493953b
+  ... 0x71accc6d0a163c0fab231a05c8a134d3ebf4fc08ac5230884b3066953ced1d1b
+  FundRequestToken: 0x23b98d4ff90a169d88bfab8b8829f0b0c0e3bce0
 Saving successful migration to network...
-  ... 0xc3a3d4de5b0d9dc28431dacb7a422f5cd7e6f46499c44b110bb286f2ba926199
+  Deploying ClaimRepository...
+  ... 0x1f7249da1e54272a4f19f5a5daa4c4e7c8c588a27c4d793a19e2539d57c77cf3
+  ... 0x79c401b2632d267858c9fecc9b574766a9a4087bb69cf7f4fae0090799f5dee5
 Saving artifacts...
-Running migration: 3_TGE.js
-  Deploying FundRequestTokenGeneration...
-  ... 0xbf8296b277c9eddb5a5ae80b112450c5e2340ddc3936f05b8f9d838a1d2ba4ea
-  FundRequestTokenGeneration: 0xbcc546eb5a290977180f85cafaa712019893729c
-Saving successful migration to network...
-  ... 0xeb62da5dc986fc36bf48df6a24351924675e4a09281c6b0c9ba78720a5ccc60b
-Saving artifacts...
+  ClaimRepository: 0x0e3ae6bd121afc617a16648e0bc51880e99bcd2a
+  Deploying FundRepository...
+  ... 0x8be10190429999b2079102e41c026b7e67d4a419647383b53bc7098fb292f06c
+  FundRepository: 0x757289ff29da4f01ea5292a6724024bcf70a1435
+  Deploying FundRequestContract...
+  ... 0x017a0aa9715c943f6dbb889fbdd6424ef447403a38c983fe3e4085d8defa4744
+  FundRequestContract: 0xc1b66749fe5e2a15034b882da9e690490d5a1336
 ```
----
-
-#### Ropsten
-
-``
-Running migration: 1_migrations.js
-  Deploying Migrations...
-  ... 0x05a125cf68f2baaf257f4721dbd1702028afb303bf0c9c3bd31198bb5fc4c83b
-  Migrations: 0x8e1c1a20fca9c90f3a3e6343f98ba0d533642d0a
-Saving successful migration to network...
-  ... 0x1189a58a2b7d88dd4d5cc0b53e8e7a6cbd482b7a9ea4b8fb18268a21a783adc6
-Saving artifacts...
-Running migration: 2_deploy_token_contract.js
-  Deploying MiniMeTokenFactory...
-  ... 0xc4fe3b38e385979ba0ae88684c2fb33f2b57b3731d1aed4b209b9ecbfa1f8143
-  MiniMeTokenFactory: 0xc914fe508884b91f4ca12c80ca7d00a671c73a4e
-  Deploying FundRequestToken...
-  ... 0x446ac5bdc705c3d614e881a04090ae401acef4af04feeac07f90c889491f331d
-  FundRequestToken: 0xde2674ca755fb89fba3e82b6822d658ff67a9c75
-Saving successful migration to network...
-  ... 0x5a41beca2ce5d92a4aa5338991019ab3196b356555eab30d21f9f59eaab09bf4
-Saving artifacts...
-Running migration: 3_TGE.js
-  Deploying FundRequestTokenGeneration...
-  ... 0xdf9daedf229d46db468cd015cfaff0cc9173d369222c7e1bfe4ccc130384bb03
-  FundRequestTokenGeneration: 0x93040a4f0fff7f975615ad69592631d207406d84
-Saving successful migration to network...
-  ... 0x31bf72bb47708086c90f6cbbb939c34f1c4dc3074fa1b144a024a6c826adb24a
-Saving artifacts...
-``
