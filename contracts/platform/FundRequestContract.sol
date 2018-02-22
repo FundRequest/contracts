@@ -3,6 +3,7 @@ pragma solidity ^0.4.13;
 
 import "../math/SafeMath.sol";
 import "../token/FundRequestToken.sol";
+import "../token/ERC20.sol";
 import "./repository/FundRepository.sol";
 import "./repository/ClaimRepository.sol";
 import '../ownership/Owned.sol';
@@ -62,20 +63,28 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
         require(doFunding(platform.toBytes32(), platformId.toString(), _amount, _from));
     }
 
-    function doFunding(bytes32 _platform, string _platformId, uint256 _value, address _funder) internal returns (bool success){
+    function doFunding(bytes32 _platform, string _platformId, address _token, uint256 _value, address _funder) internal returns (bool success){
         require(_value > 0);
-        require(token.transferFrom(_funder, address(this), _value));
+        require(ERC20(_token).transferFrom(_funder, address(this), _value));
         fundRepository.updateFunders(_funder, _platform, _platformId, _value);
-        fundRepository.updateBalances(_funder, _platform, _platformId, _value);
+        fundRepository.updateBalances(_funder, _platform, _platformId, _token, _value);
         Funded(_funder, _platform, _platformId, _value);
         return true;
     }
 
     function claim(bytes32 platform, string platformId, string solver, address solverAddress, bytes32 r, bytes32 s, uint8 v) public returns (bool) {
         require(validClaim(platform, platformId, solver, solverAddress, r, s, v));
-        uint requestBalance = fundRepository.resolveFund(platform, platformId);
-        require(token.transfer(solverAddress, requestBalance));
-        require(claimRepository.addClaim(solverAddress, platform, platformId, solver, requestBalance));
+
+        uint256[] fundedTokens = fundRepository.getFundedTokens(platform, platformId);
+
+        for (uint i = 0; i < fundedTokens; i++) {
+            address fundedToken = fundedTokens[i];
+            uint256 tokenAmount = fundRepository.claimToken(platform, platformId, fundedToken);
+            require(token.transfer(solverAddress, tokenAmount));
+        }
+
+        require(fundRepository.finishResolveFund(platform, platformId));
+        require(claimRepository.addClaim(solverAddress, platform, platformId, solver, tokenAmount));
         Claimed(solverAddress, platform, platformId, solver, requestBalance);
         return true;
     }

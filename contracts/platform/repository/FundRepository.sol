@@ -18,20 +18,26 @@ contract FundRepository is Owned {
 
     mapping (address => uint256) funders;
 
-    uint256 public totalFunded;
+    mapping(address => uint256) public totalFunded;
 
     uint256 public requestsFunded;
 
-    uint256 public totalBalance;
+    mapping (address => uint256) public totalBalance;
 
     mapping (bytes32 => mapping (string => Funding)) funds;
 
     mapping(address => bool) public callers;
 
     struct Funding {
-        address[] funders;
-        mapping (address => uint256) balances;
-        uint256 totalBalance;
+        address[] funders; //funders that funded tokens
+        address[] tokens; //tokens that were funded
+        mapping (address => TokenFunding) tokenFunding;
+        mapping(address => mapping (address => uint256)) userFunding;
+    }
+
+    struct TokenFunding {
+        mapping (address => uint256) balance;
+        uint256 totalTokenBalance;
     }
 
     //modifiers
@@ -45,7 +51,7 @@ contract FundRepository is Owned {
     }
 
     function updateFunders(address _from, bytes32 _platform, string _platformId, uint256 _value) public onlyCaller {
-        bool existing = funds[_platform][_platformId].balances[_from] > 0;
+        bool existing = funds[_platform][_platformId].funders[_from] > 0;
         if (!existing) {
             funds[_platform][_platformId].funders.push(_from);
         }
@@ -55,36 +61,49 @@ contract FundRepository is Owned {
         }
     }
 
-    function updateBalances(address _from, bytes32 _platform, string _platformId, uint256 _value) public onlyCaller {
-        if (funds[_platform][_platformId].totalBalance <= 0) {
+    function updateBalances(address _from, bytes32 _platform, string _platformId, address _token, uint256 _value) public onlyCaller {
+        if (funds[_platform][_platformId].tokens.length <= 0) {
             requestsFunded = requestsFunded.add(1);
         }
-        funds[_platform][_platformId].balances[_from] = funds[_platform][_platformId].balances[_from].add(_value);
-        funds[_platform][_platformId].totalBalance = funds[_platform][_platformId].totalBalance.add(_value);
-        totalBalance = totalBalance.add(_value);
-        totalFunded = totalFunded.add(_value);
+
+        if(funds[_platform][_platformId].token[_token] <= 0) {
+            funds[_platform][_platformId].token[_token].push(_token);
+        }
+
+        funds[_platform][_platformId].tokenFunding[_token].balance[_from] = funds[_platform][_platformId].tokenFunding[_token].balance[_from].add(_value); //add to the current balance of the user for this token
+        funds[_platform][_platformId].tokenFunding[_token].totalTokenBalance = funds[_platform][_platformId].tokenFunding[_token].totalTokenBalance.add(_value); //add to the overal balance of this token
+
+        funds[_platform][_platformId].userFunding[_from].balance[_token] = funds[_platform][_platformId].userFunding[_from].balance[_token].add(_value);
+
+        totalBalance[_token] = totalBalance.add(_value);
+        totalFunded[_token] = totalFunded.add(_value);
     }
 
-    function resolveFund(bytes32 platform, string platformId) public onlyCaller returns (uint) {
-        var funding = funds[platform][platformId];
-        var requestBalance = funding.totalBalance;
-        totalBalance = totalBalance.sub(requestBalance);
-        for (uint i = 0; i < funding.funders.length; i++) {
-            var funder = funding.funders[i];
-            delete (funding.balances[funder]);
-        }
+    function claimToken(bytes32 platform, string platformId, address _token) public onlyCaller returns (uint256) {
+        var totalTokenBalance = funds[platform][platformId].tokenFunding[_token].totalBalance;
+        delete funds[platform][platformId].tokens[_token];
+        delete funds[platform][platformId].tokenFunding[_token];
+        totalBalance[_token] = totalBalance[_token].sub(totalTokenBalance);
+        return totalTokenBalance;
+    }
+
+    function finishResolveFund(bytes32 platform, string platformId) public onlyCaller returns (bool) {
+        require(funds[platform][platformId].tokens.length <= 0);
         delete (funds[platform][platformId]);
-        return requestBalance;
+        return true;
     }
 
     //constants
-
     function getFundInfo(bytes32 _platform, string _platformId, address _funder) public view returns (uint256, uint256, uint256) {
         return (
         getFunderCount(_platform, _platformId),
         balance(_platform, _platformId),
         amountFunded(_platform, _platformId, _funder)
         );
+    }
+
+    function getFundedTokens(bytes32 _platform, string _platformId) public view returns (uint256[]){
+        return funds[_platform][_platformId].tokens;
     }
 
     function getFunderCount(bytes32 _platform, string _platformId) public view returns (uint){
