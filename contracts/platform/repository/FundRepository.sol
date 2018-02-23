@@ -16,11 +16,11 @@ contract FundRepository is Owned {
 
     uint256 public totalNumberOfFunders;
 
-    mapping (address => uint256) funders;
-
     mapping(address => uint256) public totalFunded;
 
     uint256 public requestsFunded;
+
+    mapping (address => uint256) funders;
 
     mapping (address => uint256) public totalBalance;
 
@@ -32,12 +32,17 @@ contract FundRepository is Owned {
         address[] funders; //funders that funded tokens
         address[] tokens; //tokens that were funded
         mapping (address => TokenFunding) tokenFunding;
-        mapping(address => mapping (address => uint256)) userFunding;
+        mapping(address => UserFunding) userFunding;
     }
 
     struct TokenFunding {
         mapping (address => uint256) balance;
         uint256 totalTokenBalance;
+    }
+
+    struct UserFunding {
+        mapping(address => uint256) tokenBalances;
+        bool funded;
     }
 
     //modifiers
@@ -46,12 +51,12 @@ contract FundRepository is Owned {
         _;
     }
 
-    function FundRepository() {
+    function FundRepository() public {
         //constructor
     }
 
     function updateFunders(address _from, bytes32 _platform, string _platformId, uint256 _value) public onlyCaller {
-        bool existing = funds[_platform][_platformId].funders[_from] > 0;
+        bool existing = funds[_platform][_platformId].userFunding[_from].funded;
         if (!existing) {
             funds[_platform][_platformId].funders.push(_from);
         }
@@ -66,21 +71,22 @@ contract FundRepository is Owned {
             requestsFunded = requestsFunded.add(1);
         }
 
-        if(funds[_platform][_platformId].token[_token] <= 0) {
-            funds[_platform][_platformId].token[_token].push(_token);
+        if(funds[_platform][_platformId].tokenFunding[_token].totalTokenBalance <= 0) {
+            funds[_platform][_platformId].tokens.push(_token);
         }
 
         funds[_platform][_platformId].tokenFunding[_token].balance[_from] = funds[_platform][_platformId].tokenFunding[_token].balance[_from].add(_value); //add to the current balance of the user for this token
         funds[_platform][_platformId].tokenFunding[_token].totalTokenBalance = funds[_platform][_platformId].tokenFunding[_token].totalTokenBalance.add(_value); //add to the overal balance of this token
 
-        funds[_platform][_platformId].userFunding[_from].balance[_token] = funds[_platform][_platformId].userFunding[_from].balance[_token].add(_value);
+        funds[_platform][_platformId].userFunding[_from].tokenBalances[_token] = funds[_platform][_platformId].userFunding[_from].tokenBalances[_token].add(_value);
+        funds[_platform][_platformId].userFunding[_from].funded = true;
 
-        totalBalance[_token] = totalBalance.add(_value);
-        totalFunded[_token] = totalFunded.add(_value);
+        totalBalance[_token] = totalBalance[_token].add(_value);
+        totalFunded[_token] = totalFunded[_token].add(_value);
     }
 
     function claimToken(bytes32 platform, string platformId, address _token) public onlyCaller returns (uint256) {
-        var totalTokenBalance = funds[platform][platformId].tokenFunding[_token].totalBalance;
+        uint256 totalTokenBalance = funds[platform][platformId].tokenFunding[_token].totalTokenBalance;
         delete funds[platform][platformId].tokens[_token];
         delete funds[platform][platformId].tokenFunding[_token];
         totalBalance[_token] = totalBalance[_token].sub(totalTokenBalance);
@@ -102,8 +108,12 @@ contract FundRepository is Owned {
         );
     }
 
-    function getFundedTokens(bytes32 _platform, string _platformId) public view returns (uint256[]){
-        return funds[_platform][_platformId].tokens;
+    function getFundedTokenCount(bytes32 _platform, string _platformId) public view returns (uint256){
+        return funds[_platform][_platformId].tokens.length;
+    }
+
+    function getFundedTokensByIndex(bytes32 _platform, string _platformId, uint _index) public view returns (address){
+        return funds[_platform][_platformId].tokens[_index];
     }
 
     function getFunderCount(bytes32 _platform, string _platformId) public view returns (uint){
