@@ -25,6 +25,9 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
 
     event Claimed(address indexed solverAddress, bytes32 platform, string platformId, string solver, address token, uint256 value);
 
+    event LOG(uint);
+
+
     FundRequestToken public fndToken;
 
     //repositories
@@ -56,7 +59,6 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     }
 
     function receiveApproval(address _from, uint _amount, address _token, bytes _data) public {
-        //require(_token == address(token));
         var sliced = string(_data).toSlice();
         var platform = sliced.split("|AAC|".toSlice());
         var platformId = sliced.split("|AAC|".toSlice());
@@ -64,6 +66,8 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     }
 
     function doFunding(bytes32 _platform, string _platformId, address _token, uint256 _value, address _funder) internal returns (bool success){
+        //TODO: check whitelist of tokens
+
         require(_value > 0);
         require(ERC20(_token).transferFrom(_funder, address(this), _value));
         fundRepository.updateFunders(_funder, _platform, _platformId, _value);
@@ -74,9 +78,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
 
     function claim(bytes32 platform, string platformId, string solver, address solverAddress, bytes32 r, bytes32 s, uint8 v) public returns (bool) {
         require(validClaim(platform, platformId, solver, solverAddress, r, s, v));
-
         uint256 tokenCount = fundRepository.getFundedTokenCount(platform, platformId);
-
         for (uint i = 0; i < tokenCount; i++) {
             address token = fundRepository.getFundedTokensByIndex(platform, platformId, i);
             uint256 tokenAmount = fundRepository.claimToken(platform, platformId, token);

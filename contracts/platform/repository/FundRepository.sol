@@ -93,8 +93,9 @@ contract FundRepository is Owned {
     }
 
     function finishResolveFund(bytes32 platform, string platformId) public onlyCaller returns (bool) {
-        require(funds[platform][platformId].tokens.length <= 0);
+//        require(funds[platform][platformId].tokens.length <= 0);
         delete (funds[platform][platformId]);
+        return true;
     }
 
     //constants

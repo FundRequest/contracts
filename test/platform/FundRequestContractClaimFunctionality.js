@@ -37,9 +37,10 @@ contract('FundRequestContract', function (accounts) {
 		let fundData = {
 			platform: 'GITHUB',
 			platformId: '38',
-			value: 1000
+			value: 1000,
+			token: fnd.address
 		};
-		await frc.fund(web3.fromAscii(fundData.platform), fundData.platformId, fnd.address, fundData.value);
+		await frc.fund(web3.fromAscii(fundData.platform), fundData.platformId, fundData.token, fundData.value);
 		let solverAddress = '0x35d80d4729993a4b288fd1e83bfa16b3533df524';
 
 		await frc.claim(
@@ -54,10 +55,10 @@ contract('FundRequestContract', function (accounts) {
 		await expectTokenBalance(frc.address, 0);
 		await expectTokenBalance(solverAddress, 1000);
 
-		let totalBalance = await fundRepository.totalBalance.call();
+		let totalBalance = await fundRepository.totalBalance.call(fnd.address);
 		expect(totalBalance.toNumber()).to.equal(0);
 
-		let totalFunded = await fundRepository.totalFunded.call();
+		let totalFunded = await fundRepository.totalFunded.call(fnd.address);
 		expect(totalFunded.toNumber()).to.equal(1000);
 
 		let totalNumberOfFunders = await fundRepository.totalNumberOfFunders.call();
