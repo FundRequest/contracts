@@ -77,10 +77,16 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
 
         uint256 tokenCount = fundRepository.getFundedTokenCount(platform, platformId);
 
+        address[] claimedTokens;
+        mapping(address => uint256) amountPerToken;
+
         for (uint i = 0; i < tokenCount; i++) {
             address token = fundRepository.getFundedTokensByIndex(platform, platformId, i);
             uint256 tokenAmount = fundRepository.claimToken(platform, platformId, token);
             require(ERC20(token).transfer(solverAddress, tokenAmount));
+            claimedTokens.push(token);
+            amountPerToken[token] = tokenAmount;
+
         }
 
         require(fundRepository.finishResolveFund(platform, platformId));
