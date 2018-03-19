@@ -33,18 +33,13 @@ contract('FundRequestContract', function (accounts) {
 		await frc.setClaimSignerAddress('0xc31eb6e317054a79bb5e442d686cb9b225670c1d');
 	});
 
-
-	let expectTokenBalance = async function (address, amount) {
-		let bal = await fnd.balanceOf.call(address);
-		expect(bal.toNumber()).to.equal(amount);
-	};
 	it('should be possible to claim a funded request', async function () {
 		let fundData = {
 			platform: 'GITHUB',
 			platformId: '38',
 			value: 1000
 		};
-		await frc.fund(web3.fromAscii(fundData.platform), fundData.platformId, fundData.value);
+		await frc.fund(web3.fromAscii(fundData.platform), fundData.platformId, fnd.address, fundData.value);
 		let solverAddress = '0x35d80d4729993a4b288fd1e83bfa16b3533df524';
 
 		await frc.claim(
@@ -72,4 +67,8 @@ contract('FundRequestContract', function (accounts) {
 		expect(requestsFunded.toNumber()).to.equal(1);
 	});
 
+	let expectTokenBalance = async function (address, amount) {
+		let bal = await fnd.balanceOf.call(address);
+		expect(bal.toNumber()).to.equal(amount);
+	};
 });

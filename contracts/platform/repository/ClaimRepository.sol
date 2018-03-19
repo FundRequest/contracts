@@ -31,14 +31,14 @@ contract ClaimRepository is Owned {
     }
 
     function addClaim(address _solverAddress, bytes32 _platform, string _platformId, string _solver, address _token, uint256 _requestBalance) public onlyCaller returns (bool) {
-        if (claims[_platform][_platformId].solver != address(0)) {
+        if (claims[_platform][_platformId].solverAddress != address(0)) {
             claims[_platform][_platformId].tokens.push(_token);
-            claims[_platform][_platformId].amountPertokens[token] = _requestBalance;
+            claims[_platform][_platformId].amountPerTokens[_token] = _requestBalance;
         } else {
             claims[_platform][_platformId].solver = _solver;
             claims[_platform][_platformId].solverAddress = _solverAddress;
             claims[_platform][_platformId].tokens.push(_token);
-            claims[_platform][_platformId].amountPertokens[token] = _requestBalance;
+            claims[_platform][_platformId].amountPerTokens[_token] = _requestBalance;
             totalClaims = totalClaims.add(1);
         }
         return true;

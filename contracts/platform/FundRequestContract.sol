@@ -21,9 +21,9 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     using SafeMath for uint256;
     using strings for *;
 
-    event Funded(address indexed from, bytes32 platform, string platformId, uint256 value);
+    event Funded(address indexed from, bytes32 platform, string platformId, address token, uint256 value);
 
-    event Claimed(address indexed solverAddress, bytes32 platform, string platformId, string solver, uint256 value);
+    event Claimed(address indexed solverAddress, bytes32 platform, string platformId, string solver, address token, uint256 value);
 
     FundRequestToken public fndToken;
 
@@ -68,7 +68,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
         require(ERC20(_token).transferFrom(_funder, address(this), _value));
         fundRepository.updateFunders(_funder, _platform, _platformId, _value);
         fundRepository.updateBalances(_funder, _platform, _platformId, _token, _value);
-        Funded(_funder, _platform, _platformId, _value);
+        Funded(_funder, _platform, _platformId, _token, _value);
         return true;
     }
 
@@ -77,17 +77,14 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
 
         uint256 tokenCount = fundRepository.getFundedTokenCount(platform, platformId);
 
-        address[] claimedTokens;
-        mapping(address => uint256) amountPerToken;
-
         for (uint i = 0; i < tokenCount; i++) {
             address token = fundRepository.getFundedTokensByIndex(platform, platformId, i);
             uint256 tokenAmount = fundRepository.claimToken(platform, platformId, token);
             require(ERC20(token).transfer(solverAddress, tokenAmount));
             require(claimRepository.addClaim(solverAddress, platform, platformId, solver, token, tokenAmount));
+            Claimed(solverAddress, platform, platformId, solver, token, tokenAmount);
         }
         require(fundRepository.finishResolveFund(platform, platformId));
-        Claimed(solverAddress, platform, platformId, solver, tokenAmount);
         return true;
     }
 

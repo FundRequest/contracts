@@ -87,7 +87,6 @@ contract FundRepository is Owned {
 
     function claimToken(bytes32 platform, string platformId, address _token) public onlyCaller returns (uint256) {
         uint256 totalTokenBalance = funds[platform][platformId].tokenFunding[_token].totalTokenBalance;
-        delete funds[platform][platformId].tokens[_token];
         delete funds[platform][platformId].tokenFunding[_token];
         totalBalance[_token] = totalBalance[_token].sub(totalTokenBalance);
         return totalTokenBalance;
@@ -96,15 +95,14 @@ contract FundRepository is Owned {
     function finishResolveFund(bytes32 platform, string platformId) public onlyCaller returns (bool) {
         require(funds[platform][platformId].tokens.length <= 0);
         delete (funds[platform][platformId]);
-        return true;
     }
 
     //constants
-    function getFundInfo(bytes32 _platform, string _platformId, address _funder) public view returns (uint256, uint256, uint256) {
+    function getFundInfo(bytes32 _platform, string _platformId, address _funder, address _token) public view returns (uint256, uint256, uint256) {
         return (
         getFunderCount(_platform, _platformId),
-        balance(_platform, _platformId),
-        amountFunded(_platform, _platformId, _funder)
+        balance(_platform, _platformId, _token),
+        amountFunded(_platform, _platformId, _funder, _token)
         );
     }
 
@@ -120,12 +118,12 @@ contract FundRepository is Owned {
         return funds[_platform][_platformId].funders.length;
     }
 
-    function amountFunded(bytes32 _platform, string _platformId, address _funder) public view returns (uint256){
-        return funds[_platform][_platformId].balances[_funder];
+    function amountFunded(bytes32 _platform, string _platformId, address _funder, address _token) public view returns (uint256){
+        return funds[_platform][_platformId].userFunding[_funder].tokenBalances[_token];
     }
 
-    function balance(bytes32 _platform, string _platformId) view public returns (uint256) {
-        return funds[_platform][_platformId].totalBalance;
+    function balance(bytes32 _platform, string _platformId, address _token) view public returns (uint256) {
+        return funds[_platform][_platformId].tokenFunding[_token].totalTokenBalance;
     }
 
     //management of the repositories

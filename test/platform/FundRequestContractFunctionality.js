@@ -34,12 +34,12 @@ contract('FundRequestContract', function (accounts) {
 	});
 
 	let expectBalance = async function (data) {
-		let bal = await fundRepository.balance.call(web3.fromAscii(data.platform), data.platformId);
+		let bal = await fundRepository.balance.call(web3.fromAscii(data.platform), data.platformId, fnd.address);
 		expect(bal.toNumber()).to.equal(data.value);
 	};
 
 	let fundRequest = async function (data) {
-		await frc.fund(web3.fromAscii(data.platform), data.platformId, data.value);
+		await frc.fund(web3.fromAscii(data.platform), data.platformId, data.token, data.value);
 	};
 
 	it('should return 0 balance', async function () {
@@ -54,6 +54,7 @@ contract('FundRequestContract', function (accounts) {
 		let data = {
 			platform: "github",
 			platformId: "1",
+			token: fnd.address,
 			value: 100
 		};
 		await fundRequest(data);
@@ -68,7 +69,8 @@ contract('FundRequestContract', function (accounts) {
 		let data = {
 			platform: "github",
 			platformId: "1",
-			value: 0
+			value: 0,
+			token: fnd.address
 		};
 		try {
 			await fundRequest(data);
@@ -80,13 +82,13 @@ contract('FundRequestContract', function (accounts) {
 
 	it('should update totalBalance when funding', async function () {
 		let data = await fundDefaultRequest();
-		let totalBalance = await fundRepository.totalBalance();
+		let totalBalance = await fundRepository.totalBalance(fnd.address);
 		expect(totalBalance.toNumber()).to.equal(data.value);
 	});
 
 	it('should update totalFunded when funding', async function () {
 		let data = await fundDefaultRequest();
-		let totalFunded = await fundRepository.totalFunded.call();
+		let totalFunded = await fundRepository.totalFunded.call(fnd.address);
 		expect(totalFunded.toNumber()).to.equal(data.value);
 	});
 
@@ -104,7 +106,7 @@ contract('FundRequestContract', function (accounts) {
 
 	it('should be able to query the fund information', async function () {
 		let data = await fundDefaultRequest();
-		let result = await fundRepository.getFundInfo.call(web3.fromAscii(data.platform), data.platformId, accounts[0]);
+		let result = await fundRepository.getFundInfo.call(web3.fromAscii(data.platform), data.platformId, accounts[0], fnd.address);
 		expect(result[0].toNumber()).to.equal(1);
 		expect(result[1].toNumber()).to.equal(100);
 		expect(result[2].toNumber()).to.equal(100);
