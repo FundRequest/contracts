@@ -40,9 +40,9 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     }
 
     function FundRequestContract(
-    address _tokenAddress,
-    address _fundRepository,
-    address _claimRepository
+        address _tokenAddress,
+        address _fundRepository,
+        address _claimRepository
     ) public {
         setFndToken(_tokenAddress);
         setFundRepository(_fundRepository);
@@ -84,13 +84,9 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
             address token = fundRepository.getFundedTokensByIndex(platform, platformId, i);
             uint256 tokenAmount = fundRepository.claimToken(platform, platformId, token);
             require(ERC20(token).transfer(solverAddress, tokenAmount));
-            claimedTokens.push(token);
-            amountPerToken[token] = tokenAmount;
-
+            require(claimRepository.addClaim(solverAddress, platform, platformId, solver, token, tokenAmount));
         }
-
         require(fundRepository.finishResolveFund(platform, platformId));
-        require(claimRepository.addClaim(solverAddress, platform, platformId, solver, tokenAmount));
         Claimed(solverAddress, platform, platformId, solver, tokenAmount);
         return true;
     }
