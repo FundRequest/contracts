@@ -16,7 +16,7 @@ contract TokenWhitelistPrecondition is Precondition {
     }
 
     function isValid(bytes32 _platform, string _platformId, address _token, uint256 _value, address _funder) public view returns (bool valid){
-        return defaultWhitelist[_token] == true || tokenWhitelist[_platform][_platformId][_token] == true;
+        return !active || (defaultWhitelist[_token] == true || tokenWhitelist[_platform][_platformId][_token] == true);
     }
 
     function allow(address _token, bool _allowed) public onlyOwner {

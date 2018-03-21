@@ -9,6 +9,7 @@ import "./repository/ClaimRepository.sol";
 import '../ownership/Owned.sol';
 import "../token/ApproveAndCallFallback.sol";
 import "../utils/strings.sol";
+import "./validation/Precondition.sol";
 
 
 /*
@@ -36,6 +37,8 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     ClaimRepository public claimRepository;
 
     address public claimSignerAddress;
+
+    Precondition[] preconditions;
 
     modifier addressNotNull(address target) {
         require(target != address(0));
@@ -66,8 +69,11 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     }
 
     function doFunding(bytes32 _platform, string _platformId, address _token, uint256 _value, address _funder) internal returns (bool success){
-        //TODO: check whitelist of tokens
-
+        for (uint idx = 0; idx < preconditions.length; idx++) {
+            if (address(preconditions[idx]) != address(0)) {
+                require(preconditions[idx].isValid(_platform, _platformId, _token, _value, _funder));
+            }
+        }
         require(_value > 0);
         require(ERC20(_token).transferFrom(_funder, address(this), _value));
         fundRepository.updateFunders(_funder, _platform, _platformId, _value);
