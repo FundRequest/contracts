@@ -5,9 +5,9 @@ import "./Precondition.sol";
 contract TokenWhitelistPrecondition is Precondition {
 
     event Allowed(address indexed token, bool allowed);
-    event Allowed(address indexed token, bool allowed, bytes32 platform, string platformId)
+    event Allowed(address indexed token, bool allowed, bytes32 platform, string platformId);
 
-    mapping(bytes32 => mapping(string => address)) tokenWhitelist;
+    mapping(bytes32 => mapping(string => mapping(address => bool))) tokenWhitelist;
     mapping(address => bool) defaultWhitelist;
 
     function TokenWhitelistPrecondition(string _name, uint _version, bool _active)
@@ -21,11 +21,11 @@ contract TokenWhitelistPrecondition is Precondition {
 
     function allow(address _token, bool _allowed) public onlyOwner {
         defaultWhitelist[_token] = _allowed;
-        Allowed(_token, allowed);
+        Allowed(_token, _allowed);
     }
 
     function allow(bytes32 _platform, string _platformId, address _token, bool _allowed) public onlyOwner {
         tokenWhitelist[_platform][_platformId][_token] = _allowed;
-        Allowed(_token, _allowed, _platform, platformId, _token);
+        Allowed(_token, _allowed, _platform, _platformId);
     }
 }

@@ -109,6 +109,13 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
         .strConcat(prependUnderscore(strings.addressToString(solverAddress)));
     }
 
+    function addPrecondition(address _precondition) public onlyOwner {
+        preconditions.push(Precondition(_precondition));
+    }
+
+    function removePrecondition(uint _index) public onlyOwner {
+        delete preconditions[_index];
+    }
 
     function prependUnderscore(string str) internal pure returns (string) {
         return "_".strConcat(str);
