@@ -49,11 +49,4 @@ contract('ReceiveApprovalFunctionality', function (accounts) {
 	function tokens(_amount) {
 		return _amount * Math.pow(10, 18);
 	}
-
-	function assertInvalidOpCode(error) {
-		assert(
-			error.message.indexOf('VM Exception while processing transaction: revert') >= 0,
-			'this should fail.'
-		);
-	}
 });
