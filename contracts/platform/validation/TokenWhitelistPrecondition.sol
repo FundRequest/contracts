@@ -7,7 +7,10 @@ contract TokenWhitelistPrecondition is Precondition {
     event Allowed(address indexed token, bool allowed);
     event Allowed(address indexed token, bool allowed, bytes32 platform, string platformId);
 
+    //platform -> platformId -> token => _allowed
     mapping(bytes32 => mapping(string => mapping(address => bool))) tokenWhitelist;
+
+    //token => _allowed
     mapping(address => bool) defaultWhitelist;
 
     function TokenWhitelistPrecondition(string _name, uint _version, bool _active)
