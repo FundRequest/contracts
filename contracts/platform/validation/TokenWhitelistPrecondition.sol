@@ -22,7 +22,7 @@ contract TokenWhitelistPrecondition is Precondition {
         return !active || (defaultWhitelist[_token] == true || tokenWhitelist[_platform][_platformId][_token] == true);
     }
 
-    function allow(address _token, bool _allowed) public onlyOwner {
+    function allowDefaultToken(address _token, bool _allowed) public onlyOwner {
         defaultWhitelist[_token] = _allowed;
         Allowed(_token, _allowed);
     }
