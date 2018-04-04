@@ -6,7 +6,7 @@ const Platform = artifacts.require("./platform/FundRequestContract.sol");
 
 module.exports = async function (deployer, network, accounts) {
 
-	if(network === 'ropsten' || network === 'ropsten') {
+	if(network === 'ropsten' || network === 'kovan') {
 		console.log("We're on " + network);
 		let token = await FundrequestToken.at('0x23b98d4ff90a169d88bfab8b8829f0b0c0e3bce0');
 		let platform = await Platform.at('0xc1b66749fe5e2a15034b882da9e690490d5a1336');
