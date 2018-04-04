@@ -76,7 +76,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
         }
         require(_value > 0);
         require(ERC20(_token).transferFrom(_funder, address(this), _value));
-        fundRepository.updateFunders(_funder, _platform, _platformId, _value);
+        fundRepository.updateFunders(_funder, _platform, _platformId);
         fundRepository.updateBalances(_funder, _platform, _platformId, _token, _value);
         Funded(_funder, _platform, _platformId, _token, _value);
         return true;

@@ -16,11 +16,13 @@ contract FundRepository is Owned {
 
     uint256 public totalNumberOfFunders;
 
+    //token => _totalFunded
     mapping(address => uint256) public totalFunded;
 
     uint256 public requestsFunded;
 
-    mapping (address => uint256) funders;
+    //funder => _totalFunded
+    mapping (address => bool) funders;
 
     mapping (address => uint256) public totalBalance;
 
@@ -55,14 +57,14 @@ contract FundRepository is Owned {
         //constructor
     }
 
-    function updateFunders(address _from, bytes32 _platform, string _platformId, uint256 _value) public onlyCaller {
+    function updateFunders(address _from, bytes32 _platform, string _platformId) public onlyCaller {
         bool existing = funds[_platform][_platformId].userFunding[_from].funded;
         if (!existing) {
             funds[_platform][_platformId].funders.push(_from);
         }
-        if (funders[_from] <= 0) {
+        if (funders[_from] == false) {
             totalNumberOfFunders = totalNumberOfFunders.add(1);
-            funders[_from].add(_value);
+            funders[_from] = true;
         }
     }
 
