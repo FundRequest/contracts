@@ -79,9 +79,13 @@ contract FundRepository is Owned {
             funds[_platform][_platformId].tokens.push(_token);
         }
 
-        funds[_platform][_platformId].tokenFunding[_token].balance[_from] = funds[_platform][_platformId].tokenFunding[_token].balance[_from].add(_value); //add to the current balance of the user for this token
-        funds[_platform][_platformId].tokenFunding[_token].totalTokenBalance = funds[_platform][_platformId].tokenFunding[_token].totalTokenBalance.add(_value); //add to the overal balance of this token
+        //add to the current balance of the user for this token
+        funds[_platform][_platformId].tokenFunding[_token].balance[_from] = funds[_platform][_platformId].tokenFunding[_token].balance[_from].add(_value);
 
+        //add to the overall balance of this token
+        funds[_platform][_platformId].tokenFunding[_token].totalTokenBalance = funds[_platform][_platformId].tokenFunding[_token].totalTokenBalance.add(_value);
+
+        //add to the balance the user has funded for the request
         funds[_platform][_platformId].userFunding[_from].tokenBalances[_token] = funds[_platform][_platformId].userFunding[_from].tokenBalances[_token].add(_value);
         funds[_platform][_platformId].userFunding[_from].funded = true;
 
