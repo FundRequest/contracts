@@ -21,11 +21,13 @@ contract FundRepository is Owned {
 
     uint256 public requestsFunded;
 
-    //funder => _totalFunded
+    //funder => _hasFunded
     mapping (address => bool) funders;
 
+    //token => _totalBalance
     mapping (address => uint256) public totalBalance;
 
+    //platform -> platformId => _funding
     mapping (bytes32 => mapping (string => Funding)) funds;
 
     mapping(address => bool) public callers;
@@ -95,7 +97,6 @@ contract FundRepository is Owned {
     }
 
     function finishResolveFund(bytes32 platform, string platformId) public onlyCaller returns (bool) {
-//        require(funds[platform][platformId].tokens.length <= 0);
         delete (funds[platform][platformId]);
         return true;
     }
