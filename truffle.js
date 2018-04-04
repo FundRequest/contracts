@@ -29,10 +29,6 @@ module.exports = {
 			host: "localhost",
 			port: 8545,
 		},
-		local: {
-			provider: new HDWalletProvider(getMnemonic('local'), "http://localhost:8545/"),
-			network_id: '*',
-		},
 		kovan: {
 			network_id: '42',
 			host: "https://kovan.infura.io/" + getSecret(),
@@ -49,23 +45,11 @@ module.exports = {
 			host: "https://rinkeby.infura.io/" + getSecret(),
 			provider: new HDWalletProvider(getMnemonic('rinkeby'), "https://rinkeby.infura.io/" + getSecret())
 		},
-		rinkeby_local: {
-			network_id: '4',
-			host: "localhost",
-			port: 8545,
-			gas: 4612388
-		},
 		mainnet: {
 			network_id: '1',
 			host: "localhost",
 			port: 8545,
 			gas: 4612388
-		},
-		solc: {
-			optimizer: {
-				enabled: true,
-				runs: 200
-			}
 		}
 	},
 	mocha: {

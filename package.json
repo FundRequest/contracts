@@ -1,6 +1,6 @@
 {
   "name": "fundrequest-contracts",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "FundRequest Contracts",
   "scripts": {
     "test": "truffle test",
@@ -22,9 +22,8 @@
     "dotenv": "^5.0.0",
     "ethereumjs-util": "^5.1.4",
     "ethereumjs-wallet": "^0.6.0",
-    "ethjs": "^0.3.3",
     "ethjs-signer": "^0.1.1",
-    "truffle": "^4.0.6",
-    "web3": "^0.19.0"
+    "truffle": "^4.1.5",
+    "web3": "^0.20.6"
   }
 }
