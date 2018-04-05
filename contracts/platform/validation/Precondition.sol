@@ -10,7 +10,7 @@ contract Precondition is Owned {
     bool public active = false;
 
     function Precondition(string _name, uint _version, bool _active) public {
-        active = _active;
+        name = _name;
         version = _version;
         active = _active;
     }
