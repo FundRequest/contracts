@@ -6,7 +6,7 @@ import "../token/FundRequestToken.sol";
 import "../token/ERC20.sol";
 import "./repository/FundRepository.sol";
 import "./repository/ClaimRepository.sol";
-import '../ownership/Owned.sol';
+import "../ownership/Owned.sol";
 import "../token/ApproveAndCallFallback.sol";
 import "../utils/strings.sol";
 import "./validation/Precondition.sol";
@@ -40,10 +40,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
         _;
     }
 
-    function FundRequestContract(
-        address _fundRepository,
-        address _claimRepository
-    ) public {
+    function FundRequestContract(address _fundRepository, address _claimRepository) public {
         setFundRepository(_fundRepository);
         setClaimRepository(_claimRepository);
     }
@@ -61,7 +58,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
         require(doFunding(platform.toBytes32(), platformId.toString(), _token, _amount, _from));
     }
 
-    function doFunding(bytes32 _platform, string _platformId, address _token, uint256 _value, address _funder) internal returns (bool success){
+    function doFunding(bytes32 _platform, string _platformId, address _token, uint256 _value, address _funder) internal returns (bool success) {
         for (uint idx = 0; idx < preconditions.length; idx++) {
             if (address(preconditions[idx]) != address(0)) {
                 require(preconditions[idx].isValid(_platform, _platformId, _token, _value, _funder));
@@ -126,7 +123,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
         claimSignerAddress = _claimSignerAddress;
     }
 
-    function () {
+    function() public {
         // dont receive ether via fallback
     }
 }
