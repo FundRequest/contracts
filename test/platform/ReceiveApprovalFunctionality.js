@@ -26,7 +26,7 @@ contract('ReceiveApprovalFunctionality', function (accounts) {
 
 		fundRepository = await FRC_FUND_REPO.new();
 		claimRepository = await FRC_CLAIM_REPO.new();
-		frc = await FRC.new(fnd.address, fundRepository.address, claimRepository.address);
+		frc = await FRC.new(fundRepository.address, claimRepository.address);
 		await fundRepository.updateCaller(frc.address, true, {from: owner});
 		await claimRepository.updateCaller(frc.address, true, {from: owner});
 	});

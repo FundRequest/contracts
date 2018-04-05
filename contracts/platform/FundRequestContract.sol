@@ -1,4 +1,4 @@
-pragma solidity ^0.4.13;
+pragma solidity 0.4.21;
 
 
 import "../math/SafeMath.sol";
@@ -26,11 +26,6 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
 
     event Claimed(address indexed solverAddress, bytes32 platform, string platformId, string solver, address token, uint256 value);
 
-    event LOG(uint);
-
-
-    FundRequestToken public fndToken;
-
     //repositories
     FundRepository public fundRepository;
 
@@ -38,7 +33,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
 
     address public claimSignerAddress;
 
-    Precondition[] preconditions;
+    Precondition[] public preconditions;
 
     modifier addressNotNull(address target) {
         require(target != address(0));
@@ -46,11 +41,9 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     }
 
     function FundRequestContract(
-        address _tokenAddress,
         address _fundRepository,
         address _claimRepository
     ) public {
-        setFndToken(_tokenAddress);
         setFundRepository(_fundRepository);
         setClaimRepository(_claimRepository);
     }
@@ -129,12 +122,11 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
         claimRepository = ClaimRepository(_claimRepository);
     }
 
-    function setFndToken(address _tokenAddress) addressNotNull(_tokenAddress) public onlyOwner {
-        fndToken = FundRequestToken(_tokenAddress);
-        assert(fndToken.isFundRequestToken());
-    }
-
     function setClaimSignerAddress(address _claimSignerAddress) addressNotNull(_claimSignerAddress) public onlyOwner {
         claimSignerAddress = _claimSignerAddress;
+    }
+
+    function () {
+        // dont receive ether via fallback
     }
 }

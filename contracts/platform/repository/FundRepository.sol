@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity 0.4.21;
 
 
 import '../../ownership/Owned.sol';
@@ -137,5 +137,9 @@ contract FundRepository is Owned {
     //management of the repositories
     function updateCaller(address _caller, bool allowed) public onlyOwner {
         callers[_caller] = allowed;
+    }
+
+    function () {
+        // dont receive ether via fallback
     }
 }

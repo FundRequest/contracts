@@ -32,7 +32,6 @@ module.exports = async function (deployer) {
 	let fund = await FundRepository.deployed();
 
 	await deployer.deploy(Platform,
-		token.address,
 		fund.address,
 		claim.address
 	);

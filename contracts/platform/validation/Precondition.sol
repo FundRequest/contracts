@@ -1,4 +1,4 @@
-pragma solidity ^0.4.19;
+pragma solidity 0.4.21;
 
 import "../../ownership/Owned.sol";
 
@@ -16,4 +16,7 @@ contract Precondition is Owned {
 
     function isValid(bytes32 _platform, string _platformId, address _token, uint256 _value, address _funder) public view returns (bool valid);
 
+    function () {
+        // dont receive ether via fallback
+    }
 }
