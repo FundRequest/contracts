@@ -32,7 +32,7 @@ module.exports = {
 		kovan: {
 			network_id: '42',
 			host: "https://kovan.infura.io/" + getSecret(),
-			provider: new HDWalletProvider(getMnemonic('kovan'), "https://kovan.infura.io/" + getSecret())
+			provider: new HDWalletProvider(getMnemonic('kovan'), "https://kovan.fundrequest.io/")
 		},
 		ropsten: {
 			network_id: '3',

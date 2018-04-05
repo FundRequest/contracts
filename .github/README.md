@@ -17,32 +17,35 @@ Contracts for FundRequest (token, crowdsale and platform contracts)
 | FundRequestTokenGeneration  | 0xbcc546eb5a290977180f85cafaa712019893729c  |
 
 
-### Ropsten
+### Kovan
 
 ```
-Using network 'ropsten'.
+Using network 'kovan'.
 
 Running migration: 1_migrations.js
-  Deploying Migrations...
-  ... 0xc01861023ccd4baf537d71ab2890951bb66fe1c60183b22162fa34f271bf084e
-  Migrations: 0xeab7c95ee0088f96314d846411cdf241ae9f5b6a
+  Replacing Migrations...
+  ... 0xd4c808674dcfa58779d9de9d0eac9615d38db8e557034294fe989ed7d6f8faf4
+  Migrations: 0xc6122bf8670806b9114c3110322416e924cf8784
 Saving successful migration to network...
-  ... 0x2b15274db34d70163dfd7ff73f457ec172a8be46309f502968250f22e1955fbf
+  ... 0x20e84dbe69ee9824c16262980c38fec12c6a667e58cc9f39b89ff30c33814315
 Saving artifacts...
 Running migration: 2_FundRequestContract.js
-  Deploying FundRequestToken...
-  ... 0x71accc6d0a163c0fab231a05c8a134d3ebf4fc08ac5230884b3066953ced1d1b
-  FundRequestToken: 0x23b98d4ff90a169d88bfab8b8829f0b0c0e3bce0
-Saving successful migration to network...
+  Replacing FundRequestToken...
+  ... 0x36d54f76c14d03e84e188acda660dd6f436c6679886b0e981739f3cf86cb7e3d
+  FundRequestToken: 0x9f88c5cc76148d41a5db8d0a7e581481efc9667b
   Deploying ClaimRepository...
-  ... 0x1f7249da1e54272a4f19f5a5daa4c4e7c8c588a27c4d793a19e2539d57c77cf3
-  ... 0x79c401b2632d267858c9fecc9b574766a9a4087bb69cf7f4fae0090799f5dee5
-Saving artifacts...
-  ClaimRepository: 0x0e3ae6bd121afc617a16648e0bc51880e99bcd2a
+  ... 0xd6df6dfbe01dd9c600b32138661251f91078779b5c34f295bf5e70247296512c
+  ClaimRepository: 0x0f3dffaf087347961eda6483a5ec02edcede0025
   Deploying FundRepository...
-  ... 0x8be10190429999b2079102e41c026b7e67d4a419647383b53bc7098fb292f06c
-  FundRepository: 0x757289ff29da4f01ea5292a6724024bcf70a1435
+  ... 0x960c8c43335dac3b6944a3ff224897d67cac6d20a618c7bd5eaf4ec1c8cc174d
+  FundRepository: 0x43b686856d358443a489069424163b5f8afe4c7e
   Deploying FundRequestContract...
-  ... 0x017a0aa9715c943f6dbb889fbdd6424ef447403a38c983fe3e4085d8defa4744
-  FundRequestContract: 0xc1b66749fe5e2a15034b882da9e690490d5a1336
+  ... 0x4e2f8764de972d90eb378af00644e7f19145f217306bed6a9594d894d6f229ec
+  FundRequestContract: 0x0ade7b8f58ba034a2a818f1fd48c3c92039c1cc8
+  ... 0xfe0f9ccd31be1a41470bec82503e8ced1246b1659ad6400e4ce8d42226567a3e
+  ... 0x9e3bcdd514de6963b1a93b4389cbe9e0e0f0250a1e479e9c82433d308ea09549
+Saving successful migration to network...
+  ... 0x5bef38d79a59ba986e29bcb32c6292aa4cdd769852eb798a45aa58db80263983
+Saving artifacts...
+
 ```

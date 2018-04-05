@@ -11,33 +11,40 @@ const TokenWhiteListPrecondition = artifacts.require('./platform/validation/Toke
 
 module.exports = async function (deployer) {
 
-	await deployer.deploy(FundrequestToken,
+	return deployer.deploy(FundrequestToken,
 		0x0,
 		0x0,
 		0,
 		'FundRequest',
 		18,
 		'FND',
-		true);
-
-
-	let token = await FundrequestToken.deployed();
-
-	await token.generateTokens(accounts[0], 20000 * Math.pow(10, 18));
-
-	await deployer.deploy(ClaimRepository);
-	await deployer.deploy(FundRepository);
-
-	let claim = await ClaimRepository.deployed();
-	let fund = await FundRepository.deployed();
-
-	await deployer.deploy(Platform,
-		fund.address,
-		claim.address
-	);
-
-	await claim.updateCaller(platform.address, true);
-	await fund.updateCaller(platform.address, true);
-
-	await deployer.deploy(TokenWhiteListPrecondition)
+		true).then(function () {
+		return FundrequestToken.deployed()
+			.then(function (token) {
+				return deployer.deploy(ClaimRepository)
+					.then(function () {
+						return deployer.deploy(FundRepository)
+							.then(function () {
+								return ClaimRepository.deployed()
+									.then(function (claim) {
+										return FundRepository.deployed()
+											.then(function (fund) {
+												return deployer.deploy(Platform,
+													fund.address,
+													claim.address
+												).then(function () {
+													return Platform.deployed()
+														.then(function (platform) {
+															return claim.updateCaller(platform.address, true)
+																.then(function () {
+																	return fund.updateCaller(platform.address, true);
+																});
+														});
+												});
+											})
+									});
+							});
+					});
+			});
+	});
 };
