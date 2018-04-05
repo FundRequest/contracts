@@ -87,7 +87,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     }
 
     function validClaim(bytes32 platform, string platformId, string solver, address solverAddress, bytes32 r, bytes32 s, uint8 v) internal view returns (bool) {
-        var h = sha3(createClaimMsg(platform, platformId, solver, solverAddress));
+        var h = keccak256(createClaimMsg(platform, platformId, solver, solverAddress));
         address signerAddress = ecrecover(h, v, r, s);
         return claimSignerAddress == signerAddress;
     }

@@ -2,6 +2,7 @@ pragma solidity 0.4.21;
 
 import "./Precondition.sol";
 
+
 contract TokenWhitelistPrecondition is Precondition {
 
     event Allowed(address indexed token, bool allowed);
@@ -13,12 +14,11 @@ contract TokenWhitelistPrecondition is Precondition {
     //token => _allowed
     mapping(address => bool) defaultWhitelist;
 
-    function TokenWhitelistPrecondition(string _name, uint _version, bool _active) public
-    Precondition(_name, _version, _active) {
-
+    function TokenWhitelistPrecondition(string _name, uint _version, bool _active) public Precondition(_name, _version, _active) {
+        //constructor
     }
 
-    function isValid(bytes32 _platform, string _platformId, address _token, uint256 _value, address _funder) public view returns (bool valid){
+    function isValid(bytes32 _platform, string _platformId, address _token, uint256 _value, address _funder) public view returns (bool valid) {
         return !active || (defaultWhitelist[_token] == true || tokenWhitelist[_platform][_platformId][_token] == true);
     }
 

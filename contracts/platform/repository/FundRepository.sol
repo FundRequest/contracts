@@ -1,7 +1,7 @@
 pragma solidity 0.4.21;
 
 
-import '../../ownership/Owned.sol';
+import "../../ownership/Owned.sol";
 import "../../math/SafeMath.sol";
 
 
@@ -22,25 +22,25 @@ contract FundRepository is Owned {
     uint256 public requestsFunded;
 
     //funder => _hasFunded
-    mapping (address => bool) funders;
+    mapping(address => bool) funders;
 
     //token => _totalBalance
-    mapping (address => uint256) public totalBalance;
+    mapping(address => uint256) public totalBalance;
 
     //platform -> platformId => _funding
-    mapping (bytes32 => mapping (string => Funding)) funds;
+    mapping(bytes32 => mapping(string => Funding)) funds;
 
     mapping(address => bool) public callers;
 
     struct Funding {
         address[] funders; //funders that funded tokens
         address[] tokens; //tokens that were funded
-        mapping (address => TokenFunding) tokenFunding;
+        mapping(address => TokenFunding) tokenFunding;
         mapping(address => UserFunding) userFunding;
     }
 
     struct TokenFunding {
-        mapping (address => uint256) balance;
+        mapping(address => uint256) balance;
         uint256 totalTokenBalance;
     }
 
@@ -75,7 +75,7 @@ contract FundRepository is Owned {
             requestsFunded = requestsFunded.add(1);
         }
 
-        if(funds[_platform][_platformId].tokenFunding[_token].totalTokenBalance <= 0) {
+        if (funds[_platform][_platformId].tokenFunding[_token].totalTokenBalance <= 0) {
             funds[_platform][_platformId].tokens.push(_token);
         }
 
@@ -114,19 +114,19 @@ contract FundRepository is Owned {
         );
     }
 
-    function getFundedTokenCount(bytes32 _platform, string _platformId) public view returns (uint256){
+    function getFundedTokenCount(bytes32 _platform, string _platformId) public view returns (uint256) {
         return funds[_platform][_platformId].tokens.length;
     }
 
-    function getFundedTokensByIndex(bytes32 _platform, string _platformId, uint _index) public view returns (address){
+    function getFundedTokensByIndex(bytes32 _platform, string _platformId, uint _index) public view returns (address) {
         return funds[_platform][_platformId].tokens[_index];
     }
 
-    function getFunderCount(bytes32 _platform, string _platformId) public view returns (uint){
+    function getFunderCount(bytes32 _platform, string _platformId) public view returns (uint) {
         return funds[_platform][_platformId].funders.length;
     }
 
-    function amountFunded(bytes32 _platform, string _platformId, address _funder, address _token) public view returns (uint256){
+    function amountFunded(bytes32 _platform, string _platformId, address _funder, address _token) public view returns (uint256) {
         return funds[_platform][_platformId].userFunding[_funder].tokenBalances[_token];
     }
 
@@ -139,7 +139,7 @@ contract FundRepository is Owned {
         callers[_caller] = allowed;
     }
 
-    function () {
+    function() public {
         // dont receive ether via fallback
     }
 }

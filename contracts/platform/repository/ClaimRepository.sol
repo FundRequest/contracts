@@ -1,7 +1,8 @@
 pragma solidity 0.4.21;
 
-import '../../ownership/Owned.sol';
+import "../../ownership/Owned.sol";
 import "../../math/SafeMath.sol";
+
 
 contract ClaimRepository is Owned {
     using SafeMath for uint256;
@@ -28,7 +29,7 @@ contract ClaimRepository is Owned {
         mapping(address => uint256) amountPerTokens;
     }
 
-    function ClaimRepository() {
+    function ClaimRepository() public {
         //constructor
     }
 
@@ -52,7 +53,7 @@ contract ClaimRepository is Owned {
         callers[_caller] = allowed;
     }
 
-    function () {
+    function() public {
         // dont receive ether via fallback
     }
 }
