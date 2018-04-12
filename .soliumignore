@@ -1,1 +1,5 @@
 node_modules
+contracts/Migrations.sol
+contracts/utils/strings.sol
+contracts/token/MiniMeToken.sol
+contracts/factory/MiniMeTokenFactory.sol
