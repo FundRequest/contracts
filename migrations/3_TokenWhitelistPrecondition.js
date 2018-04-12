@@ -3,7 +3,7 @@ const Platform = artifacts.require("./platform/FundRequestContract.sol");
 
 module.exports = async function (deployer) {
 
-	return deployer.deploy(TokenWhiteListPrecondition, 'token-whitelist', 1, true)
+	return deployer.deploy(TokenWhiteListPrecondition, 'token-whitelist', 2, true)
 		.then(function () {
 			return Platform.deployed()
 				.then(function (_platform) {

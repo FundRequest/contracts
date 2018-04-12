@@ -3,9 +3,14 @@ const FND = artifacts.require('./token/FundRequestToken.sol');
 const FRC_FUND_REPO = artifacts.require('./token/repository/FundRepository.sol');
 const FRC_CLAIM_REPO = artifacts.require('./token/repository/ClaimRepository.sol');
 const TokenFactory = artifacts.require('./factory/MiniMeTokenFactory.sol');
-const expect = require('chai').expect;
+
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
 contract('FundRequestContract', function (accounts) {
+
+	const expect = chai.expect;
+	chai.use(chaiAsPromised);
 
 	let frc;
 	let fnd;
@@ -14,7 +19,7 @@ contract('FundRequestContract', function (accounts) {
 	let tokenFactory;
 	const owner = accounts[0];
 
-	let createToken = async function () {
+	let createToken = async () => {
 		tokenFactory = await TokenFactory.new();
 		fnd = await FND.new(tokenFactory.address, 0x0, 0, "FundRequest", 18, "FND", true);
 		await fnd.changeController(owner);
@@ -33,7 +38,7 @@ contract('FundRequestContract', function (accounts) {
 		await frc.setClaimSignerAddress('0xc31eb6e317054a79bb5e442d686cb9b225670c1d');
 	});
 
-	it('should be possible to claim a funded request', async function () {
+	it('should be possible to claim a funded request', async () => {
 		let fundData = {
 			platform: 'GITHUB',
 			platformId: '38',
@@ -69,7 +74,8 @@ contract('FundRequestContract', function (accounts) {
 	});
 
 	let expectTokenBalance = async function (address, amount) {
-		let bal = await fnd.balanceOf.call(address);
-		expect(bal.toNumber()).to.equal(amount);
+		expect(
+			(await fnd.balanceOf.call(address)).toNumber()
+		).to.equal(amount);
 	};
 });
