@@ -2,10 +2,15 @@
   "name": "fundrequest-contracts",
   "version": "2.0.0",
   "description": "FundRequest Contracts",
+  "directories": {
+    "test": "test"
+  },
   "scripts": {
-    "test": "truffle test",
-    "coverage": "solidity-coverage",
-    "build-contracts": "sol-merger './contracts/**/*.sol' ./build_merged"
+    "test": "npx truffle test",
+    "coverage": "npx solidity-coverage",
+    "build-contracts": "npx sol-merger './contracts/**/*.sol' ./build_merged",
+    "migrate": "npx truffle migrate",
+    "lint": "npx solium -d contracts/"
   },
   "author": "FundRequest",
   "license": "MIT",
@@ -18,12 +23,15 @@
     "truffle-hdwallet-provider": "0.0.3"
   },
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-register": "^6.26.0",
     "chai": "^4.1.2",
-    "dotenv": "^5.0.0",
     "ethereumjs-util": "^5.1.4",
     "ethereumjs-wallet": "^0.6.0",
     "ethjs-signer": "^0.1.1",
     "truffle": "^4.1.5",
-    "web3": "^0.20.6"
+    "web3": "^0.20.6",
+    "dotenv": "^5.0.1"
   }
 }
