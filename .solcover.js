@@ -3,6 +3,10 @@
 module.exports = {
 	skipFiles: [
 		'mocks',
-		'truffle/Migrations.sol',
+		'Migrations.sol',
+		'Migrations.sol',
+		'utils/strings.sol',
+		'token/MiniMeToken.sol',
+		'factory/MiniMeTokenFactory.sol'
 	]
 };
