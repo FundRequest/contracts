@@ -94,7 +94,7 @@ contract FundRequestTokenGeneration is Pausable, TokenController {
         totalCollected = updatedWeiRaised;
         deposits[beneficiary] = deposits[beneficiary].add(msg.value);
         distributeTokens(beneficiary, tokensInWei);
-        Paid(beneficiary, weiAmount, tokensInWei, personalCapActive);
+        emit Paid(beneficiary, weiAmount, tokensInWei, personalCapActive);
         forwardFunds();
         return;
     }
@@ -156,8 +156,7 @@ contract FundRequestTokenGeneration is Pausable, TokenController {
     function personalCapNotReached(address _beneficiary) internal view returns (bool) {
         if (personalCapActive) {
             return deposits[_beneficiary].add(msg.value) <= personalCap;
-        }
-        else {
+        } else {
             return true;
         }
     }
@@ -174,7 +173,6 @@ contract FundRequestTokenGeneration is Pausable, TokenController {
     function setFounderWallet(address _founderWallet) public onlyOwner {
         founderWallet = _founderWallet;
     }
-
 
     function setPersonalCap(uint256 _capInWei) public onlyOwner {
         personalCap = _capInWei;
