@@ -11,12 +11,15 @@ contract TokenWhitelistPrecondition is Precondition {
     event Allowed(address indexed token, bool allowed);
     event Allowed(address indexed token, bool allowed, bytes32 platform, string platformId);
 
-
     //platform -> platformId -> token => _allowed
     mapping(bytes32 => mapping(string => mapping(address => bool))) tokenWhitelist;
 
     //token => _allowed
     mapping(address => bool) defaultWhitelist;
+
+    //all tokens that either got allowed or disallowed
+    address[] public tokens;
+    mapping(address => bool) existingToken;
 
     function TokenWhitelistPrecondition(string _name, uint _version, bool _active) public Precondition(_name, _version, _active) {
         //constructor
@@ -28,11 +31,17 @@ contract TokenWhitelistPrecondition is Precondition {
 
     function allowDefaultToken(address _token, bool _allowed) public onlyOwner {
         defaultWhitelist[_token] = _allowed;
+        if (!existingToken[_token]) {
+            tokens.push(_token);
+        }
         emit Allowed(_token, _allowed);
     }
 
     function allow(bytes32 _platform, string _platformId, address _token, bool _allowed) public onlyOwner {
         tokenWhitelist[_platform][_platformId][_token] = _allowed;
+        if (!existingToken[_token]) {
+            tokens.push(_token);
+        }
         emit Allowed(_token, _allowed, _platform, _platformId);
     }
 
@@ -40,5 +49,9 @@ contract TokenWhitelistPrecondition is Precondition {
         var sliced = string(_platformId).toSlice();
         var platform = sliced.split("|FR|".toSlice());
         return platform.toString();
+    }
+
+    function amountOfTokens() public view returns (uint) {
+        return tokens.length;
     }
 }

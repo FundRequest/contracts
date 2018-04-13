@@ -76,4 +76,11 @@ contract('FundRequestContract', function (accounts) {
 			tokenWhitelistPrecondition.isValid(platform, platformId, token, 1, funder)
 		).to.eventually.be.false;
 	});
+
+	it('it should return values of all tokens', async () => {
+		let platform = web3.fromAscii('GITHUB');
+		await tokenWhitelistPrecondition.allow(platform, 'organization2', token, false);
+		let newVar = (await tokenWhitelistPrecondition.amountOfTokens()).toNumber();
+		expect(newVar).to.equal(1);
+	});
 });
