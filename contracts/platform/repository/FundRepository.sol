@@ -1,8 +1,7 @@
 pragma solidity 0.4.21;
 
-
-import "../../ownership/Owned.sol";
 import "../../math/SafeMath.sol";
+import "../../control/Callable.sol";
 
 
 /*
@@ -10,7 +9,7 @@ import "../../math/SafeMath.sol";
  * Davy Van Roy
  * Quinten De Swaef
  */
-contract FundRepository is Owned {
+contract FundRepository is Callable {
 
     using SafeMath for uint256;
 
@@ -30,8 +29,6 @@ contract FundRepository is Owned {
     //platform -> platformId => _funding
     mapping(bytes32 => mapping(string => Funding)) funds;
 
-    mapping(address => bool) public callers;
-
     struct Funding {
         address[] funders; //funders that funded tokens
         address[] tokens; //tokens that were funded
@@ -47,12 +44,6 @@ contract FundRepository is Owned {
     struct UserFunding {
         mapping(address => uint256) tokenBalances;
         bool funded;
-    }
-
-    //modifiers
-    modifier onlyCaller {
-        require(callers[msg.sender]);
-        _;
     }
 
     function FundRepository() public {
@@ -132,11 +123,6 @@ contract FundRepository is Owned {
 
     function balance(bytes32 _platform, string _platformId, address _token) view public returns (uint256) {
         return funds[_platform][_platformId].tokenFunding[_token].totalTokenBalance;
-    }
-
-    //management of the repositories
-    function updateCaller(address _caller, bool allowed) public onlyOwner {
-        callers[_caller] = allowed;
     }
 
     function() public {

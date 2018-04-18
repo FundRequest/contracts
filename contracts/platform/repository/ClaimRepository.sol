@@ -2,25 +2,16 @@ pragma solidity 0.4.21;
 
 import "../../ownership/Owned.sol";
 import "../../math/SafeMath.sol";
+import "../../control/Callable.sol";
 
 
-contract ClaimRepository is Owned {
+contract ClaimRepository is Callable {
     using SafeMath for uint256;
 
     //platform -> platformId => _claim
     mapping(bytes32 => mapping(string => Claim)) claims;
 
-    //sender => _allowed
-    mapping(address => bool) public callers;
-
     uint256 public totalClaims;
-
-
-    //modifiers
-    modifier onlyCaller {
-        require(callers[msg.sender]);
-        _;
-    }
 
     struct Claim {
         address solverAddress;
@@ -46,11 +37,6 @@ contract ClaimRepository is Owned {
             totalClaims = totalClaims.add(1);
         }
         return true;
-    }
-
-    //management of the repositories
-    function updateCaller(address _caller, bool allowed) public onlyOwner {
-        callers[_caller] = allowed;
     }
 
     function() public {
