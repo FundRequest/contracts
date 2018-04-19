@@ -1,8 +1,6 @@
 ### FundRequest Contracts<img align="right" src="https://fundrequest.io/assets/img/logo.png" height="30px" />
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/FundRequest/contracts.svg)](https://greenkeeper.io/)
-
-[![Build Status](https://travis-ci.org/FundRequest/contracts.svg?branch=master)](https://travis-ci.org/FundRequest/contracts)
+[![Greenkeeper badge](https://badges.greenkeeper.io/FundRequest/contracts.svg)](https://greenkeeper.io/) [![Build Status](https://travis-ci.org/FundRequest/contracts.svg?branch=master)](https://travis-ci.org/FundRequest/contracts)
 
 Contracts for FundRequest (token, crowdsale and platform contracts)
 
