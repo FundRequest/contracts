@@ -18,9 +18,6 @@ contract FundRepository is Callable {
 
     uint256 public totalNumberOfFunders;
 
-    //token => _totalFunded
-    mapping(address => uint256) public totalFunded;
-
     uint256 public requestsFunded;
 
     //funder => _hasFunded
@@ -81,7 +78,8 @@ contract FundRepository is Callable {
         funds[_platform][_platformId].userFunding[_from].funded = true;
 
         db.setUint(keccak256("total_balance", _token), totalBalance(_token).add(_value));
-        totalFunded[_token] = totalFunded[_token].add(_value);
+
+        db.setUint(keccak256("total_funded", _token), totalFunded(_token).add(_value));
     }
 
     function claimToken(bytes32 platform, string platformId, address _token) public onlyCaller returns (uint256) {
@@ -108,6 +106,10 @@ contract FundRepository is Callable {
         balance(_platform, _platformId, _token),
         amountFunded(_platform, _platformId, _funder, _token)
         );
+    }
+
+    function totalFunded(address _token) public view returns (uint totalFunded) {
+        return db.getUint(keccak256("total_funded", _token));
     }
 
     function getFundedTokenCount(bytes32 _platform, string _platformId) public view returns (uint256) {
