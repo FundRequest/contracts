@@ -78,16 +78,16 @@ contract FundRepository is Callable {
         db.setUint(keccak256("funds.amountFundedByUser", _platform, _platformId, _from, _token), amountFunded(_platform, _platformId, _from, _token).add(_value));
         funds[_platform][_platformId].userFunding[_from].funded = true;
 
-        db.setUint(keccak256("total_balance", _token), totalBalance(_token).add(_value));
+        db.setUint(keccak256("funds.total_balance", _token), totalBalance(_token).add(_value));
 
-        db.setUint(keccak256("total_funded", _token), totalFunded(_token).add(_value));
+        db.setUint(keccak256("funds.total_funded", _token), totalFunded(_token).add(_value));
     }
 
     function claimToken(bytes32 platform, string platformId, address _token) public onlyCaller returns (uint256) {
         uint256 totalTokenBalance = funds[platform][platformId].tokenFunding[_token].totalTokenBalance;
         delete funds[platform][platformId].tokenFunding[_token];
 
-        db.setUint(keccak256("total_balance", _token), totalBalance(_token).sub(totalTokenBalance));
+        db.setUint(keccak256("funds.total_balance", _token), totalBalance(_token).sub(totalTokenBalance));
         return totalTokenBalance;
     }
 
@@ -97,7 +97,7 @@ contract FundRepository is Callable {
     }
 
     function totalBalance(address _token) public view returns (uint balance) {
-        return db.getUint(keccak256("total_balance", _token));
+        return db.getUint(keccak256("funds.total_balance", _token));
     }
 
     //constants
@@ -110,7 +110,7 @@ contract FundRepository is Callable {
     }
 
     function totalFunded(address _token) public view returns (uint totalFunded) {
-        return db.getUint(keccak256("total_funded", _token));
+        return db.getUint(keccak256("funds.total_funded", _token));
     }
 
     function getFundedTokenCount(bytes32 _platform, string _platformId) public view returns (uint256) {
