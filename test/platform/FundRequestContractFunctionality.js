@@ -34,6 +34,7 @@ contract('FundRequestContract', function (accounts) {
 		claimRepository = await FRC_CLAIM_REPO.new(db.address);
 
 		await db.updateCaller(claimRepository.address, true);
+		await db.updateCaller(fundRepository.address, true);
 
 		frc = await FRC.new(fundRepository.address, claimRepository.address);
 

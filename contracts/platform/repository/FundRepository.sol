@@ -26,9 +26,6 @@ contract FundRepository is Callable {
     //funder => _hasFunded
     mapping(address => bool) funders;
 
-    //token => _totalBalance
-    mapping(address => uint256) public totalBalance;
-
     //platform -> platformId => _funding
     mapping(bytes32 => mapping(string => Funding)) funds;
 
@@ -83,20 +80,25 @@ contract FundRepository is Callable {
         funds[_platform][_platformId].userFunding[_from].tokenBalances[_token] = funds[_platform][_platformId].userFunding[_from].tokenBalances[_token].add(_value);
         funds[_platform][_platformId].userFunding[_from].funded = true;
 
-        totalBalance[_token] = totalBalance[_token].add(_value);
+        db.setUint(keccak256("total_balance", _token), totalBalance(_token).add(_value));
         totalFunded[_token] = totalFunded[_token].add(_value);
     }
 
     function claimToken(bytes32 platform, string platformId, address _token) public onlyCaller returns (uint256) {
         uint256 totalTokenBalance = funds[platform][platformId].tokenFunding[_token].totalTokenBalance;
         delete funds[platform][platformId].tokenFunding[_token];
-        totalBalance[_token] = totalBalance[_token].sub(totalTokenBalance);
+
+        db.setUint(keccak256("total_balance", _token), totalBalance(_token).sub(totalTokenBalance));
         return totalTokenBalance;
     }
 
     function finishResolveFund(bytes32 platform, string platformId) public onlyCaller returns (bool) {
         delete (funds[platform][platformId]);
         return true;
+    }
+
+    function totalBalance(address _token) public view returns (uint balance) {
+        return db.getUint(keccak256("total_balance", _token));
     }
 
     //constants

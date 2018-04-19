@@ -34,6 +34,7 @@ contract('ReceiveApprovalFunctionality', function (accounts) {
     claimRepository = await FRC_CLAIM_REPO.new(db.address);
 
     await db.updateCaller(claimRepository.address, true);
+    await db.updateCaller(fundRepository.address, true);
 
     frc = await FRC.new(fundRepository.address, claimRepository.address);
     await fundRepository.updateCaller(frc.address, true, {from: owner});
@@ -51,7 +52,7 @@ contract('ReceiveApprovalFunctionality', function (accounts) {
     expect(bal.toNumber()).to.equal(amount);
     let fundInfo = await fundRepository.getFundInfo.call(web3.fromAscii(platform), platformId, owner, fnd.address);
     expect(fundInfo[0].toNumber()).to.equal(1);
-    expect(fundInfo[1].toNumber()).to.equal(amount);
+    expect(fundInfo[1].toNumber()).to.equal(amount);https://github.com/ethereum/EIPs/pull/681
     expect(fundInfo[2].toNumber()).to.equal(amount);
   });
 
