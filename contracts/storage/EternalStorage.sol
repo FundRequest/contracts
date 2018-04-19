@@ -1,7 +1,7 @@
 pragma solidity 0.4.21;
 
-
 import "../control/Callable.sol";
+
 
 contract EternalStorage is Callable {
 

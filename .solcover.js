@@ -7,6 +7,6 @@ module.exports = {
 		'Migrations.sol',
 		'utils/strings.sol',
 		'token/MiniMeToken.sol',
-		'factory/MiniMeTokenFactory.sol'
+		'factory/MiniMeTokenFactory.sol',
 	]
 };
