@@ -30,17 +30,11 @@ contract FundRepository is Callable {
         address[] funders; //funders that funded tokens
         address[] tokens; //tokens that were funded
         mapping(address => TokenFunding) tokenFunding;
-        mapping(address => UserFunding) userFunding;
     }
 
     struct TokenFunding {
         mapping(address => uint256) balance;
         uint256 totalTokenBalance;
-    }
-
-    struct UserFunding {
-        mapping(address => uint256) tokenBalances;
-        bool funded;
     }
 
     function FundRepository(address _eternalStorage) public {
