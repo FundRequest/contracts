@@ -2,6 +2,7 @@ pragma solidity 0.4.21;
 
 import "../../math/SafeMath.sol";
 import "../../control/Callable.sol";
+import "../../storage/EternalStorage.sol";
 
 
 /*
@@ -12,6 +13,8 @@ import "../../control/Callable.sol";
 contract FundRepository is Callable {
 
     using SafeMath for uint256;
+
+    EternalStorage public db;
 
     uint256 public totalNumberOfFunders;
 
@@ -46,8 +49,8 @@ contract FundRepository is Callable {
         bool funded;
     }
 
-    function FundRepository() public {
-        //constructor
+    function FundRepository(address _eternalStorage) public {
+        db = EternalStorage(_eternalStorage);
     }
 
     function updateFunders(address _from, bytes32 _platform, string _platformId) public onlyCaller {

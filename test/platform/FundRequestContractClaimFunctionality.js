@@ -39,7 +39,7 @@ contract('FundRequestContract', function (accounts) {
 
     db = await EternalStorage.new();
 
-    fundRepository = await FRC_FUND_REPO.new();
+    fundRepository = await FRC_FUND_REPO.new(db.address);
     claimRepository = await FRC_CLAIM_REPO.new(db.address);
 
     await db.updateCaller(claimRepository.address, true);

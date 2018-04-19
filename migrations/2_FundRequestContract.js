@@ -29,7 +29,7 @@ module.exports = async function (deployer) {
               .then(function (db) {
                 return deployer.deploy(ClaimRepository, db.address)
                   .then(function () {
-                    return deployer.deploy(FundRepository)
+                    return deployer.deploy(FundRepository, db.address)
                       .then(function () {
                         return ClaimRepository.deployed()
                           .then(function (claim) {
