@@ -59,27 +59,34 @@ contract FundRepository is Callable {
     }
 
     function updateBalances(address _from, bytes32 _platform, string _platformId, address _token, uint256 _value) public onlyCaller {
+
+        //if there are no tokens available for this platformId
         if (funds[_platform][_platformId].tokens.length <= 0) {
+            //add to the amount of requests that are funded
             requestsFunded = requestsFunded.add(1);
         }
 
         if (balance(_platform, _platformId, _token) <= 0) {
+            //add to the list of tokens for this platformId
             funds[_platform][_platformId].tokens.push(_token);
         }
 
         //add to the current balance of the user for this token
         funds[_platform][_platformId].tokenFunding[_token].balance[_from] = funds[_platform][_platformId].tokenFunding[_token].balance[_from].add(_value);
 
-        //add to the overall balance of this token
+        //add to the balance of this platformId for this token
         db.setUint(keccak256("funds.tokenBalance", _platform, _platformId, _token), balance(_platform, _platformId, _token).add(_value));
 
         //add to the balance the user has funded for the request
         db.setUint(keccak256("funds.amountFundedByUser", _platform, _platformId, _from, _token), amountFunded(_platform, _platformId, _from, _token).add(_value));
 
+        //add the fact that the user has now funded this platformId
         db.setBool(keccak256("funds.userHasFunded", _platform, _platformId, _from), true);
 
+        //add to the total balance of a token //TODO: check if we actually need this
         db.setUint(keccak256("funds.total_balance", _token), totalBalance(_token).add(_value));
 
+        //add to the total_funded statistic //TODO: check if we actually need this
         db.setUint(keccak256("funds.total_funded", _token), totalFunded(_token).add(_value));
     }
 
