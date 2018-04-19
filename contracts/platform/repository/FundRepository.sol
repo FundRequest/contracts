@@ -74,7 +74,8 @@ contract FundRepository is Callable {
         funds[_platform][_platformId].tokenFunding[_token].totalTokenBalance = funds[_platform][_platformId].tokenFunding[_token].totalTokenBalance.add(_value);
 
         //add to the balance the user has funded for the request
-        funds[_platform][_platformId].userFunding[_from].tokenBalances[_token] = funds[_platform][_platformId].userFunding[_from].tokenBalances[_token].add(_value);
+
+        db.setUint(keccak256("funds.amountFundedByUser", _platform, _platformId, _from, _token), amountFunded(_platform, _platformId, _from, _token).add(_value));
         funds[_platform][_platformId].userFunding[_from].funded = true;
 
         db.setUint(keccak256("total_balance", _token), totalBalance(_token).add(_value));
@@ -125,7 +126,7 @@ contract FundRepository is Callable {
     }
 
     function amountFunded(bytes32 _platform, string _platformId, address _funder, address _token) public view returns (uint256) {
-        return funds[_platform][_platformId].userFunding[_funder].tokenBalances[_token];
+        return db.getUint(keccak256("funds.amountFundedByUser", _platform, _platformId, _funder, _token));
     }
 
     function balance(bytes32 _platform, string _platformId, address _token) view public returns (uint256) {
