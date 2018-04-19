@@ -31,6 +31,7 @@
     "solium": "^1.1.6",
     "truffle": "^4.1.6",
     "truffle-hdwallet-provider": "0.0.3",
-    "web3": "^0.20.6"
+    "web3": "^0.20.6",
+    "solc": "0.4.22"
   }
 }

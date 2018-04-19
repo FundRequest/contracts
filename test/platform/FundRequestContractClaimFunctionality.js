@@ -3,79 +3,120 @@ const FND = artifacts.require('./token/FundRequestToken.sol');
 const FRC_FUND_REPO = artifacts.require('./token/repository/FundRepository.sol');
 const FRC_CLAIM_REPO = artifacts.require('./token/repository/ClaimRepository.sol');
 const TokenFactory = artifacts.require('./factory/MiniMeTokenFactory.sol');
+const EternalStorage = artifacts.require('./storage/EternalStorage.sol');
 
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 contract('FundRequestContract', function (accounts) {
 
-	const expect = chai.expect;
-	chai.use(chaiAsPromised);
+  const expect = chai.expect;
+  chai.use(chaiAsPromised);
 
-	let frc;
-	let fnd;
-	let fundRepository;
-	let claimRepository;
-	let tokenFactory;
-	const owner = accounts[0];
+  let frc;
+  let fnd;
+  let fundRepository;
+  let claimRepository;
+  let tokenFactory;
+  let db;
 
-	let createToken = async () => {
-		tokenFactory = await TokenFactory.new();
-		fnd = await FND.new(tokenFactory.address, 0x0, 0, "FundRequest", 18, "FND", true);
-		await fnd.changeController(owner);
-		await fnd.generateTokens(owner, 666000000000000000000);
-	};
+  let fundData;
 
-	beforeEach(async function () {
-		await createToken();
 
-		fundRepository = await FRC_FUND_REPO.new();
-		claimRepository = await FRC_CLAIM_REPO.new();
-		frc = await FRC.new(fundRepository.address, claimRepository.address);
-		await fundRepository.updateCaller(frc.address, true, {from: owner});
-		await claimRepository.updateCaller(frc.address, true, {from: owner});
-		await fnd.approve(frc.address, 10000);
-		await frc.setClaimSignerAddress('0xc31eb6e317054a79bb5e442d686cb9b225670c1d');
-	});
+  const solverAddress = '0x35d80d4729993a4b288fd1e83bfa16b3533df524';
 
-	it('should be possible to claim a funded request', async () => {
-		let fundData = {
-			platform: 'GITHUB',
-			platformId: '38',
-			value: 1000,
-			token: fnd.address
-		};
-		await frc.fund(web3.fromAscii(fundData.platform), fundData.platformId, fundData.token, fundData.value);
-		let solverAddress = '0x35d80d4729993a4b288fd1e83bfa16b3533df524';
+  const owner = accounts[0];
 
-		await frc.claim(
-			web3.fromAscii(fundData.platform),
-			fundData.platformId,
-			'davyvanroy',
-			solverAddress,
-			'0xdc440aac3d6057083e194dc26750c897790c63282f92dd1d7421b6e401de7178',
-			'0x531fa36ad434e377f72ce5b16399c57f0cb17ecd03cc2e631d3150d301ca0d3a',
-			28);
+  let createToken = async () => {
+    tokenFactory = await TokenFactory.new();
+    fnd = await FND.new(tokenFactory.address, 0x0, 0, "FundRequest", 18, "FND", true);
+    await fnd.changeController(owner);
+    await fnd.generateTokens(owner, 666000000000000000000);
+  };
 
-		await expectTokenBalance(frc.address, 0);
-		await expectTokenBalance(solverAddress, 1000);
+  beforeEach(async function () {
+    await createToken();
 
-		let totalBalance = await fundRepository.totalBalance.call(fnd.address);
-		expect(totalBalance.toNumber()).to.equal(0);
+    db = await EternalStorage.new();
 
-		let totalFunded = await fundRepository.totalFunded.call(fnd.address);
-		expect(totalFunded.toNumber()).to.equal(1000);
+    fundRepository = await FRC_FUND_REPO.new();
+    claimRepository = await FRC_CLAIM_REPO.new(db.address);
 
-		let totalNumberOfFunders = await fundRepository.totalNumberOfFunders.call();
-		expect(totalNumberOfFunders.toNumber()).to.equal(1);
+    await db.updateCaller(claimRepository.address, true);
 
-		let requestsFunded = await fundRepository.requestsFunded.call();
-		expect(requestsFunded.toNumber()).to.equal(1);
-	});
 
-	let expectTokenBalance = async function (address, amount) {
-		expect(
-			(await fnd.balanceOf.call(address)).toNumber()
-		).to.equal(amount);
-	};
+    frc = await FRC.new(fundRepository.address, claimRepository.address);
+    await fundRepository.updateCaller(frc.address, true, {from: owner});
+    await claimRepository.updateCaller(frc.address, true, {from: owner});
+    await fnd.approve(frc.address, 10000);
+    await frc.setClaimSignerAddress('0xc31eb6e317054a79bb5e442d686cb9b225670c1d');
+
+    fundData = {
+      platform: 'GITHUB',
+      platformId: '38',
+      value: 1000,
+      token: fnd.address
+    };
+  });
+
+  it('should correctly update the FundRepository after claiming', async () => {
+    await fund();
+    await claim();
+
+    let totalBalance = await fundRepository.totalBalance.call(fnd.address);
+    expect(totalBalance.toNumber()).to.equal(0);
+
+    let totalFunded = await fundRepository.totalFunded.call(fnd.address);
+    expect(totalFunded.toNumber()).to.equal(1000);
+
+    let totalNumberOfFunders = await fundRepository.totalNumberOfFunders.call();
+    expect(totalNumberOfFunders.toNumber()).to.equal(1);
+
+    let requestsFunded = await fundRepository.requestsFunded.call();
+    expect(requestsFunded.toNumber()).to.equal(1);
+  });
+
+
+  it('should correctly transfer balances', async () => {
+    await fund();
+    await claim();
+
+    await expectTokenBalance(frc.address, 0);
+    await expectTokenBalance(solverAddress, 1000);
+  });
+
+  it('should correctly update claimRepository after updating', async () => {
+    await fund();
+    await claim();
+
+
+    return expect(mapToNumber(claimRepository.getClaimCount())).to.eventually.equal(1);
+  });
+
+
+  const fund = function () {
+    return frc.fund(web3.fromAscii(fundData.platform), fundData.platformId, fundData.token, fundData.value);
+  };
+
+  const claim = async function () {
+
+    await frc.claim(
+      web3.fromAscii(fundData.platform),
+      fundData.platformId,
+      'davyvanroy',
+      solverAddress,
+      '0xdc440aac3d6057083e194dc26750c897790c63282f92dd1d7421b6e401de7178',
+      '0x531fa36ad434e377f72ce5b16399c57f0cb17ecd03cc2e631d3150d301ca0d3a',
+      28);
+  };
+
+  const expectTokenBalance = async function (address, amount) {
+    expect(
+      (await fnd.balanceOf.call(address)).toNumber()
+    ).to.equal(amount);
+  };
+
+  const mapToNumber = function (promise) {
+    return promise.then(x => x.toNumber());
+  };
 });

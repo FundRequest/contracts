@@ -3,6 +3,8 @@ const FND = artifacts.require('./token/FundRequestToken.sol');
 const FRC_FUND_REPO = artifacts.require('./token/repository/FundRepository.sol');
 const FRC_CLAIM_REPO = artifacts.require('./token/repository/ClaimRepository.sol');
 const TokenFactory = artifacts.require('./factory/MiniMeTokenFactory.sol');
+const EternalStorage = artifacts.require('./storage/EternalStorage.sol');
+
 const expect = require('chai').expect;
 
 contract('FundRequestContract', function (accounts) {
@@ -12,6 +14,8 @@ contract('FundRequestContract', function (accounts) {
 	let fundRepository;
 	let claimRepository;
 	let tokenFactory;
+	let db;
+
 	const owner = accounts[0];
 
 	let createToken = async function () {
@@ -24,8 +28,13 @@ contract('FundRequestContract', function (accounts) {
 	beforeEach(async function () {
 		await createToken();
 
+		db = await EternalStorage.new();
+
 		fundRepository = await FRC_FUND_REPO.new();
-		claimRepository = await FRC_CLAIM_REPO.new();
+		claimRepository = await FRC_CLAIM_REPO.new(db.address);
+
+		await db.updateCaller(claimRepository.address, true);
+
 		frc = await FRC.new(fundRepository.address, claimRepository.address);
 
 		await fundRepository.updateCaller(frc.address, true, {from: owner});

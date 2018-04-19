@@ -46,7 +46,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     }
 
     //entrypoints
-    function fund(bytes32 _platform, string _platformId, address _token, uint256 _value) public returns (bool success) {
+    function fund(bytes32 _platform, string _platformId, address _token, uint256 _value) external returns (bool success) {
         require(doFunding(_platform, _platformId, _token, _value, msg.sender));
         return true;
     }
@@ -87,7 +87,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     }
 
     function validClaim(bytes32 platform, string platformId, string solver, address solverAddress, bytes32 r, bytes32 s, uint8 v) internal view returns (bool) {
-        var h = keccak256(createClaimMsg(platform, platformId, solver, solverAddress));
+        bytes32 h = keccak256(createClaimMsg(platform, platformId, solver, solverAddress));
         address signerAddress = ecrecover(h, v, r, s);
         return claimSignerAddress == signerAddress;
     }
@@ -99,16 +99,12 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
         .strConcat(prependUnderscore(strings.addressToString(solverAddress)));
     }
 
-    function addPrecondition(address _precondition) public onlyOwner {
+    function addPrecondition(address _precondition) external onlyOwner {
         preconditions.push(Precondition(_precondition));
     }
 
-    function removePrecondition(uint _index) public onlyOwner {
+    function removePrecondition(uint _index) external onlyOwner {
         delete preconditions[_index];
-    }
-
-    function prependUnderscore(string str) internal pure returns (string) {
-        return "_".strConcat(str);
     }
 
     function setFundRepository(address _repositoryAddress) public onlyOwner {
@@ -123,7 +119,11 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
         claimSignerAddress = _claimSignerAddress;
     }
 
-    function() public {
+    function prependUnderscore(string str) internal pure returns (string) {
+        return "_".strConcat(str);
+    }
+
+    function() external {
         // dont receive ether via fallback
     }
 }

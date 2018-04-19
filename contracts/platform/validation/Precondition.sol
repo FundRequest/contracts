@@ -15,13 +15,13 @@ contract Precondition is Owned {
         active = _active;
     }
 
-    function setActive(bool _active) public onlyOwner {
+    function setActive(bool _active) external onlyOwner {
         active = _active;
     }
 
-    function isValid(bytes32 _platform, string _platformId, address _token, uint256 _value, address _funder) public view returns (bool valid);
+    function isValid(bytes32 _platform, string _platformId, address _token, uint256 _value, address _funder) external view returns (bool valid);
 
-    function () public {
+    function () external {
         // dont receive ether via fallback
     }
 }
