@@ -5,9 +5,6 @@
 Contracts for FundRequest (token, crowdsale and platform contracts)
 
 
-### Development [![Build Status](https://travis-ci.org/FundRequest/contracts.svg?branch=develop)](https://travis-ci.org/FundRequest/contracts)
-
-
 #### Mainnet
 
 | First Header  | Second Header |
