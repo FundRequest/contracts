@@ -63,7 +63,7 @@ contract FundRepository is Callable {
             requestsFunded = requestsFunded.add(1);
         }
 
-        if (funds[_platform][_platformId].tokenFunding[_token].totalTokenBalance <= 0) {
+        if (balance(_platform, _platformId, _token) <= 0) {
             funds[_platform][_platformId].tokens.push(_token);
         }
 
@@ -71,7 +71,7 @@ contract FundRepository is Callable {
         funds[_platform][_platformId].tokenFunding[_token].balance[_from] = funds[_platform][_platformId].tokenFunding[_token].balance[_from].add(_value);
 
         //add to the overall balance of this token
-        funds[_platform][_platformId].tokenFunding[_token].totalTokenBalance = funds[_platform][_platformId].tokenFunding[_token].totalTokenBalance.add(_value);
+        db.setUint(keccak256("funds.tokenBalance", _platform, _platformId, _token), balance(_platform, _platformId, _token).add(_value));
 
         //add to the balance the user has funded for the request
 
@@ -84,7 +84,7 @@ contract FundRepository is Callable {
     }
 
     function claimToken(bytes32 platform, string platformId, address _token) public onlyCaller returns (uint256) {
-        uint256 totalTokenBalance = funds[platform][platformId].tokenFunding[_token].totalTokenBalance;
+        uint256 totalTokenBalance = balance(platform, platformId, _token);
         delete funds[platform][platformId].tokenFunding[_token];
 
         db.setUint(keccak256("funds.total_balance", _token), totalBalance(_token).sub(totalTokenBalance));
@@ -130,7 +130,7 @@ contract FundRepository is Callable {
     }
 
     function balance(bytes32 _platform, string _platformId, address _token) view public returns (uint256) {
-        return funds[_platform][_platformId].tokenFunding[_token].totalTokenBalance;
+        return db.getUint(keccak256("funds.tokenBalance", _platform, _platformId, _token));
     }
 
     function() public {
