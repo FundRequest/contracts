@@ -48,7 +48,7 @@ contract FundRepository is Callable {
     }
 
     function updateFunders(address _from, bytes32 _platform, string _platformId) public onlyCaller {
-        bool existing = funds[_platform][_platformId].userFunding[_from].funded;
+        bool existing = db.getBool(keccak256("funds.userHasFunded", _platform, _platformId, _from));
         if (!existing) {
             funds[_platform][_platformId].funders.push(_from);
         }
@@ -74,9 +74,9 @@ contract FundRepository is Callable {
         db.setUint(keccak256("funds.tokenBalance", _platform, _platformId, _token), balance(_platform, _platformId, _token).add(_value));
 
         //add to the balance the user has funded for the request
-
         db.setUint(keccak256("funds.amountFundedByUser", _platform, _platformId, _from, _token), amountFunded(_platform, _platformId, _from, _token).add(_value));
-        funds[_platform][_platformId].userFunding[_from].funded = true;
+
+        db.setBool(keccak256("funds.userHasFunded", _platform, _platformId, _from), true);
 
         db.setUint(keccak256("funds.total_balance", _token), totalBalance(_token).add(_value));
 
