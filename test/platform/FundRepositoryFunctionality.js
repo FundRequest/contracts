@@ -131,7 +131,7 @@ contract('FundRepositoryContract', function (accounts) {
     expect(fndBalance).to.equal(fundData.value);
 
     let alternativeTokenBalance = await mapToNumber(fundRepository.balance(toBytes32(fundData.platform), fundData.platformId, alternativeToken.address));
-    expect(fndBalance).to.equal(fundData.value);
+    expect(alternativeTokenBalance).to.equal(fundData.value);
   });
 
   it('should have the correct tokens after funding once', async function () {
