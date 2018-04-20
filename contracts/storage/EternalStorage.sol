@@ -1,11 +1,9 @@
-pragma solidity 0.4.21;
+pragma solidity 0.4.23;
 
 import "../control/Callable.sol";
 
 
 contract EternalStorage is Callable {
-
-    address latestVersion;
 
     mapping(bytes32 => uint) uIntStorage;
     mapping(bytes32 => string) stringStorage;

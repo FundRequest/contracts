@@ -1,6 +1,4 @@
-pragma solidity 0.4.21;
-pragma experimental "v0.5.0";
-pragma experimental "ABIEncoderV2";
+pragma solidity 0.4.23;
 
 import "../../ownership/Owned.sol";
 import "../../math/SafeMath.sol";
@@ -15,7 +13,7 @@ contract ClaimRepository is Callable {
 
     EternalStorage public db;
 
-    function ClaimRepository(address _eternalStorage) public {
+    constructor(address _eternalStorage) public {
         //constructor
         require(_eternalStorage != address(0));
         db = EternalStorage(_eternalStorage);

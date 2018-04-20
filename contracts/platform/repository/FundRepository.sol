@@ -1,4 +1,4 @@
-pragma solidity 0.4.21;
+pragma solidity 0.4.23;
 
 import "../../math/SafeMath.sol";
 import "../../control/Callable.sol";
@@ -37,7 +37,7 @@ contract FundRepository is Callable {
         uint256 totalTokenBalance;
     }
 
-    function FundRepository(address _eternalStorage) public {
+    constructor(address _eternalStorage) public {
         db = EternalStorage(_eternalStorage);
     }
 
@@ -110,7 +110,7 @@ contract FundRepository is Callable {
         );
     }
 
-    function totalFunded(address _token) public view returns (uint totalFunded) {
+    function totalFunded(address _token) public view returns (uint) {
         return db.getUint(keccak256("funds.total_funded", _token));
     }
 

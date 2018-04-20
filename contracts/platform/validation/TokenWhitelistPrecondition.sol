@@ -1,4 +1,4 @@
-pragma solidity 0.4.21;
+pragma solidity 0.4.23;
 
 import "./Precondition.sol";
 import "../../utils/strings.sol";
@@ -21,7 +21,7 @@ contract TokenWhitelistPrecondition is Precondition {
     address[] public tokens;
     mapping(address => bool) existingToken;
 
-    function TokenWhitelistPrecondition(string _name, uint _version, bool _active) public Precondition(_name, _version, _active) {
+    constructor(string _name, uint _version, bool _active) public Precondition(_name, _version, _active) {
         //constructor
     }
 

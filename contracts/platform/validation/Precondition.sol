@@ -1,4 +1,4 @@
-pragma solidity 0.4.21;
+pragma solidity 0.4.23;
 
 import "../../ownership/Owned.sol";
 
@@ -9,7 +9,7 @@ contract Precondition is Owned {
     uint public version;
     bool public active = false;
 
-    function Precondition(string _name, uint _version, bool _active) public {
+    constructor(string _name, uint _version, bool _active) public {
         name = _name;
         version = _version;
         active = _active;

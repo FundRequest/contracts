@@ -1,4 +1,4 @@
-pragma solidity 0.4.21;
+pragma solidity 0.4.23;
 
 
 import "../math/SafeMath.sol";
@@ -40,7 +40,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
         _;
     }
 
-    function FundRequestContract(address _fundRepository, address _claimRepository) public {
+    constructor(address _fundRepository, address _claimRepository) public {
         setFundRepository(_fundRepository);
         setClaimRepository(_claimRepository);
     }
