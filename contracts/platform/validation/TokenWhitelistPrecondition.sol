@@ -45,7 +45,7 @@ contract TokenWhitelistPrecondition is Precondition {
         emit Allowed(_token, _allowed, _platform, _platformId);
     }
 
-    function extractRepository(string _platformId) view internal returns (string repository) {
+    function extractRepository(string _platformId) pure internal returns (string repository) {
         var sliced = string(_platformId).toSlice();
         var platform = sliced.split("|FR|".toSlice());
         return platform.toString();
