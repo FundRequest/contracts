@@ -42,7 +42,7 @@ contract FundRepository is Callable {
     }
 
     function updateFunders(address _from, bytes32 _platform, string _platformId) public onlyCaller {
-        bool existing = db.getBool(keccak256("funds.userHasFunded", _platform, _platformId, _from));
+        bool existing = db.getBool(keccak256(abi.encodePacked("funds.userHasFunded", _platform, _platformId, _from)));
         if (!existing) {
             funds[_platform][_platformId].funders.push(_from);
         }
@@ -75,30 +75,18 @@ contract FundRepository is Callable {
         db.setUint(keccak256("funds.amountFundedByUser", _platform, _platformId, _from, _token), amountFunded(_platform, _platformId, _from, _token).add(_value));
 
         //add the fact that the user has now funded this platformId
-        db.setBool(keccak256("funds.userHasFunded", _platform, _platformId, _from), true);
-
-        //add to the total balance of a token //TODO: check if we actually need this
-        db.setUint(keccak256("funds.total_balance", _token), totalBalance(_token).add(_value));
-
-        //add to the total_funded statistic //TODO: check if we actually need this
-        db.setUint(keccak256("funds.total_funded", _token), totalFunded(_token).add(_value));
+        db.setBool(keccak256(abi.encodePacked("funds.userHasFunded", _platform, _platformId, _from)), true);
     }
 
     function claimToken(bytes32 platform, string platformId, address _token) public onlyCaller returns (uint256) {
         uint256 totalTokenBalance = balance(platform, platformId, _token);
         delete funds[platform][platformId].tokenFunding[_token];
-
-        db.setUint(keccak256("funds.total_balance", _token), totalBalance(_token).sub(totalTokenBalance));
         return totalTokenBalance;
     }
 
     function finishResolveFund(bytes32 platform, string platformId) public onlyCaller returns (bool) {
         delete (funds[platform][platformId]);
         return true;
-    }
-
-    function totalBalance(address _token) public view returns (uint balance) {
-        return db.getUint(keccak256("funds.total_balance", _token));
     }
 
     //constants
@@ -108,10 +96,6 @@ contract FundRepository is Callable {
         balance(_platform, _platformId, _token),
         amountFunded(_platform, _platformId, _funder, _token)
         );
-    }
-
-    function totalFunded(address _token) public view returns (uint) {
-        return db.getUint(keccak256("funds.total_funded", _token));
     }
 
     function getFundedTokenCount(bytes32 _platform, string _platformId) public view returns (uint256) {

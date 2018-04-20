@@ -90,18 +90,6 @@ contract('FundRequestContract', function (accounts) {
 		}
 	});
 
-	it('should update totalBalance when funding', async function () {
-		let data = await fundDefaultRequest();
-		let totalBalance = await fundRepository.totalBalance(fnd.address);
-		expect(totalBalance.toNumber()).to.equal(data.value);
-	});
-
-	it('should update totalFunded when funding', async function () {
-		let data = await fundDefaultRequest();
-		let totalFunded = await fundRepository.totalFunded.call(fnd.address);
-		expect(totalFunded.toNumber()).to.equal(data.value);
-	});
-
 	it('should update totalNumberOfFunders when funding', async function () {
 		await fundDefaultRequest();
 		let totalNumberOfFunders = await fundRepository.totalNumberOfFunders.call();

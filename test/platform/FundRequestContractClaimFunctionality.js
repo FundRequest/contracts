@@ -64,12 +64,6 @@ contract('FundRequestContract', function (accounts) {
     await fund();
     await claim();
 
-    let totalBalance = await fundRepository.totalBalance.call(fnd.address);
-    expect(totalBalance.toNumber()).to.equal(0);
-
-    let totalFunded = await fundRepository.totalFunded.call(fnd.address);
-    expect(totalFunded.toNumber()).to.equal(1000);
-
     let totalNumberOfFunders = await fundRepository.totalNumberOfFunders.call();
     expect(totalNumberOfFunders.toNumber()).to.equal(1);
 
