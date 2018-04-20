@@ -63,13 +63,14 @@ contract FundRepository is Callable {
     }
 
     function claimToken(bytes32 platform, string platformId, address _token) public onlyCaller returns (uint256) {
+        require(!issueResolved(platform, platformId), "Can't claim token, issue is already resolved.");
         uint256 totalTokenBalance = balance(platform, platformId, _token);
         db.deleteUint(keccak256(abi.encodePacked("funds.tokenBalance", platform, platformId, _token)));
         return totalTokenBalance;
     }
 
     function finishResolveFund(bytes32 platform, string platformId) public onlyCaller returns (bool) {
-        delete (funds[platform][platformId]);
+        db.setBool(keccak256(abi.encodePacked("funds.issueResolved", platform, platformId)), true);
         return true;
     }
 
@@ -82,6 +83,10 @@ contract FundRepository is Callable {
         );
     }
 
+    function issueResolved(bytes32 _platform, string _platformId) public view returns (bool) {
+        return db.getBool(keccak256(abi.encodePacked("funds.issueResolved", _platform, _platformId)));
+    }
+
     function getFundedTokenCount(bytes32 _platform, string _platformId) public view returns (uint256) {
         return db.getUint(keccak256(abi.encodePacked("funds.tokenCount", _platform, _platformId)));
     }
@@ -92,6 +97,10 @@ contract FundRepository is Callable {
 
     function getFunderCount(bytes32 _platform, string _platformId) public view returns (uint) {
         return db.getUint(keccak256(abi.encodePacked("funds.funderCount", _platform, _platformId)));
+    }
+
+    function getFunderByIndex(bytes32 _platform, string _platformId, uint index) external view returns (address) {
+        return db.getAddress(keccak256(abi.encodePacked("funds.funders.address", _platform, _platformId, index)));
     }
 
     function amountFunded(bytes32 _platform, string _platformId, address _funder, address _token) public view returns (uint256) {
