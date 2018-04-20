@@ -50,12 +50,10 @@ contract FundRepository is Callable {
     function updateBalances(address _from, bytes32 _platform, string _platformId, address _token, uint256 _value) public onlyCaller {
         if (balance(_platform, _platformId, _token) <= 0) {
             //add to the list of tokens for this platformId
-            db.setUint(keccak256(abi.encodePacked("funds.tokenCount", _platform, _platformId)), getFundedTokenCount(_platform, _platformId).add(1));
-            funds[_platform][_platformId].tokens.push(_token);
+            uint tokenCount = getFundedTokenCount(_platform, _platformId);
+            db.setAddress(keccak256(abi.encodePacked("funds.token.address", _platform, _platformId, tokenCount)), _token);
+            db.setUint(keccak256(abi.encodePacked("funds.tokenCount", _platform, _platformId)), tokenCount.add(1));
         }
-
-        //add to the current balance of the user for this token
-        funds[_platform][_platformId].tokenFunding[_token].balance[_from] = funds[_platform][_platformId].tokenFunding[_token].balance[_from].add(_value);
 
         //add to the balance of this platformId for this token
         db.setUint(keccak256(abi.encodePacked("funds.tokenBalance", _platform, _platformId, _token)), balance(_platform, _platformId, _token).add(_value));
@@ -70,6 +68,7 @@ contract FundRepository is Callable {
     function claimToken(bytes32 platform, string platformId, address _token) public onlyCaller returns (uint256) {
         uint256 totalTokenBalance = balance(platform, platformId, _token);
         delete funds[platform][platformId].tokenFunding[_token];
+        db.deleteUint(keccak256(abi.encodePacked("funds.tokenBalance", platform, platformId, _token)));
         return totalTokenBalance;
     }
 
@@ -92,7 +91,7 @@ contract FundRepository is Callable {
     }
 
     function getFundedTokensByIndex(bytes32 _platform, string _platformId, uint _index) public view returns (address) {
-        return funds[_platform][_platformId].tokens[_index];
+        return db.getAddress(keccak256(abi.encodePacked("funds.token.address", _platform, _platformId, _index)));
     }
 
     function getFunderCount(bytes32 _platform, string _platformId) public view returns (uint) {
