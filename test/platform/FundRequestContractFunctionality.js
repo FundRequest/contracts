@@ -90,24 +90,6 @@ contract('FundRequestContract', function (accounts) {
 		}
 	});
 
-	it('should update totalNumberOfFunders when funding', async function () {
-		await fundDefaultRequest();
-		let totalNumberOfFunders = await fundRepository.totalNumberOfFunders.call();
-		expect(totalNumberOfFunders.toNumber()).to.equal(1);
-	});
-
-  it('should not update totalNumberOfFunders when funding and funder has already funded issues', async function () {
-    await fundDefaultRequest();
-    await fundDefaultRequest();
-    let totalNumberOfFunders = await fundRepository.totalNumberOfFunders.call();
-    expect(totalNumberOfFunders.toNumber()).to.equal(1);
-  });
-
-	it('should update requestsFunded when funding', async function () {
-		await fundDefaultRequest();
-		let requestsFunded = await fundRepository.requestsFunded.call();
-		expect(requestsFunded.toNumber()).to.equal(1);
-	});
 
 	it('should be able to query the fund information', async function () {
 		let data = await fundDefaultRequest();
