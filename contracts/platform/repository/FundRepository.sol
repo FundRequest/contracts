@@ -16,8 +16,6 @@ contract FundRepository is Callable {
 
     EternalStorage public db;
 
-    //funder => _hasFunded
-    mapping(address => bool) funders;
 
     //platform -> platformId => _funding
     mapping(bytes32 => mapping(string => Funding)) funds;
@@ -40,10 +38,9 @@ contract FundRepository is Callable {
     function updateFunders(address _from, bytes32 _platform, string _platformId) public onlyCaller {
         bool existing = db.getBool(keccak256(abi.encodePacked("funds.userHasFunded", _platform, _platformId, _from)));
         if (!existing) {
-            funds[_platform][_platformId].funders.push(_from);
-        }
-        if (funders[_from] == false) {
-            funders[_from] = true;
+            uint funderCount = getFunderCount(_platform, _platformId);
+            db.setAddress(keccak256(abi.encodePacked("funds.funders.address", _platform, _platformId, funderCount)), _from);
+            db.setUint(keccak256(abi.encodePacked("funds.funderCount", _platform, _platformId)), funderCount.add(1));
         }
     }
 
@@ -67,7 +64,6 @@ contract FundRepository is Callable {
 
     function claimToken(bytes32 platform, string platformId, address _token) public onlyCaller returns (uint256) {
         uint256 totalTokenBalance = balance(platform, platformId, _token);
-        delete funds[platform][platformId].tokenFunding[_token];
         db.deleteUint(keccak256(abi.encodePacked("funds.tokenBalance", platform, platformId, _token)));
         return totalTokenBalance;
     }
@@ -95,7 +91,7 @@ contract FundRepository is Callable {
     }
 
     function getFunderCount(bytes32 _platform, string _platformId) public view returns (uint) {
-        return funds[_platform][_platformId].funders.length;
+        return db.getUint(keccak256(abi.encodePacked("funds.funderCount", _platform, _platformId)));
     }
 
     function amountFunded(bytes32 _platform, string _platformId, address _funder, address _token) public view returns (uint256) {
