@@ -65,8 +65,8 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
                 require(preconditions[idx].isValid(_platform, _platformId, _token, _value, _funder));
             }
         }
-        require(_value > 0);
-        require(ERC20(_token).transferFrom(_funder, address(this), _value));
+        require(_value > 0, "amount of tokens needs to be more than 0");
+        require(ERC20(_token).transferFrom(_funder, address(this), _value), "Transfer of tokens to contract failed");
         fundRepository.updateFunders(_funder, _platform, _platformId);
         fundRepository.updateBalances(_funder, _platform, _platformId, _token, _value);
         emit Funded(_funder, _platform, _platformId, _token, _value);
@@ -79,7 +79,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
         for (uint i = 0; i < tokenCount; i++) {
             address token = fundRepository.getFundedTokensByIndex(platform, platformId, i);
             uint256 tokenAmount = fundRepository.claimToken(platform, platformId, token);
-            require(ERC20(token).transfer(solverAddress, tokenAmount), "transfer of tokens to contract failed");
+            require(ERC20(token).transfer(solverAddress, tokenAmount), "transfer of tokens from contract failed");
             require(claimRepository.addClaim(solverAddress, platform, platformId, solver, token, tokenAmount), "adding claim to repository failed");
             emit Claimed(solverAddress, platform, platformId, solver, token, tokenAmount);
         }
