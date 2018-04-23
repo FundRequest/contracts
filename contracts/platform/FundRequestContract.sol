@@ -59,6 +59,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     }
 
     function doFunding(bytes32 _platform, string _platformId, address _token, uint256 _value, address _funder) internal returns (bool success) {
+        require(!fundRepository.issueResolved(_platform, _platformId), "Can't fund tokens, platformId already claimed");
         for (uint idx = 0; idx < preconditions.length; idx++) {
             if (address(preconditions[idx]) != address(0)) {
                 require(preconditions[idx].isValid(_platform, _platformId, _token, _value, _funder));

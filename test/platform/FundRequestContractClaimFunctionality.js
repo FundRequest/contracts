@@ -60,16 +60,25 @@ contract('FundRequestContract', function (accounts) {
     };
   });
 
-  it('should correctly update the FundRepository after claiming', async () => {
+  it('should correctly update the FundRepository data after claiming one token', async () => {
     await fund();
+    expect((await fundRepository.balance(web3.fromAscii(fundData.platform), fundData.platformId, fnd.address)).toNumber()).to.equal(1000);
+    expect((await fundRepository.getFunderCount(web3.fromAscii(fundData.platform), fundData.platformId)).toNumber()).to.equal(1);
+
     await claim();
 
-    //TODO: correct stuff to check
+    expect((await fundRepository.issueResolved(web3.fromAscii(fundData.platform), fundData.platformId))).to.be.true;
+    expect((await fundRepository.balance(web3.fromAscii(fundData.platform), fundData.platformId, fnd.address)).toNumber()).to.equal(0);
+    expect((await fundRepository.getFunderCount(web3.fromAscii(fundData.platform), fundData.platformId)).toNumber()).to.equal(0);
   });
 
 
   it('should correctly transfer balances', async () => {
     await fund();
+
+    await expectTokenBalance(solverAddress, 0);
+    await expectTokenBalance(frc.address, 1000);
+
     await claim();
 
     await expectTokenBalance(frc.address, 0);
@@ -85,8 +94,8 @@ contract('FundRequestContract', function (accounts) {
   });
 
 
-  const fund = function () {
-    return frc.fund(web3.fromAscii(fundData.platform), fundData.platformId, fundData.token, fundData.value);
+  const fund = function (extraData) {
+    return frc.fund(web3.fromAscii(fundData.platform), fundData.platformId, fundData.token, fundData.value, extraData);
   };
 
   const claim = async function () {
