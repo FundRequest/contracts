@@ -178,6 +178,20 @@ contract('FundRepositoryContract', function (accounts) {
     ).to.eventually.equal(fundData.value * 2);
   });
 
+  it('after claiming, the issue should be resolved', async () => {
+    await fund();
+
+    await expect(
+      fundRepository.issueResolved(toBytes32(fundData.platform), platformId)
+    ).to.eventually.equal(false);
+
+    await claim();
+
+    return expect(
+      fundRepository.issueResolved(toBytes32(fundData.platform), platformId)
+    ).to.eventually.equal(true);
+  });
+
 
   function assertInvalidOpCode(error) {
     assert(
