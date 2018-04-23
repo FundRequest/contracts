@@ -24,6 +24,8 @@ contract('FundRepositoryContract', function (accounts) {
 
   let fundData;
 
+  const solverAddress = '0x35d80d4729993a4b288fd1e83bfa16b3533df524';
+
 
   const owner = accounts[0];
   console.log(accounts[0]);
@@ -182,13 +184,13 @@ contract('FundRepositoryContract', function (accounts) {
     await fund();
 
     await expect(
-      fundRepository.issueResolved(toBytes32(fundData.platform), platformId)
+      fundRepository.issueResolved(toBytes32(fundData.platform), fundData.platformId)
     ).to.eventually.equal(false);
 
     await claim();
 
     return expect(
-      fundRepository.issueResolved(toBytes32(fundData.platform), platformId)
+      fundRepository.issueResolved(toBytes32(fundData.platform), fundData.platformId)
     ).to.eventually.equal(true);
   });
 
