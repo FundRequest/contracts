@@ -3,6 +3,8 @@ const FND = artifacts.require('./token/FundRequestToken.sol');
 const FRC_FUND_REPO = artifacts.require('./token/repository/FundRepository.sol');
 const FRC_CLAIM_REPO = artifacts.require('./token/repository/ClaimRepository.sol');
 const TokenFactory = artifacts.require('./factory/MiniMeTokenFactory.sol');
+const EternalStorage = artifacts.require('./storage/EternalStorage.sol');
+
 const expect = require('chai').expect;
 
 contract('FundRequestContract', function (accounts) {
@@ -12,6 +14,8 @@ contract('FundRequestContract', function (accounts) {
 	let fundRepository;
 	let claimRepository;
 	let tokenFactory;
+	let db;
+
 	const owner = accounts[0];
 
 	let createToken = async function () {
@@ -24,8 +28,14 @@ contract('FundRequestContract', function (accounts) {
 	beforeEach(async function () {
 		await createToken();
 
-		fundRepository = await FRC_FUND_REPO.new();
-		claimRepository = await FRC_CLAIM_REPO.new();
+		db = await EternalStorage.new();
+
+		fundRepository = await FRC_FUND_REPO.new(db.address);
+		claimRepository = await FRC_CLAIM_REPO.new(db.address);
+
+		await db.updateCaller(claimRepository.address, true);
+		await db.updateCaller(fundRepository.address, true);
+
 		frc = await FRC.new(fundRepository.address, claimRepository.address);
 
 		await fundRepository.updateCaller(frc.address, true, {from: owner});
@@ -80,36 +90,6 @@ contract('FundRequestContract', function (accounts) {
 		}
 	});
 
-	it('should update totalBalance when funding', async function () {
-		let data = await fundDefaultRequest();
-		let totalBalance = await fundRepository.totalBalance(fnd.address);
-		expect(totalBalance.toNumber()).to.equal(data.value);
-	});
-
-	it('should update totalFunded when funding', async function () {
-		let data = await fundDefaultRequest();
-		let totalFunded = await fundRepository.totalFunded.call(fnd.address);
-		expect(totalFunded.toNumber()).to.equal(data.value);
-	});
-
-	it('should update totalNumberOfFunders when funding', async function () {
-		await fundDefaultRequest();
-		let totalNumberOfFunders = await fundRepository.totalNumberOfFunders.call();
-		expect(totalNumberOfFunders.toNumber()).to.equal(1);
-	});
-
-  it('should not update totalNumberOfFunders when funding and funder has already funded issues', async function () {
-    await fundDefaultRequest();
-    await fundDefaultRequest();
-    let totalNumberOfFunders = await fundRepository.totalNumberOfFunders.call();
-    expect(totalNumberOfFunders.toNumber()).to.equal(1);
-  });
-
-	it('should update requestsFunded when funding', async function () {
-		await fundDefaultRequest();
-		let requestsFunded = await fundRepository.requestsFunded.call();
-		expect(requestsFunded.toNumber()).to.equal(1);
-	});
 
 	it('should be able to query the fund information', async function () {
 		let data = await fundDefaultRequest();

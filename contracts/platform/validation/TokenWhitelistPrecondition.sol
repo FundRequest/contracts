@@ -21,11 +21,11 @@ contract TokenWhitelistPrecondition is Precondition {
     address[] public tokens;
     mapping(address => bool) existingToken;
 
-    function TokenWhitelistPrecondition(string _name, uint _version, bool _active) public Precondition(_name, _version, _active) {
+    constructor(string _name, uint _version, bool _active) public Precondition(_name, _version, _active) {
         //constructor
     }
 
-    function isValid(bytes32 _platform, string _platformId, address _token, uint256 _value, address _funder) public view returns (bool valid) {
+    function isValid(bytes32 _platform, string _platformId, address _token, uint256 /*_value */, address /* _funder */) external view returns (bool valid) {
         return !active || (defaultWhitelist[_token] == true || tokenWhitelist[_platform][extractRepository(_platformId)][_token] == true);
     }
 
@@ -37,7 +37,7 @@ contract TokenWhitelistPrecondition is Precondition {
         emit Allowed(_token, _allowed);
     }
 
-    function allow(bytes32 _platform, string _platformId, address _token, bool _allowed) public onlyOwner {
+    function allow(bytes32 _platform, string _platformId, address _token, bool _allowed) external onlyOwner {
         tokenWhitelist[_platform][_platformId][_token] = _allowed;
         if (!existingToken[_token]) {
             tokens.push(_token);
@@ -45,13 +45,13 @@ contract TokenWhitelistPrecondition is Precondition {
         emit Allowed(_token, _allowed, _platform, _platformId);
     }
 
-    function extractRepository(string _platformId) internal returns (string repository) {
+    function extractRepository(string _platformId) pure internal returns (string repository) {
         var sliced = string(_platformId).toSlice();
         var platform = sliced.split("|FR|".toSlice());
         return platform.toString();
     }
 
-    function amountOfTokens() public view returns (uint) {
+    function amountOfTokens() external view returns (uint) {
         return tokens.length;
     }
 }
