@@ -25,7 +25,7 @@
     "ganache-cli": "^6.1.0",
     "mocha": "^5.1.1",
     "sol-merger": "^0.1.2",
-    "solidity-coverage": "^0.4.15",
+    "solidity-coverage": "^0.5.0",
     "solium": "^1.1.6",
     "truffle": "^4.1.7",
     "truffle-hdwallet-provider": "0.0.3",
