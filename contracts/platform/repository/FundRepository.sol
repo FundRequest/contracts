@@ -16,7 +16,6 @@ contract FundRepository is Callable {
 
     EternalStorage public db;
 
-
     //platform -> platformId => _funding
     mapping(bytes32 => mapping(string => Funding)) funds;
 
