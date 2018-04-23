@@ -15,13 +15,13 @@ contract ClaimRepository is Callable {
 
     constructor(address _eternalStorage) public {
         //constructor
-        require(_eternalStorage != address(0));
+        require(_eternalStorage != address(0), "Eternal storage cannot be 0x0");
         db = EternalStorage(_eternalStorage);
     }
 
     function addClaim(address _solverAddress, bytes32 _platform, string _platformId, string _solver, address _token, uint256 _requestBalance) public onlyCaller returns (bool) {
         if (db.getAddress(keccak256("claims.solver_address", _platform, _platformId)) != address(0)) {
-            require(db.getAddress(keccak256("claims.solver_address", _platform, _platformId)) == _solverAddress);
+            require(db.getAddress(keccak256("claims.solver_address", _platform, _platformId)) == _solverAddress, "Adding a claim needs to happen with the same claimer as before");
         } else {
             db.setString(keccak256("claims.solver", _platform, _platformId), _solver);
             db.setAddress(keccak256("claims.solver_address", _platform, _platformId), _solverAddress);
