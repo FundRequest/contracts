@@ -28,8 +28,6 @@ contract('FundRepositoryContract', function (accounts) {
 
 
   const owner = accounts[0];
-  console.log(accounts[0]);
-  console.log(accounts[1]);
 
   let createToken = async function () {
     let newToken = await FND.new(tokenFactory.address, 0x0, 0, "FundRequest", 18, "FND", true);
@@ -195,12 +193,7 @@ contract('FundRepositoryContract', function (accounts) {
   });
 
 
-  function assertInvalidOpCode(error) {
-    assert(
-      error.message.indexOf('VM Exception while processing transaction: revert') >= 0,
-      'this should fail.'
-    );
-  }
+
 
   const claim = async function () {
     await frc.claim(
@@ -227,10 +220,5 @@ contract('FundRepositoryContract', function (accounts) {
 
   let toBytes32 = function (input) {
     return web3.fromAscii(input);
-  };
-
-  let expectBalance = async function (data) {
-    let bal = await fundRepository.balance.call(web3.fromAscii(data.platform), data.platformId, fnd.address);
-    expect(bal.toNumber()).to.equal(data.value);
   };
 });

@@ -26,6 +26,8 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
 
     event Claimed(address indexed solverAddress, bytes32 platform, string platformId, string solver, address token, uint256 value);
 
+    address public ETHER_ADDRESS = 0x00eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee;
+
     //repositories
     FundRepository public fundRepository;
 
@@ -47,7 +49,12 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
 
     //entrypoints
     function fund(bytes32 _platform, string _platformId, address _token, uint256 _value) external returns (bool success) {
-        require(doFunding(_platform, _platformId, _token, _value, msg.sender), "funding failed");
+        require(doFunding(_platform, _platformId, _token, _value, msg.sender), "funding with token failed");
+        return true;
+    }
+
+    function etherFund(bytes32 _platform, string _platformId) payable external returns (bool success) {
+        require(doFunding(_platform, _platformId, ETHER_ADDRESS, msg.value, msg.sender), "funding with ether failed");
         return true;
     }
 
@@ -59,6 +66,10 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     }
 
     function doFunding(bytes32 _platform, string _platformId, address _token, uint256 _value, address _funder) internal returns (bool success) {
+        if(_token == ETHER_ADDRESS) {
+            //must check this, so we don't have people foefeling with the amounts
+            require(msg.value == _value);
+        }
         require(!fundRepository.issueResolved(_platform, _platformId), "Can't fund tokens, platformId already claimed");
         for (uint idx = 0; idx < preconditions.length; idx++) {
             if (address(preconditions[idx]) != address(0)) {
@@ -66,7 +77,11 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
             }
         }
         require(_value > 0, "amount of tokens needs to be more than 0");
-        require(ERC20(_token).transferFrom(_funder, address(this), _value), "Transfer of tokens to contract failed");
+
+        if(_token != ETHER_ADDRESS) {
+            require(ERC20(_token).transferFrom(_funder, address(this), _value), "Transfer of tokens to contract failed");
+        }
+
         fundRepository.updateFunders(_funder, _platform, _platformId);
         fundRepository.updateBalances(_funder, _platform, _platformId, _token, _value);
         emit Funded(_funder, _platform, _platformId, _token, _value);
@@ -79,7 +94,11 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
         for (uint i = 0; i < tokenCount; i++) {
             address token = fundRepository.getFundedTokensByIndex(platform, platformId, i);
             uint256 tokenAmount = fundRepository.claimToken(platform, platformId, token);
-            require(ERC20(token).transfer(solverAddress, tokenAmount), "transfer of tokens from contract failed");
+            if(token == ETHER_ADDRESS) {
+                solverAddress.transfer(tokenAmount);
+            } else {
+                require(ERC20(token).transfer(solverAddress, tokenAmount), "transfer of tokens from contract failed");
+            }
             require(claimRepository.addClaim(solverAddress, platform, platformId, solver, token, tokenAmount), "adding claim to repository failed");
             emit Claimed(solverAddress, platform, platformId, solver, token, tokenAmount);
         }
