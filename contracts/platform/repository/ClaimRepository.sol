@@ -48,10 +48,9 @@ contract ClaimRepository is Callable {
         return db.getAddress(keccak256("claims.solver_address", _platform, _platformId));
     }
 
-    //   TODO: implement when 0.4.22 is shipped with truffle
-    //    function getSolver(bytes32 _platform, string _platformId) view external returns (string){
-    //        return db.getString(keccak256("claims.solver", _platform, _platformId));
-    //    }
+    function getSolver(bytes32 _platform, string _platformId) view external returns (string){
+        return db.getString(keccak256("claims.solver", _platform, _platformId));
+    }
 
     function getTokenCount(bytes32 _platform, string _platformId) view external returns (uint count) {
         return db.getUint(keccak256("claims.tokenCount", _platform, _platformId));
