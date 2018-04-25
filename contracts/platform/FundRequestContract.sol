@@ -2,7 +2,6 @@ pragma solidity 0.4.23;
 
 
 import "../math/SafeMath.sol";
-import "../token/FundRequestToken.sol";
 import "../token/ERC20.sol";
 import "./repository/FundRepository.sol";
 import "./repository/ClaimRepository.sol";
