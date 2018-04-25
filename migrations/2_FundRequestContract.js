@@ -46,6 +46,8 @@ module.exports = async function (deployer) {
                                           return fund.updateCaller(platform.address, true)
                                             .then(function () {
                                               return db.updateCaller(claim.address, true);
+                                            }).then(function () {
+                                              return db.updateCaller(fund.address, true);
                                             });
                                         });
                                     });
