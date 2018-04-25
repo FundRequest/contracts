@@ -23,39 +23,39 @@ Using network 'kovan'.
 
 Running migration: 1_migrations.js
   Replacing Migrations...
-  ... 0xd4c808674dcfa58779d9de9d0eac9615d38db8e557034294fe989ed7d6f8faf4
-  Migrations: 0xc6122bf8670806b9114c3110322416e924cf8784
+  ... 0xb152ba8d5ea6d509ab0cae53f74354f441f1d9dab854c5ed0c54541d51417e62
+  Migrations: 0x03024d33c381b5a6732beabf87c0b8501a2451ce
 Saving successful migration to network...
-  ... 0x20e84dbe69ee9824c16262980c38fec12c6a667e58cc9f39b89ff30c33814315
+  ... 0x439deeda85b89049022e2177c0da2d5499bd34000945422adb817785429fa38c
 Saving artifacts...
-
 Running migration: 2_FundRequestContract.js
   Replacing FundRequestToken...
-  ... 0x36d54f76c14d03e84e188acda660dd6f436c6679886b0e981739f3cf86cb7e3d
-  FundRequestToken: 0x9f88c5cc76148d41a5db8d0a7e581481efc9667b
-  Deploying ClaimRepository...
-  ... 0xd6df6dfbe01dd9c600b32138661251f91078779b5c34f295bf5e70247296512c
-  ClaimRepository: 0x0f3dffaf087347961eda6483a5ec02edcede0025
-  Deploying FundRepository...
-  ... 0x960c8c43335dac3b6944a3ff224897d67cac6d20a618c7bd5eaf4ec1c8cc174d
-  FundRepository: 0x43b686856d358443a489069424163b5f8afe4c7e
-  Deploying FundRequestContract...
-  ... 0x4e2f8764de972d90eb378af00644e7f19145f217306bed6a9594d894d6f229ec
-  FundRequestContract: 0x0ade7b8f58ba034a2a818f1fd48c3c92039c1cc8
-  ... 0xfe0f9ccd31be1a41470bec82503e8ced1246b1659ad6400e4ce8d42226567a3e
-  ... 0x9e3bcdd514de6963b1a93b4389cbe9e0e0f0250a1e479e9c82433d308ea09549
+  ... 0x8a3c2ab1c2b1be81bd06c8c24172c79fb94675a7368dd7e4a31ded2e5c6e37f8
+  FundRequestToken: 0x02f96ef85cad6639500ca1cc8356f0b5ca5bf1d2
+  Deploying EternalStorage...
+  ... 0x6a12d4acd37b99af495a645132a2d06669072f6ae49d442cd4f1200049cee742
+  EternalStorage: 0x1e5370467e0fa38de1902fa02ed8096b7a81ba74
+  Replacing ClaimRepository...
+  ... 0x919c4d3491589eb8998d66f549086039e79419e083d1f1db6978793d30497172
+  ClaimRepository: 0x29387b85b315827c8c9bab15f0f4d364ef91418e
+  Replacing FundRepository...
+  ... 0x0af1f730793554f0bfe339c0a2f898505bc61ed02390e485d68246d76e50f6e1
+  FundRepository: 0xe65633d94338877a7299e1f25666b22cb82f97b3
+  Replacing FundRequestContract...
+  ... 0xcb3e3d7114d3e1f97fd44618ce56d6c32011c7b035eda4a43705c2a16bc9e961
+  FundRequestContract: 0xc16a102813b7bd98b0bef2df28ffcaf1fbee97c0
+  ... 0x97d2befd5ff675c5190b046bee3f3593f44ff80ed2a9856c0bcf200e90c94775
+  ... 0x245c73282a83a78cd9ac09a7694f9a421c5737a0aa42d41534936bd5c81369e2
+  ... 0xb315a0ff39b1af6575f8cf45a483c42421e29864cb5f4262cd42680a475521ae
+  ... 0x673319d9458275590585df95cab98402bf5efa092b52ad3d88d801caeb4bff8d
 Saving successful migration to network...
-  ... 0x5bef38d79a59ba986e29bcb32c6292aa4cdd769852eb798a45aa58db80263983
+  ... 0xffc21b84ce4516147894bb55d77c2c43a7cbaec16a6b21a2591d060f7590f66f
 Saving artifacts...
-
 Running migration: 3_TokenWhitelistPrecondition.js
-  Deploying TokenWhitelistPrecondition...
-  ... 0xf30170990af6a698eb63d2d7619d2650009ac9f40d15c70025095bf946a6f3cc
-  TokenWhitelistPrecondition: 0x43252a78c8a93dc7bc7b6cba88a885d665f1ee04
-  ... 0x9927780fdb2313402e34bd01952bf806286e4b4b5064a2ede18a8975db30879d
+  Replacing TokenWhitelistPrecondition...
+  ... 0x0df0f0d4d8e2216701b8d6e6ce6fbfbdf5d5c1e21f8468b72b5ef9464578ae78
+  TokenWhitelistPrecondition: 0x401eccaba12e6466a1c838917dbe2d2669d64e34
+  ... 0xe18ed6dc64473fdd217439a11379745f800ea27abd22df8d329b924b8544afa2
 Saving successful migration to network...
-  ... 0x2412c430a5e14038790e779a9b972457ea2e4db5f8587b96966ca3646dee0dbb
-Saving artifacts...
-
-
+  ... 0xebf02b7f771669db1c5a6eb351cd0a502c885e8d06052545098462013c9f5bb0
 ```
