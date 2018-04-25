@@ -143,6 +143,22 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
         return "_".strConcat(str);
     }
 
+    //required to be able to migrate to a new FundRequestContract
+    function migrateTokens(address _token, address newContract) external onlyOwner {
+        require(newContract != address(0));
+        if(_token == ETHER_ADDRESS) {
+            newContract.transfer(address(this).balance);
+        } else {
+            ERC20 token = ERC20(_token);
+            token.transfer(newContract, token.balanceOf(address(this)));
+        }
+    }
+
+    //required should there be an issue with available ether
+    function deposit() external onlyOwner payable {
+        require(msg.value > 0, "Should at least be 1 wei deposited");
+    }
+
     function() external {
         // dont receive ether via fallback
     }
