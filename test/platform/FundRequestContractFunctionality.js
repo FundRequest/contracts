@@ -117,10 +117,10 @@ contract('FundRequestContract', function (accounts) {
 
   it('should be possible to migrate existing tokens', async () => {
     let data = await fundDefaultRequest();
-    expect((await fnd.balanceOf(frc.address)).toNumber()).to.equal(100);
+    expect((await fnd.balanceOf(frc.address)).toNumber()).to.equal(data.value);
 
     await frc.migrateTokens(fnd.address, accounts[3]);
-    expect((await fnd.balanceOf(accounts[3])).toNumber()).to.equal(100);
+    expect((await fnd.balanceOf(accounts[3])).toNumber()).to.equal(data.value);
 
   });
 
