@@ -9,8 +9,6 @@ import "../../storage/EternalStorage.sol";
 contract ClaimRepository is Callable {
     using SafeMath for uint256;
 
-    uint256 public totalClaims;
-
     EternalStorage public db;
 
     constructor(address _eternalStorage) public {
