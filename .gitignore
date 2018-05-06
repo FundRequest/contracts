@@ -28,3 +28,6 @@ coverage.json
 
 .env
 csv/
+
+scripts/batch/.env
+scripts/batch/*.csv
