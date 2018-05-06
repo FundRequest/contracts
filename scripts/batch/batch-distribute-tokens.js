@@ -14,30 +14,35 @@ const p_address = '0xB3eC406B6338513A9396948Ba7de91ae572fd52f';
 const p_contract = '0x2e185e709c3c670a5ab75448Aa3431124B2c1DEa';
 const p_token = '0x02F96eF85cAd6639500CA1cc8356F0b5CA5bF1D2';
 
+const logFile = 'debug_' + Date.now() + ".log";
+
 const getAbi = require('./ERC20BatchTransfer.js');
 
+const solidityFunction = new SolidityFunction('', _.find(getAbi(), {name: 'batchTransfer'}), '');
 
-const solidityFunction = new SolidityFunction('', _.find(getAbi(), {name: 'batchTransferFixedAmount'}), '');
-
-const doThings = function (whitelisted, _callback) {
-  let payloadData = solidityFunction.toPayload(p_token, [whitelisted, 3]).data;
+const doThings = function (ids, fromAddresses, amounts, _callback) {
+  let payloadData = solidityFunction.toPayload([p_token, fromAddresses, amounts]).data;
 
   web3.eth.getTransactionCount(p_address, function (_, nonce) {
     web3.eth.sendRawTransaction(sign({
       to: p_contract,
       value: 0,
-      gas: 3000000,
+      gas: 4000000,
       data: payloadData,
-      gasPrice: 4000000000,
+      gasPrice: 1000000000,
       nonce: nonce
     }, p_key), function (_, txHash) {
       if (_) {
         console.log(_);
         _callback(null);
       } else {
-        console.log('[sending] Transaction Hash', txHash);
+        // console.log('[sending] Transaction Hash', txHash);
         web3.eth.getTransactionReceiptMined(txHash).then(function (txHash) {
           console.log(txHash);
+          fromAddresses.forEach(function (value, i) {
+            logToFile(ids[i] + "," + value + "," + amounts[i] + "," + txHash.transactionHash + "\n");
+            // console.log(output);
+          });
           _callback(txHash);
         });
       }
@@ -45,18 +50,30 @@ const doThings = function (whitelisted, _callback) {
   });
 };
 
+let logToFile = function (data) {
+  fs.appendFile(logFile, data, (err) => {
+    // throws an error, you could also catch it here
+    if (err) throw err;
+
+  })
+};
+
 
 let iterate = function (lines) {
-  let transfers = [];
-  for (let i = 0; i < 30; i++) {
+  let ids = [];
+  let fromAddresses = [];
+  let amounts = [];
+  for (let i = 0; i < 100; i++) {
     if (lines.length > 0) {
       let line = lines.pop();
-      // let allocation = line.split(",");
-      transfers.push(lines.pop())
+      let transfer = line.split(",");
+      ids.push(transfer[0]);
+      fromAddresses.push(transfer[1]);
+      amounts.push(web3.toWei(transfer[2], 'ether'));
     }
   }
 
-  doThings(transfers, function (_callback) {
+  doThings(ids, fromAddresses, amounts, function (_callback) {
     if (lines.length > 0) {
       iterate(lines);
     }
