@@ -3,117 +3,131 @@ const FND = artifacts.require('./token/FundRequestToken.sol');
 const FRC_FUND_REPO = artifacts.require('./token/repository/FundRepository.sol');
 const FRC_CLAIM_REPO = artifacts.require('./token/repository/ClaimRepository.sol');
 const TokenFactory = artifacts.require('./factory/MiniMeTokenFactory.sol');
+const EternalStorage = artifacts.require('./storage/EternalStorage.sol');
+
 const expect = require('chai').expect;
+
+const utils = require('../TestUtils.js');
+
 
 contract('FundRequestContract', function (accounts) {
 
-	let frc;
-	let fnd;
-	let fundRepository;
-	let claimRepository;
-	let tokenFactory;
-	const owner = accounts[0];
+  let frc;
+  let fnd;
+  let fundRepository;
+  let claimRepository;
+  let tokenFactory;
+  let db;
 
-	let createToken = async function () {
-		tokenFactory = await TokenFactory.new();
-		fnd = await FND.new(tokenFactory.address, 0x0, 0, "FundRequest", 18, "FND", true);
-		await fnd.changeController(owner);
-		await fnd.generateTokens(owner, 666000000000000000000);
-	};
+  const owner = accounts[0];
 
-	beforeEach(async function () {
-		await createToken();
+  let createToken = async function () {
+    tokenFactory = await TokenFactory.new();
+    fnd = await FND.new(tokenFactory.address, 0x0, 0, "FundRequest", 18, "FND", true);
+    await fnd.changeController(owner);
+    await fnd.generateTokens(owner, 666000000000000000000);
+  };
 
-		fundRepository = await FRC_FUND_REPO.new();
-		claimRepository = await FRC_CLAIM_REPO.new();
-		frc = await FRC.new(fnd.address, fundRepository.address, claimRepository.address);
+  beforeEach(async function () {
+    await createToken();
 
-		await fundRepository.updateCaller(frc.address, true, {from: owner});
-		await claimRepository.updateCaller(frc.address, true, {from: owner});
-		await fnd.approve(frc.address, 1000);
-	});
+    db = await EternalStorage.new();
 
-	let expectBalance = async function (data) {
-		let bal = await fundRepository.balance.call(web3.fromAscii(data.platform), data.platformId);
-		expect(bal.toNumber()).to.equal(data.value);
-	};
+    fundRepository = await FRC_FUND_REPO.new(db.address);
+    claimRepository = await FRC_CLAIM_REPO.new(db.address);
 
-	let fundRequest = async function (data) {
-		await frc.fund(web3.fromAscii(data.platform), data.platformId, data.value);
-	};
+    await db.updateCaller(claimRepository.address, true);
+    await db.updateCaller(fundRepository.address, true);
 
-	it('should return 0 balance', async function () {
-		await expectBalance({
-			platform: "github",
-			platformId: "1",
-			value: 0
-		});
-	});
+    frc = await FRC.new(fundRepository.address, claimRepository.address);
 
-	let fundDefaultRequest = async function () {
-		let data = {
-			platform: "github",
-			platformId: "1",
-			value: 100
-		};
-		await fundRequest(data);
-		return data;
-	};
-	it('should be able to fund an issue which updates the balance', async function () {
-		let data = await fundDefaultRequest();
-		await expectBalance(data);
-	});
+    await fundRepository.updateCaller(frc.address, true, {from: owner});
+    await claimRepository.updateCaller(frc.address, true, {from: owner});
+    await fnd.approve(frc.address, 1000);
+  });
 
-	it('should not be possible to fund 0 tokens', async function () {
-		let data = {
-			platform: "github",
-			platformId: "1",
-			value: 0
-		};
-		try {
-			await fundRequest(data);
-			assert.fail('should fail');
-		} catch (error) {
-			assertInvalidOpCode(error);
-		}
-	});
+  let expectBalance = async function (data) {
+    let bal = await fundRepository.balance.call(web3.fromAscii(data.platform), data.platformId, fnd.address);
+    expect(bal.toNumber()).to.equal(data.value);
+  };
 
-	it('should update totalBalance when funding', async function () {
-		let data = await fundDefaultRequest();
-		let totalBalance = await fundRepository.totalBalance();
-		expect(totalBalance.toNumber()).to.equal(data.value);
-	});
+  let fundRequest = async function (data) {
+    await frc.fund(web3.fromAscii(data.platform), data.platformId, data.token, data.value);
+  };
 
-	it('should update totalFunded when funding', async function () {
-		let data = await fundDefaultRequest();
-		let totalFunded = await fundRepository.totalFunded.call();
-		expect(totalFunded.toNumber()).to.equal(data.value);
-	});
+  it('should return 0 balance', async function () {
+    await expectBalance({
+      platform: "github",
+      platformId: "1",
+      value: 0
+    });
+  });
 
-	it('should update totalNumberOfFunders when funding', async function () {
-		await fundDefaultRequest();
-		let totalNumberOfFunders = await fundRepository.totalNumberOfFunders.call();
-		expect(totalNumberOfFunders.toNumber()).to.equal(1);
-	});
+  let fundDefaultRequest = async function () {
+    let data = {
+      platform: "github",
+      platformId: "1",
+      token: fnd.address,
+      value: 100
+    };
+    await fundRequest(data);
+    return data;
+  };
+  it('should be able to fund an issue which updates the balance', async function () {
+    let data = await fundDefaultRequest();
+    await expectBalance(data);
+  });
 
-	it('should update requestsFunded when funding', async function () {
-		await fundDefaultRequest();
-		let requestsFunded = await fundRepository.requestsFunded.call();
-		expect(requestsFunded.toNumber()).to.equal(1);
-	});
+  it('should not be possible to fund 0 tokens', async function () {
+    let data = {
+      platform: "github",
+      platformId: "1",
+      value: 0,
+      token: fnd.address
+    };
+    try {
+      await fundRequest(data);
+      assert.fail('should fail');
+    } catch (error) {
+      assertInvalidOpCode(error);
+    }
+  });
 
-	it('should be able to query the fund information', async function () {
-		let data = await fundDefaultRequest();
-		let result = await fundRepository.getFundInfo.call(web3.fromAscii(data.platform), data.platformId, accounts[0]);
-		expect(result[0].toNumber()).to.equal(1);
-		expect(result[1].toNumber()).to.equal(100);
-		expect(result[2].toNumber()).to.equal(100);
-	});
 
-	function assertInvalidOpCode(error) {
-		assert(
-			error.message.indexOf('VM Exception while processing transaction: revert') >= 0,
-			'this should fail.'
-		);
-	}
+  it('should be able to query the fund information', async function () {
+    let data = await fundDefaultRequest();
+    let result = await fundRepository.getFundInfo.call(web3.fromAscii(data.platform), data.platformId, accounts[0], fnd.address);
+    expect(result[0].toNumber()).to.equal(1);
+    expect(result[1].toNumber()).to.equal(100);
+    expect(result[2].toNumber()).to.equal(100);
+  });
+
+  it('should be possible to deposit ether to the contract', async function () {
+    await frc.deposit({value: 1});
+    expect((await web3.eth.getBalance(frc.address)).toNumber()).to.equal(1);
+  });
+
+  it('should not be possible to deposit 0 ether to the contract', async function () {
+    try {
+      await frc.deposit()
+    } catch (error) {
+      utils.assertInvalidOpCode(error);
+    }
+  });
+
+  it('should be possible to migrate existing tokens', async () => {
+    let data = await fundDefaultRequest();
+    expect((await fnd.balanceOf(frc.address)).toNumber()).to.equal(data.value);
+
+    await frc.migrateTokens(fnd.address, accounts[3]);
+    expect((await fnd.balanceOf(accounts[3])).toNumber()).to.equal(data.value);
+
+  });
+
+  function assertInvalidOpCode(error) {
+    assert(
+      error.message.indexOf('VM Exception while processing transaction: revert') >= 0,
+      'this should fail.'
+    );
+  }
 });

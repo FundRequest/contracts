@@ -1,11 +1,10 @@
 ### FundRequest Contracts<img align="right" src="https://fundrequest.io/assets/img/logo.png" height="30px" />
 
-[![Build Status](https://travis-ci.org/FundRequest/contracts.svg?branch=master)](https://travis-ci.org/FundRequest/contracts)
+[![Last Commit](https://img.shields.io/github/last-commit/FundRequest/contracts.svg?style=for-the-badge)](https://img.shields.io/github/last-commit/FundRequest/contracts.svg)  [![Build Status](https://img.shields.io/travis/FundRequest/contracts.svg?style=for-the-badge)](https://img.shields.io/travis/FundRequest/contracts.svg?style=for-the-badge) 
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/FundRequest/contracts.svg)](https://greenkeeper.io/)
 
 Contracts for FundRequest (token, crowdsale and platform contracts)
-
-
-### Development [![Build Status](https://travis-ci.org/FundRequest/contracts.svg?branch=develop)](https://travis-ci.org/FundRequest/contracts)
 
 
 #### Mainnet
@@ -17,32 +16,46 @@ Contracts for FundRequest (token, crowdsale and platform contracts)
 | FundRequestTokenGeneration  | 0xbcc546eb5a290977180f85cafaa712019893729c  |
 
 
-### Ropsten
+### Kovan
 
 ```
-Using network 'ropsten'.
+Using network 'kovan'.
 
 Running migration: 1_migrations.js
-  Deploying Migrations...
-  ... 0xc01861023ccd4baf537d71ab2890951bb66fe1c60183b22162fa34f271bf084e
-  Migrations: 0xeab7c95ee0088f96314d846411cdf241ae9f5b6a
+  Replacing Migrations...
+  ... 0xb152ba8d5ea6d509ab0cae53f74354f441f1d9dab854c5ed0c54541d51417e62
+  Migrations: 0x03024d33c381b5a6732beabf87c0b8501a2451ce
 Saving successful migration to network...
-  ... 0x2b15274db34d70163dfd7ff73f457ec172a8be46309f502968250f22e1955fbf
+  ... 0x439deeda85b89049022e2177c0da2d5499bd34000945422adb817785429fa38c
 Saving artifacts...
 Running migration: 2_FundRequestContract.js
-  Deploying FundRequestToken...
-  ... 0x71accc6d0a163c0fab231a05c8a134d3ebf4fc08ac5230884b3066953ced1d1b
-  FundRequestToken: 0x23b98d4ff90a169d88bfab8b8829f0b0c0e3bce0
+  Replacing FundRequestToken...
+  ... 0x8a3c2ab1c2b1be81bd06c8c24172c79fb94675a7368dd7e4a31ded2e5c6e37f8
+  FundRequestToken: 0x02f96ef85cad6639500ca1cc8356f0b5ca5bf1d2
+  Deploying EternalStorage...
+  ... 0x6a12d4acd37b99af495a645132a2d06669072f6ae49d442cd4f1200049cee742
+  EternalStorage: 0x1e5370467e0fa38de1902fa02ed8096b7a81ba74
+  Replacing ClaimRepository...
+  ... 0x919c4d3491589eb8998d66f549086039e79419e083d1f1db6978793d30497172
+  ClaimRepository: 0x29387b85b315827c8c9bab15f0f4d364ef91418e
+  Replacing FundRepository...
+  ... 0x0af1f730793554f0bfe339c0a2f898505bc61ed02390e485d68246d76e50f6e1
+  FundRepository: 0xe65633d94338877a7299e1f25666b22cb82f97b3
+  Replacing FundRequestContract...
+  ... 0xcb3e3d7114d3e1f97fd44618ce56d6c32011c7b035eda4a43705c2a16bc9e961
+  FundRequestContract: 0xc16a102813b7bd98b0bef2df28ffcaf1fbee97c0
+  ... 0x97d2befd5ff675c5190b046bee3f3593f44ff80ed2a9856c0bcf200e90c94775
+  ... 0x245c73282a83a78cd9ac09a7694f9a421c5737a0aa42d41534936bd5c81369e2
+  ... 0xb315a0ff39b1af6575f8cf45a483c42421e29864cb5f4262cd42680a475521ae
+  ... 0x673319d9458275590585df95cab98402bf5efa092b52ad3d88d801caeb4bff8d
 Saving successful migration to network...
-  Deploying ClaimRepository...
-  ... 0x1f7249da1e54272a4f19f5a5daa4c4e7c8c588a27c4d793a19e2539d57c77cf3
-  ... 0x79c401b2632d267858c9fecc9b574766a9a4087bb69cf7f4fae0090799f5dee5
+  ... 0xffc21b84ce4516147894bb55d77c2c43a7cbaec16a6b21a2591d060f7590f66f
 Saving artifacts...
-  ClaimRepository: 0x0e3ae6bd121afc617a16648e0bc51880e99bcd2a
-  Deploying FundRepository...
-  ... 0x8be10190429999b2079102e41c026b7e67d4a419647383b53bc7098fb292f06c
-  FundRepository: 0x757289ff29da4f01ea5292a6724024bcf70a1435
-  Deploying FundRequestContract...
-  ... 0x017a0aa9715c943f6dbb889fbdd6424ef447403a38c983fe3e4085d8defa4744
-  FundRequestContract: 0xc1b66749fe5e2a15034b882da9e690490d5a1336
+Running migration: 3_TokenWhitelistPrecondition.js
+  Replacing TokenWhitelistPrecondition...
+  ... 0x0df0f0d4d8e2216701b8d6e6ce6fbfbdf5d5c1e21f8468b72b5ef9464578ae78
+  TokenWhitelistPrecondition: 0x401eccaba12e6466a1c838917dbe2d2669d64e34
+  ... 0xe18ed6dc64473fdd217439a11379745f800ea27abd22df8d329b924b8544afa2
+Saving successful migration to network...
+  ... 0xebf02b7f771669db1c5a6eb351cd0a502c885e8d06052545098462013c9f5bb0
 ```

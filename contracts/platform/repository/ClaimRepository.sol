@@ -1,46 +1,68 @@
-pragma solidity ^0.4.18;
+pragma solidity 0.4.23;
 
-import '../../ownership/Owned.sol';
+import "../../ownership/Owned.sol";
 import "../../math/SafeMath.sol";
+import "../../control/Callable.sol";
+import "../../storage/EternalStorage.sol";
 
-contract ClaimRepository is Owned {
+
+contract ClaimRepository is Callable {
     using SafeMath for uint256;
 
-    mapping (bytes32 => mapping (string => Claim)) claims;
+    EternalStorage public db;
 
-    mapping(address => bool) public callers;
-
-    uint256 public totalBalanceClaimed;
-    uint256 public totalClaims;
-
-
-    //modifiers
-    modifier onlyCaller {
-        require(callers[msg.sender]);
-        _;
-    }
-
-    struct Claim {
-        address solverAddress;
-        string solver;
-        uint256 requestBalance;
-    }
-
-    function ClaimRepository() {
+    constructor(address _eternalStorage) public {
         //constructor
+        require(_eternalStorage != address(0), "Eternal storage cannot be 0x0");
+        db = EternalStorage(_eternalStorage);
     }
 
-    function addClaim(address _solverAddress, bytes32 _platform, string _platformId, string _solver, uint256 _requestBalance) public onlyCaller returns (bool) {
-        claims[_platform][_platformId].solver = _solver;
-        claims[_platform][_platformId].solverAddress = _solverAddress;
-        claims[_platform][_platformId].requestBalance = _requestBalance;
-        totalBalanceClaimed = totalBalanceClaimed.add(_requestBalance);
-        totalClaims = totalClaims.add(1);
+    function addClaim(address _solverAddress, bytes32 _platform, string _platformId, string _solver, address _token, uint256 _requestBalance) public onlyCaller returns (bool) {
+        if (db.getAddress(keccak256("claims.solver_address", _platform, _platformId)) != address(0)) {
+            require(db.getAddress(keccak256("claims.solver_address", _platform, _platformId)) == _solverAddress, "Adding a claim needs to happen with the same claimer as before");
+        } else {
+            db.setString(keccak256("claims.solver", _platform, _platformId), _solver);
+            db.setAddress(keccak256("claims.solver_address", _platform, _platformId), _solverAddress);
+
+            db.setUint(keccak256("claims.count"), db.getUint(keccak256("claim.count")).add(1));
+        }
+
+        uint tokenCount = db.getUint(keccak256("claims.tokenCount", _platform, _platformId));
+        db.setUint(keccak256("claims.tokenCount", _platform, _platformId), tokenCount.add(1));
+        db.setUint(keccak256("claims.token.amount", _platform, _platformId, _token), _requestBalance);
+        db.setAddress(keccak256("claims.token.address", _platform, _platformId, tokenCount), _token);
         return true;
     }
 
-    //management of the repositories
-    function updateCaller(address _caller, bool allowed) public onlyOwner {
-        callers[_caller] = allowed;
+    function getClaimCount() view external returns (uint claimCount) {
+        return db.getUint(keccak256("claims.count"));
+    }
+
+    function isClaimed(bytes32 _platform, string _platformId) view external returns (bool claimed) {
+        return db.getAddress(keccak256("claims.solver_address", _platform, _platformId)) != address(0);
+    }
+
+    function getSolverAddress(bytes32 _platform, string _platformId) view external returns (address solverAddress) {
+        return db.getAddress(keccak256("claims.solver_address", _platform, _platformId));
+    }
+
+    function getSolver(bytes32 _platform, string _platformId) view external returns (string){
+        return db.getString(keccak256("claims.solver", _platform, _platformId));
+    }
+
+    function getTokenCount(bytes32 _platform, string _platformId) view external returns (uint count) {
+        return db.getUint(keccak256("claims.tokenCount", _platform, _platformId));
+    }
+
+    function getTokenByIndex(bytes32 _platform, string _platformId, uint _index) view external returns (address token) {
+        return db.getAddress(keccak256("claims.token.address", _platform, _platformId, _index));
+    }
+
+    function getAmountByToken(bytes32 _platform, string _platformId, address _token) view external returns (uint token) {
+        return db.getUint(keccak256("claims.token.amount", _platform, _platformId, _token));
+    }
+
+    function() external {
+        // dont receive ether via fallback
     }
 }
