@@ -6,6 +6,7 @@ This page contains more information on found vulnarabilities in the FundRequest 
 ## Auditors
 * @davyvanroy
 * @Qkyrie
+* @Pauliax
 * *Add your name here*
 
 
@@ -15,14 +16,14 @@ When you find a vulnerability, please create a pull request with more informatio
 ### *Example Vulnerabilitiy*
 
 #### *Auditor*
-*@davyvanroy*
+*@Pauliax*
 
 #### *Severity*
-*Minor / Major*
+*Minor*
 
 #### *Description*
-*Information about the vulnerability + how this can be exploited.*
+*-*
 
 #### *Proposed solution*
-*Information on how the problem can be mitigated.*
+*Fixes https://github.com/FundRequest/contracts/issues/45*
 
