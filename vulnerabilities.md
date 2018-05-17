@@ -6,7 +6,7 @@ This page contains more information on found vulnarabilities in the FundRequest 
 ## Auditors
 * @davyvanroy
 * @Qkyrie
-* *Add your name here*
+* @Pauliax
 
 
 ## Found issues
@@ -15,15 +15,23 @@ When you find a vulnerability, please create a pull request with more informatio
 ### *Example Vulnerabilitiy*
 
 #### *Auditor*
-*@davyvanroy*
+*@Pauliax*
 
 #### *Overall Risk Severity (see [OWASP Risk Rating](https://www.owasp.org/index.php/OWASP_Risk_Rating_Methodology))*
-* *Impact: High / Low*
-* *Likelihood: High / Low*
+* *Impact: Low*
+* *Likelihood: Low*
 
 #### *Description*
-*Information about the vulnerability + how this can be exploited.*
+https://github.com/FundRequest/contracts/issues/48
 
 #### *Proposed solution*
-*Information on how the problem can be mitigated.*
+
+function removePrecondition(uint _index) external onlyOwner {
+    if (_index >= preconditions.length) return;
+    for (uint i = _index; i < preconditions.length-1; i++) {
+      preconditions[i] = preconditions[i+1];
+    }
+    delete preconditions[preconditions.length-1];
+    preconditions.length--;
+  }
 
