@@ -17,8 +17,9 @@ When you find a vulnerability, please create a pull request with more informatio
 #### *Auditor*
 *@davyvanroy*
 
-#### *Severity*
-*Minor / Major*
+#### *Overall Risk Severity (see [OWASP Risk Rating](https://www.owasp.org/index.php/OWASP_Risk_Rating_Methodology))*
+* *Impact: High / Low*
+* *Likelihood: High / Low*
 
 #### *Description*
 *Information about the vulnerability + how this can be exploited.*
