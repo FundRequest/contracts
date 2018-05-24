@@ -1,4 +1,4 @@
-pragma solidity 0.4.23;
+pragma solidity 0.4.24;
 
 
 import "../math/SafeMath.sol";
@@ -106,7 +106,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     }
 
     function validClaim(bytes32 platform, string platformId, string solver, address solverAddress, bytes32 r, bytes32 s, uint8 v) internal view returns (bool) {
-        bytes32 h = keccak256(createClaimMsg(platform, platformId, solver, solverAddress));
+        bytes32 h = keccak256(abi.encodePacked(createClaimMsg(platform, platformId, solver, solverAddress)));
         address signerAddress = ecrecover(h, v, r, s);
         return claimSignerAddress == signerAddress;
     }
