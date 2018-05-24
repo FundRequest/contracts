@@ -1,29 +1,28 @@
 # Vulnerabilities
 
-This page contains more information on found vulnarabilities in the FundRequest contracts.
+This page contains more information on found vulnerabilities in the FundRequest contracts.
 
 
 ## Auditors
 * @davyvanroy
 * @Qkyrie
-* *Add your name here*
+* @thomasvds
 
 
 ## Found issues
 When you find a vulnerability, please create a pull request with more information as demonstrated below.
 
-### *Example Vulnerabilitiy*
+### *Example Vulnerability*
 
 #### *Auditor*
-*@davyvanroy*
+*@thomasvds*
 
 #### *Overall Risk Severity (see [OWASP Risk Rating](https://www.owasp.org/index.php/OWASP_Risk_Rating_Methodology))*
-* *Impact: High / Low*
-* *Likelihood: High / Low*
+* *Impact: High*
+* *Likelihood: High*
 
 #### *Description*
-*Information about the vulnerability + how this can be exploited.*
+*https://github.com/FundRequest/contracts/issues/50*
 
 #### *Proposed solution*
-*Information on how the problem can be mitigated.*
-
+*Hotfix: fix the key syntax (should be claims instead of claim). Future-proof: Use enums instead of strings as db keys*
