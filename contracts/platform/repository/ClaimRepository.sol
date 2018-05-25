@@ -23,8 +23,6 @@ contract ClaimRepository is Callable {
         } else {
             db.setString(keccak256("claims.solver", _platform, _platformId), _solver);
             db.setAddress(keccak256("claims.solver_address", _platform, _platformId), _solverAddress);
-
-            db.setUint(keccak256("claims.count"), db.getUint(keccak256("claim.count")).add(1));
         }
 
         uint tokenCount = db.getUint(keccak256("claims.tokenCount", _platform, _platformId));
@@ -32,10 +30,6 @@ contract ClaimRepository is Callable {
         db.setUint(keccak256("claims.token.amount", _platform, _platformId, _token), _requestBalance);
         db.setAddress(keccak256("claims.token.address", _platform, _platformId, tokenCount), _token);
         return true;
-    }
-
-    function getClaimCount() view external returns (uint claimCount) {
-        return db.getUint(keccak256("claims.count"));
     }
 
     function isClaimed(bytes32 _platform, string _platformId) view external returns (bool claimed) {
