@@ -110,8 +110,4 @@ contract FundRepository is Callable {
     function balance(bytes32 _platform, string _platformId, address _token) view public returns (uint256) {
         return db.getUint(keccak256(abi.encodePacked("funds.tokenBalance", _platform, _platformId, _token)));
     }
-
-    function() public {
-        // dont receive ether via fallback
-    }
 }

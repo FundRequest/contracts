@@ -61,8 +61,4 @@ contract ClaimRepository is Callable {
     function getAmountByToken(bytes32 _platform, string _platformId, address _token) view external returns (uint token) {
         return db.getUint(keccak256(abi.encodePacked("claims.token.amount", _platform, _platformId, _token)));
     }
-
-    function() external {
-        // dont receive ether via fallback
-    }
 }

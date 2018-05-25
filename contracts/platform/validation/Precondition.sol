@@ -20,8 +20,4 @@ contract Precondition is Owned {
     }
 
     function isValid(bytes32 _platform, string _platformId, address _token, uint256 _value, address _funder) external view returns (bool valid);
-
-    function () external {
-        // dont receive ether via fallback
-    }
 }

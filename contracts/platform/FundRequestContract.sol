@@ -123,7 +123,14 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     }
 
     function removePrecondition(uint _index) external onlyOwner {
-        delete preconditions[_index];
+        if (_index >= preconditions.length) return;
+
+        for (uint i = _index; i < preconditions.length-1; i++) {
+            preconditions[i] = preconditions[i+1];
+        }
+
+        delete preconditions[preconditions.length-1];
+        preconditions.length--;
     }
 
     function setFundRepository(address _repositoryAddress) public onlyOwner {
@@ -156,9 +163,5 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     //required should there be an issue with available ether
     function deposit() external onlyOwner payable {
         require(msg.value > 0, "Should at least be 1 wei deposited");
-    }
-
-    function() external {
-        // dont receive ether via fallback
     }
 }
