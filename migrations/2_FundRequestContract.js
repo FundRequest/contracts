@@ -1,5 +1,3 @@
-const FundrequestToken = artifacts.require("./token/FundRequestToken.sol");
-
 const FundRepository = artifacts.require('./platform/repository/FundRepository.sol');
 const ClaimRepository = artifacts.require('./platform/repository/ClaimRepository.sol');
 const Platform = artifacts.require("./platform/FundRequestContract.sol");
