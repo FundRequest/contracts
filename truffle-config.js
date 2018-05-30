@@ -21,9 +21,10 @@ module.exports = {
 		},
 		mainnet: {
 			network_id: '1',
-			host: "localhost",
-			port: 8545,
-			gas: 4612388
+      provider: new HDWalletProvider(process.env.MNEMONIC_MAINNET, "https://mainnet.fundrequest.io"),
+			from: process.env.MAINNET_FROM,
+			gas: 4612388,
+			gasPrice: 23000000000
 		}
 	},
 	mocha: {
