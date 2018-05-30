@@ -45,4 +45,4 @@ Contracts for FundRequest (token, crowdsale and platform contracts)
   ClaimRepository: 0x97590d2ba0b015c6138ee3f744d90e8707f3ff9c
   FundRepository: 0xca9d455591d1573e9f5f42dbd3db348232e583e0
   TokenWhitelistPrecondition: 0xb12e3fe9fac35a79030e428bcec2639183bfeb0f
-``
+```
