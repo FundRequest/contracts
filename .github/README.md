@@ -13,6 +13,12 @@ Contracts for FundRequest (token, crowdsale and platform contracts)
 | MiniMeTokenFactory  | 0x8b0b13d43122eaba2b2318387dc6a368ce398f6a  |
 | FundRequestToken  | 0x4df47b4969b2911c966506e3592c41389493953b  |
 | FundRequestTokenGeneration  | 0xbcc546eb5a290977180f85cafaa712019893729c  |
+| FundRequestContract  | 0xa8aa4ce1bcd0d78bf19889f389cd030dfc96275e  |
+| TokenWhitelistPrecondition  | 0x06d4eccf466d08246856b3f8fc52b13a51cf01ca  |
+| FundRepository  | 0x9b13026a4430acbfd3d80d9dea2cebc4e7d1d79a  |
+| ClaimRepository  | 0x3f5460cc85921d43f14b99699bfc87ab8aa3ab97  |
+| EternalStorage  | 0x0821d33c50d2d2d1381b5dfca34900bacad909a7  |
+
 
 ### Kovan Staging
 
