@@ -13,7 +13,7 @@ This page contains more information on found vulnarabilities in the FundRequest 
 ## Found issues
 When you find a vulnerability, please create a pull request with more information as demonstrated below.
 
-### *Example Vulnerabilitiy*
+### *Solve old issues*
 
 #### *Auditor*
 *@Pauliax*
