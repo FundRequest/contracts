@@ -18,8 +18,9 @@ When you find a vulnerability, please create a pull request with more informatio
 #### *Auditor*
 *@Pauliax*
 
-#### *Severity*
-*Minor*
+#### *Overall Risk Severity (see [OWASP Risk Rating](https://www.owasp.org/index.php/OWASP_Risk_Rating_Methodology))*
+* *Impact: Low*
+* *Likelihood: Low*
 
 #### *Description*
 *-*

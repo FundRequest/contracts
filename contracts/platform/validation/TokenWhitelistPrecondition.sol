@@ -1,4 +1,4 @@
-pragma solidity 0.4.23;
+pragma solidity 0.4.24;
 
 import "./Precondition.sol";
 import "../../utils/strings.sol";
@@ -32,6 +32,7 @@ contract TokenWhitelistPrecondition is Precondition {
     function allowDefaultToken(address _token, bool _allowed) public onlyOwner {
         defaultWhitelist[_token] = _allowed;
         if (!existingToken[_token]) {
+            existingToken[_token] = true;
             tokens.push(_token);
         }
         emit Allowed(_token, _allowed);
@@ -40,6 +41,7 @@ contract TokenWhitelistPrecondition is Precondition {
     function allow(bytes32 _platform, string _platformId, address _token, bool _allowed) external onlyOwner {
         tokenWhitelist[_platform][_platformId][_token] = _allowed;
         if (!existingToken[_token]) {
+            existingToken[_token] = true;
             tokens.push(_token);
         }
         emit Allowed(_token, _allowed, _platform, _platformId);
