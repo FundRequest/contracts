@@ -1,4 +1,4 @@
-pragma solidity 0.4.23;
+pragma solidity 0.4.24;
 
 
 import "../math/SafeMath.sol";
@@ -106,7 +106,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     }
 
     function validClaim(bytes32 platform, string platformId, string solver, address solverAddress, bytes32 r, bytes32 s, uint8 v) internal view returns (bool) {
-        bytes32 h = keccak256(createClaimMsg(platform, platformId, solver, solverAddress));
+        bytes32 h = keccak256(abi.encodePacked(createClaimMsg(platform, platformId, solver, solverAddress)));
         address signerAddress = ecrecover(h, v, r, s);
         return claimSignerAddress == signerAddress;
     }
@@ -123,7 +123,14 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     }
 
     function removePrecondition(uint _index) external onlyOwner {
-        delete preconditions[_index];
+        if (_index >= preconditions.length) return;
+
+        for (uint i = _index; i < preconditions.length-1; i++) {
+            preconditions[i] = preconditions[i+1];
+        }
+
+        delete preconditions[preconditions.length-1];
+        preconditions.length--;
     }
 
     function setFundRepository(address _repositoryAddress) public onlyOwner {
@@ -156,9 +163,5 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     //required should there be an issue with available ether
     function deposit() external onlyOwner payable {
         require(msg.value > 0, "Should at least be 1 wei deposited");
-    }
-
-    function() external {
-        // dont receive ether via fallback
     }
 }

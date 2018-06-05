@@ -85,14 +85,6 @@ contract('FundRequestContract', function (accounts) {
     await expectTokenBalance(solverAddress, 1000);
   });
 
-  it('should correctly update claimRepository after updating', async () => {
-    await fund();
-    await claim();
-
-
-    return expect(mapToNumber(claimRepository.getClaimCount())).to.eventually.equal(1);
-  });
-
 
   const fund = function (extraData) {
     return frc.fund(web3.fromAscii(fundData.platform), fundData.platformId, fundData.token, fundData.value, extraData);
