@@ -6,24 +6,45 @@ This page contains more information on found vulnarabilities in the FundRequest 
 ## Auditors
 * @davyvanroy
 * @Qkyrie
-* *Add your name here*
+* @Pauliax
 
 
 ## Found issues
-When you find a vulnerability, please create a pull request with more information as demonstrated below.
+*When you find a vulnerability, please create a pull request with more information as demonstrated below.*
 
-### *Example Vulnerabilitiy*
+### Solve old issues
 
-#### *Auditor*
-*@davyvanroy*
+#### Auditor
+@Pauliax
 
-#### *Overall Risk Severity (see [OWASP Risk Rating](https://www.owasp.org/index.php/OWASP_Risk_Rating_Methodology))*
-* *Impact: High / Low*
-* *Likelihood: High / Low*
-
-#### *Description*
-*Information about the vulnerability + how this can be exploited.*
+#### Overall Risk Severity (see [OWASP Risk Rating](https://www.owasp.org/index.php/OWASP_Risk_Rating_Methodology))
+* Impact: Low
+* Likelihood: Low
 
 #### *Proposed solution*
-*Information on how the problem can be mitigated.*
+Fixes https://github.com/FundRequest/contracts/issues/45
+
+
+### Using delete on an array leaves a gap
+
+#### Auditor
+@Pauliax
+
+#### Overall Risk Severity (see [OWASP Risk Rating](https://www.owasp.org/index.php/OWASP_Risk_Rating_Methodology))
+* Impact: Low
+* Likelihood: Low
+
+#### Proposed solution
+
+```
+function removePrecondition(uint _index) external onlyOwner {
+    if (_index >= preconditions.length) return;
+    for (uint i = _index; i < preconditions.length-1; i++) {
+      preconditions[i] = preconditions[i+1];
+    }
+    delete preconditions[preconditions.length-1];
+    preconditions.length--;
+  }
+```
+
 
