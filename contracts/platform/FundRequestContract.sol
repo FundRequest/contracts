@@ -27,9 +27,7 @@ contract FundRequestContract is Callable, ApproveAndCallFallBack {
 
     event Refund(address indexed owner, bytes32 platform, string platformId, address token, uint256 value);
 
-    address public ETHER_ADDRESS = 0x00eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee;
-
-    event Log(string test);
+    address constant public ETHER_ADDRESS = 0x00eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee;
 
     //repositories
     FundRepository public fundRepository;
