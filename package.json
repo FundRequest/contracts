@@ -20,15 +20,15 @@
     "babel-register": "^6.26.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
-    "dotenv": "^5.0.1",
+    "dotenv": "^6.0.0",
     "ethjs-signer": "^0.1.1",
     "ganache-cli": "^6.1.0",
     "mocha": "^5.1.1",
     "sol-merger": "^0.1.2",
     "solidity-coverage": "^0.5.0",
-    "solium": "^1.1.6",
+    "solium": "^1.1.7",
     "truffle": "^4.1.11",
-    "truffle-hdwallet-provider": "0.0.3",
+    "truffle-hdwallet-provider": "0.0.5",
     "web3": "^0.20.6"
   }
 }

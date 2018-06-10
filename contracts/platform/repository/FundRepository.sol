@@ -68,6 +68,21 @@ contract FundRepository is Callable {
         return totalTokenBalance;
     }
 
+    function refundToken(bytes32 _platform, string _platformId, address _owner, address _token) public onlyCaller returns (uint256) {
+        require(!issueResolved(_platform, _platformId), "Can't refund token, issue is already resolved.");
+        require(balance(_platform, _platformId, _token) > 0);
+
+
+        //delete amount from user, so he can't refund again
+        uint256 userTokenBalance = amountFunded(_platform, _platformId, _owner, _token);
+        db.deleteUint(keccak256(abi.encodePacked("funds.amountFundedByUser", _platform, _platformId, _owner, _token)));
+
+        //subtract amount from tokenBalance
+        db.setUint(keccak256(abi.encodePacked("funds.tokenBalance", _platform, _platformId, _token)), balance(_platform, _platformId, _token).sub(userTokenBalance));
+
+        return userTokenBalance;
+    }
+
     function finishResolveFund(bytes32 platform, string platformId) public onlyCaller returns (bool) {
         db.setBool(keccak256(abi.encodePacked("funds.issueResolved", platform, platformId)), true);
         db.deleteUint(keccak256(abi.encodePacked("funds.funderCount", platform, platformId)));

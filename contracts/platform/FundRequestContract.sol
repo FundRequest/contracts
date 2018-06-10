@@ -5,7 +5,7 @@ import "../math/SafeMath.sol";
 import "../token/ERC20.sol";
 import "./repository/FundRepository.sol";
 import "./repository/ClaimRepository.sol";
-import "../ownership/Owned.sol";
+import "../control/Callable.sol";
 import "../token/ApproveAndCallFallback.sol";
 import "../utils/strings.sol";
 import "./validation/Precondition.sol";
@@ -16,7 +16,7 @@ import "./validation/Precondition.sol";
  * Davy Van Roy
  * Quinten De Swaef
  */
-contract FundRequestContract is Owned, ApproveAndCallFallBack {
+contract FundRequestContract is Callable, ApproveAndCallFallBack {
 
     using SafeMath for uint256;
     using strings for *;
@@ -25,7 +25,11 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
 
     event Claimed(address indexed solverAddress, bytes32 platform, string platformId, string solver, address token, uint256 value);
 
+    event Refund(address indexed owner, bytes32 platform, string platformId, address token, uint256 value);
+
     address public ETHER_ADDRESS = 0x00eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee;
+
+    event Log(string test);
 
     //repositories
     FundRepository public fundRepository;
@@ -33,6 +37,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     ClaimRepository public claimRepository;
 
     address public claimSignerAddress;
+    address public server;
 
     Precondition[] public preconditions;
 
@@ -65,7 +70,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     }
 
     function doFunding(bytes32 _platform, string _platformId, address _token, uint256 _value, address _funder) internal returns (bool success) {
-        if(_token == ETHER_ADDRESS) {
+        if (_token == ETHER_ADDRESS) {
             //must check this, so we don't have people foefeling with the amounts
             require(msg.value == _value);
         }
@@ -77,7 +82,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
         }
         require(_value > 0, "amount of tokens needs to be more than 0");
 
-        if(_token != ETHER_ADDRESS) {
+        if (_token != ETHER_ADDRESS) {
             require(ERC20(_token).transferFrom(_funder, address(this), _value), "Transfer of tokens to contract failed");
         }
 
@@ -93,7 +98,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
         for (uint i = 0; i < tokenCount; i++) {
             address token = fundRepository.getFundedTokensByIndex(platform, platformId, i);
             uint256 tokenAmount = fundRepository.claimToken(platform, platformId, token);
-            if(token == ETHER_ADDRESS) {
+            if (token == ETHER_ADDRESS) {
                 solverAddress.transfer(tokenAmount);
             } else {
                 require(ERC20(token).transfer(solverAddress, tokenAmount), "transfer of tokens from contract failed");
@@ -105,10 +110,45 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
         return true;
     }
 
+    /*
+     * The user can request a refund, but will need a signature by the server
+     */
+    function refundByUser(bytes32 _platform, string _platformId, bytes32 r, bytes32 s, uint8 v) public returns (bool) {
+        require(validRefundServerSignature(_platform, _platformId, r, s, v));
+        doRefund(_platform, _platformId, msg.sender);
+    }
+
+    function doRefund(bytes32 _platform, string _platformId, address _funder) internal {
+        uint256 tokenCount = fundRepository.getFundedTokenCount(_platform, _platformId);
+        for (uint i = 0; i < tokenCount; i++) {
+            address token = fundRepository.getFundedTokensByIndex(_platform, _platformId, i);
+            uint256 tokenAmount = fundRepository.refundToken(_platform, _platformId, _funder, token);
+            if (tokenAmount > 0) {
+                if (token == ETHER_ADDRESS) {
+                    _funder.transfer(tokenAmount);
+                } else {
+                    require(ERC20(token).transfer(_funder, tokenAmount), "transfer of tokens from contract failed");
+                }
+            }
+            emit Refund(_funder, _platform, _platformId, token, tokenAmount);
+        }
+    }
+
+    function validRefundServerSignature(bytes32 platform, string platformId, bytes32 r, bytes32 s, uint8 v) internal view returns (bool) {
+        bytes32 h = keccak256(abi.encodePacked(createRefundMsg(platform, platformId)));
+        address signerAddress = ecrecover(h, v, r, s);
+        return claimSignerAddress == signerAddress;
+    }
+
     function validClaim(bytes32 platform, string platformId, string solver, address solverAddress, bytes32 r, bytes32 s, uint8 v) internal view returns (bool) {
         bytes32 h = keccak256(abi.encodePacked(createClaimMsg(platform, platformId, solver, solverAddress)));
         address signerAddress = ecrecover(h, v, r, s);
         return claimSignerAddress == signerAddress;
+    }
+
+    function createRefundMsg(bytes32 platform, string platformId) public pure returns (string) {
+        return strings.bytes32ToString(platform)
+        .strConcat(prependUnderscore(platformId));
     }
 
     function createClaimMsg(bytes32 platform, string platformId, string solver, address solverAddress) internal pure returns (string) {
@@ -125,11 +165,11 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     function removePrecondition(uint _index) external onlyOwner {
         if (_index >= preconditions.length) return;
 
-        for (uint i = _index; i < preconditions.length-1; i++) {
-            preconditions[i] = preconditions[i+1];
+        for (uint i = _index; i < preconditions.length - 1; i++) {
+            preconditions[i] = preconditions[i + 1];
         }
 
-        delete preconditions[preconditions.length-1];
+        delete preconditions[preconditions.length - 1];
         preconditions.length--;
     }
 
@@ -152,7 +192,7 @@ contract FundRequestContract is Owned, ApproveAndCallFallBack {
     //required to be able to migrate to a new FundRequestContract
     function migrateTokens(address _token, address newContract) external onlyOwner {
         require(newContract != address(0));
-        if(_token == ETHER_ADDRESS) {
+        if (_token == ETHER_ADDRESS) {
             newContract.transfer(address(this).balance);
         } else {
             ERC20 token = ERC20(_token);
