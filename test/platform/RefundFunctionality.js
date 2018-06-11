@@ -40,7 +40,7 @@ contract('FundRequestContract', function (accounts) {
     await claimRepository.updateCaller(frc.address, true, {from: owner});
     await fnd.approve(frc.address, 999999999999999999);
 
-    await frc.setClaimSignerAddress(claimSignerAddress);
+    await frc.updateCaller(accounts[1], true, {from: owner})
   });
 
   //TESTS
@@ -54,10 +54,7 @@ contract('FundRequestContract', function (accounts) {
       value: 100
     });
 
-    await frc.refundByUser(web3.fromAscii("github"), "1",
-      "0x3618e9450fb28cbe4bd0af9f470f34406665dcf3c1bb660db6a13c318c990360",
-      "0x3b3453fc12e4d3c8a803cdbd424f66825f2fb80142ae2d46d4e91ef6488f8bc3",
-      28, {from: accounts[0]});
+    await frc.refund(web3.fromAscii("github"), "1", accounts[0], {from: accounts[1]});
 
     await expectBalance({
       platform: "github",
@@ -77,10 +74,7 @@ contract('FundRequestContract', function (accounts) {
       value: 200
     });
 
-    await frc.refundByUser(web3.fromAscii("github"), "1",
-      "0x3618e9450fb28cbe4bd0af9f470f34406665dcf3c1bb660db6a13c318c990360",
-      "0x3b3453fc12e4d3c8a803cdbd424f66825f2fb80142ae2d46d4e91ef6488f8bc3",
-      28, {from: accounts[0]});
+    await frc.refund(web3.fromAscii("github"), "1", accounts[0], {from: accounts[1]});
 
     await expectBalance({
       platform: "github",
@@ -97,13 +91,10 @@ contract('FundRequestContract', function (accounts) {
     let amountFundedBeforeRefund = await fundRepository.amountFunded(web3.fromAscii("github"), "1", accounts[0], fnd.address);
     expect(amountFundedBeforeRefund.toNumber()).to.equal(100);
 
-    await frc.refundByUser(web3.fromAscii("github"), "1",
-      "0x3618e9450fb28cbe4bd0af9f470f34406665dcf3c1bb660db6a13c318c990360",
-      "0x3b3453fc12e4d3c8a803cdbd424f66825f2fb80142ae2d46d4e91ef6488f8bc3",
-      28, {from: accounts[0]});
+    await frc.refund(web3.fromAscii("github"), "1", accounts[0], {from: accounts[1]});
 
-      let amountFundedAfterRefund = await fundRepository.amountFunded(web3.fromAscii("github"), "1", accounts[0], fnd.address);
-      expect(amountFundedAfterRefund.toNumber()).to.equal(0);
+    let amountFundedAfterRefund = await fundRepository.amountFunded(web3.fromAscii("github"), "1", accounts[0], fnd.address);
+    expect(amountFundedAfterRefund.toNumber()).to.equal(0);
   });
 
   //UTILITY

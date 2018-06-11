@@ -108,15 +108,7 @@ contract FundRequestContract is Callable, ApproveAndCallFallBack {
         return true;
     }
 
-    /*
-     * The user can request a refund, but will need a signature by the server
-     */
-    function refundByUser(bytes32 _platform, string _platformId, bytes32 r, bytes32 s, uint8 v) public returns (bool) {
-        require(validRefundServerSignature(_platform, _platformId, r, s, v));
-        doRefund(_platform, _platformId, msg.sender);
-    }
-
-    function doRefund(bytes32 _platform, string _platformId, address _funder) internal {
+    function refund(bytes32 _platform, string _platformId, address _funder) public onlyCaller returns (bool) {
         uint256 tokenCount = fundRepository.getFundedTokenCount(_platform, _platformId);
         for (uint i = 0; i < tokenCount; i++) {
             address token = fundRepository.getFundedTokensByIndex(_platform, _platformId, i);
