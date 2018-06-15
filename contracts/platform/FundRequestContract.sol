@@ -124,12 +124,6 @@ contract FundRequestContract is Callable, ApproveAndCallFallBack {
         }
     }
 
-    function validRefundServerSignature(bytes32 platform, string platformId, bytes32 r, bytes32 s, uint8 v) internal view returns (bool) {
-        bytes32 h = keccak256(abi.encodePacked(createRefundMsg(platform, platformId)));
-        address signerAddress = ecrecover(h, v, r, s);
-        return claimSignerAddress == signerAddress;
-    }
-
     function validClaim(bytes32 platform, string platformId, string solver, address solverAddress, bytes32 r, bytes32 s, uint8 v) internal view returns (bool) {
         bytes32 h = keccak256(abi.encodePacked(createClaimMsg(platform, platformId, solver, solverAddress)));
         address signerAddress = ecrecover(h, v, r, s);
