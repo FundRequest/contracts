@@ -1,4 +1,4 @@
-### FundRequest Contracts<img align="right" src="https://fundrequest.io/assets/img/logo.png" height="30px" />
+### FundRequest Contracts<img align="right" src="https://github.com/FundRequest.png?size=30" />
 
 [![Build Status](https://img.shields.io/travis/FundRequest/contracts.svg?style=for-the-badge)](https://img.shields.io/travis/FundRequest/contracts.svg?style=for-the-badge) 
 [![Greenkeeper badge](https://badges.greenkeeper.io/FundRequest/contracts.svg)](https://greenkeeper.io/)
