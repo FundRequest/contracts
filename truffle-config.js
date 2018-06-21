@@ -15,7 +15,11 @@ module.exports = {
 			host: "localhost",
 			port: 8545,
 		},
-		kovan: {
+		staging: {
+			network_id: '42',
+			provider: new HDWalletProvider(process.env.MNEMONIC, "https://kovan.fundrequest.io/")
+		},
+		test: {
 			network_id: '42',
 			provider: new HDWalletProvider(process.env.MNEMONIC, "https://kovan.fundrequest.io/")
 		},

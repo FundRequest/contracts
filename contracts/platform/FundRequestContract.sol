@@ -35,7 +35,6 @@ contract FundRequestContract is Callable, ApproveAndCallFallBack {
     ClaimRepository public claimRepository;
 
     address public claimSignerAddress;
-    address public server;
 
     Precondition[] public preconditions;
 

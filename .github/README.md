@@ -26,23 +26,25 @@ Contracts for FundRequest (token, crowdsale and platform contracts)
   FundRequestToken: 0x02f96ef85cad6639500ca1cc8356f0b5ca5bf1d2
   0xToken: 0x6ff6c0ff1d68b964901f986d4c9fa3ac68346570
   EternalStorage: 0xea4f67d52771e177037c5787e3d73c5eca0d83ae
-  ClaimRepository: 0x4ac69cfa88e38edd81b192edb084983b24ca8f9e
-  FundRepository: 0x309c50ca57ec4f856f9eefffc53586f7cdda046f
-  FundRequestContract: 0xea387e184f1366b10c98c08b92cd90eb876dbbc0
+  ClaimRepository: 0xc7a039b5bd54d4c5743661cdea2968f6f0f6e47e
+  FundRepository: 0x94ff49329209c43014a250a5794e569ff09071cc
+  Old FundRequestContract: 0xea387e184f1366b10c98c08b92cd90eb876dbbc0
+  FundRequestContract: 0xece499ce3b76f5685605c95b3603e7131aa2fdd4
   TokenWhitelistPrecondition: 0xec498c0a6bab80c99e4575bbe425dba806db48ea
 ```
 
 
 
 
-### Kovan dev-web
+### Kovan Test
 
 ```
   FundRequestToken: 0x02f96ef85cad6639500ca1cc8356f0b5ca5bf1d2
   0xToken: 0x6ff6c0ff1d68b964901f986d4c9fa3ac68346570
   EternalStorage: 0x1e5370467e0fa38de1902fa02ed8096b7a81ba74
-  FundRequestContract: 0x22b6cf852e39e91f18d4c8b0cb64810d6d49bc27
-  ClaimRepository: 0x97590d2ba0b015c6138ee3f744d90e8707f3ff9c
-  FundRepository: 0xca9d455591d1573e9f5f42dbd3db348232e583e0
+  Old FundRequestContract: 0x22b6cf852e39e91f18d4c8b0cb64810d6d49bc27
+  FundRequestContract: 0x7392daafbd4f22f2c356eb42461cfbe2aa346ca1
+  ClaimRepository: 0x27cde0a77757aa980ba63ab3a16e454ea142f6b4
+  FundRepository: 0xbfd3549e2310f5fb114154582d99dbe57a8ea63f
   TokenWhitelistPrecondition: 0xb12e3fe9fac35a79030e428bcec2639183bfeb0f
 ```
