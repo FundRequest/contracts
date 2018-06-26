@@ -12,7 +12,7 @@ import "./validation/Precondition.sol";
 
 
 /*
- * Main FundRequest Contract
+ * Main FundRequest Contract. The entrypoint for every claim/refund
  * Davy Van Roy
  * Quinten De Swaef
  */
@@ -38,27 +38,38 @@ contract FundRequestContract is Callable, ApproveAndCallFallBack {
 
     Precondition[] public preconditions;
 
-    modifier addressNotNull(address target) {
-        require(target != address(0), "target address can not be 0x0");
-        _;
-    }
-
     constructor(address _fundRepository, address _claimRepository) public {
         setFundRepository(_fundRepository);
         setClaimRepository(_claimRepository);
     }
 
-    //entrypoints
+    //ENTRYPOINTS
+
+    /*
+     * Public function, can only be called from the outside.
+     * Fund an issue, providing a token and value.
+     * Requires an allowance > _value of the token.
+     */
     function fund(bytes32 _platform, string _platformId, address _token, uint256 _value) external returns (bool success) {
         require(doFunding(_platform, _platformId, _token, _value, msg.sender), "funding with token failed");
         return true;
     }
 
+    /*
+     * Public function, can only be called from the outside.
+     * Fund an issue, ether as value of the transaction.
+     * Requires ether to be whitelisted in a precondition.
+     */
     function etherFund(bytes32 _platform, string _platformId) payable external returns (bool success) {
         require(doFunding(_platform, _platformId, ETHER_ADDRESS, msg.value, msg.sender), "funding with ether failed");
         return true;
     }
 
+    /*
+     * Public function, supposed to be called from another contract, after receiving approval
+     * Funds an issue, expects platform, platformid to be concatted with |AAC| as delimiter and provided as _data
+     * Only used with the FundRequest approveAndCall function at the moment. Might be removed later in favor of 2 calls.
+     */
     function receiveApproval(address _from, uint _amount, address _token, bytes _data) public {
         var sliced = string(_data).toSlice();
         var platform = sliced.split("|AAC|".toSlice());
@@ -66,6 +77,51 @@ contract FundRequestContract is Callable, ApproveAndCallFallBack {
         require(doFunding(platform.toBytes32(), platformId.toString(), _token, _amount, _from));
     }
 
+    /*
+     * Claim: Public function, only supposed to be called from the outside
+     * Anyone can call this function, but a valid signature from FundRequest is required
+     */
+    function claim(bytes32 platform, string platformId, string solver, address solverAddress, bytes32 r, bytes32 s, uint8 v) public returns (bool) {
+        require(validClaim(platform, platformId, solver, solverAddress, r, s, v), "Claimsignature was not valid");
+        uint256 tokenCount = fundRepository.getFundedTokenCount(platform, platformId);
+        for (uint i = 0; i < tokenCount; i++) {
+            address token = fundRepository.getFundedTokensByIndex(platform, platformId, i);
+            uint256 tokenAmount = fundRepository.claimToken(platform, platformId, token);
+            if (token == ETHER_ADDRESS) {
+                solverAddress.transfer(tokenAmount);
+            } else {
+                require(ERC20(token).transfer(solverAddress, tokenAmount), "transfer of tokens from contract failed");
+            }
+            require(claimRepository.addClaim(solverAddress, platform, platformId, solver, token, tokenAmount), "adding claim to repository failed");
+            emit Claimed(solverAddress, platform, platformId, solver, token, tokenAmount);
+        }
+        require(fundRepository.finishResolveFund(platform, platformId), "Resolving the fund failed");
+        return true;
+    }
+
+    /*
+     * Claim: Public function, only supposed to be called from the outside
+     * Only FundRequest can call this function for now, which will refund a user for a specific issue.
+     */
+    function refund(bytes32 _platform, string _platformId, address _funder) external onlyCaller returns (bool) {
+        uint256 tokenCount = fundRepository.getFundedTokenCount(_platform, _platformId);
+        for (uint i = 0; i < tokenCount; i++) {
+            address token = fundRepository.getFundedTokensByIndex(_platform, _platformId, i);
+            uint256 tokenAmount = fundRepository.refundToken(_platform, _platformId, _funder, token);
+            if (tokenAmount > 0) {
+                if (token == ETHER_ADDRESS) {
+                    _funder.transfer(tokenAmount);
+                } else {
+                    require(ERC20(token).transfer(_funder, tokenAmount), "transfer of tokens from contract failed");
+                }
+            }
+            emit Refund(_funder, _platform, _platformId, token, tokenAmount);
+        }
+    }
+
+    /*
+     * only called from within the this contract itself, will actually do the funding
+     */
     function doFunding(bytes32 _platform, string _platformId, address _token, uint256 _value, address _funder) internal returns (bool success) {
         if (_token == ETHER_ADDRESS) {
             //must check this, so we don't have people foefeling with the amounts
@@ -89,49 +145,13 @@ contract FundRequestContract is Callable, ApproveAndCallFallBack {
         return true;
     }
 
-    function claim(bytes32 platform, string platformId, string solver, address solverAddress, bytes32 r, bytes32 s, uint8 v) public returns (bool) {
-        require(validClaim(platform, platformId, solver, solverAddress, r, s, v), "Claimsignature was not valid");
-        uint256 tokenCount = fundRepository.getFundedTokenCount(platform, platformId);
-        for (uint i = 0; i < tokenCount; i++) {
-            address token = fundRepository.getFundedTokensByIndex(platform, platformId, i);
-            uint256 tokenAmount = fundRepository.claimToken(platform, platformId, token);
-            if (token == ETHER_ADDRESS) {
-                solverAddress.transfer(tokenAmount);
-            } else {
-                require(ERC20(token).transfer(solverAddress, tokenAmount), "transfer of tokens from contract failed");
-            }
-            require(claimRepository.addClaim(solverAddress, platform, platformId, solver, token, tokenAmount), "adding claim to repository failed");
-            emit Claimed(solverAddress, platform, platformId, solver, token, tokenAmount);
-        }
-        require(fundRepository.finishResolveFund(platform, platformId), "Resolving the fund failed");
-        return true;
-    }
-
-    function refund(bytes32 _platform, string _platformId, address _funder) public onlyCaller returns (bool) {
-        uint256 tokenCount = fundRepository.getFundedTokenCount(_platform, _platformId);
-        for (uint i = 0; i < tokenCount; i++) {
-            address token = fundRepository.getFundedTokensByIndex(_platform, _platformId, i);
-            uint256 tokenAmount = fundRepository.refundToken(_platform, _platformId, _funder, token);
-            if (tokenAmount > 0) {
-                if (token == ETHER_ADDRESS) {
-                    _funder.transfer(tokenAmount);
-                } else {
-                    require(ERC20(token).transfer(_funder, tokenAmount), "transfer of tokens from contract failed");
-                }
-            }
-            emit Refund(_funder, _platform, _platformId, token, tokenAmount);
-        }
-    }
-
+    /*
+     * checks if a claim is valid, by checking the signature
+     */
     function validClaim(bytes32 platform, string platformId, string solver, address solverAddress, bytes32 r, bytes32 s, uint8 v) internal view returns (bool) {
         bytes32 h = keccak256(abi.encodePacked(createClaimMsg(platform, platformId, solver, solverAddress)));
         address signerAddress = ecrecover(h, v, r, s);
         return claimSignerAddress == signerAddress;
-    }
-
-    function createRefundMsg(bytes32 platform, string platformId) public pure returns (string) {
-        return strings.bytes32ToString(platform)
-        .strConcat(prependUnderscore(platformId));
     }
 
     function createClaimMsg(bytes32 platform, string platformId, string solver, address solverAddress) internal pure returns (string) {
@@ -181,6 +201,11 @@ contract FundRequestContract is Callable, ApproveAndCallFallBack {
             ERC20 token = ERC20(_token);
             token.transfer(newContract, token.balanceOf(address(this)));
         }
+    }
+
+    modifier addressNotNull(address target) {
+        require(target != address(0), "target address can not be 0x0");
+        _;
     }
 
     //required should there be an issue with available ether

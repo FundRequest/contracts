@@ -3,7 +3,7 @@ pragma solidity 0.4.24;
 import "../../ownership/Owned.sol";
 import "../../math/SafeMath.sol";
 import "../../control/Callable.sol";
-import "../../storage/EternalStorage.sol";
+import "../storage/EternalStorage.sol";
 
 
 contract ClaimRepository is Callable {

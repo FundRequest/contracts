@@ -3,7 +3,7 @@ const FND = artifacts.require('./token/FundRequestToken.sol');
 const FRC_FUND_REPO = artifacts.require('./token/repository/FundRepository.sol');
 const FRC_CLAIM_REPO = artifacts.require('./token/repository/ClaimRepository.sol');
 const TokenFactory = artifacts.require('./factory/MiniMeTokenFactory.sol');
-const EternalStorage = artifacts.require('./storage/EternalStorage.sol');
+const EternalStorage = artifacts.require('./platform/storage/EternalStorage.sol');
 
 const expect = require('chai').expect;
 

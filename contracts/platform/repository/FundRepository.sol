@@ -2,7 +2,7 @@ pragma solidity 0.4.24;
 
 import "../../math/SafeMath.sol";
 import "../../control/Callable.sol";
-import "../../storage/EternalStorage.sol";
+import "../storage/EternalStorage.sol";
 
 
 /*
