@@ -36,5 +36,5 @@ getSolverAddress(bytes32 _platform, string _platformId) view external returns (a
 getSolver(bytes32 _platform, string _platformId) view external returns (string)
 getTokenCount(bytes32 _platform, string _platformId) view external returns (uint count) 
 getTokenByIndex(bytes32 _platform, string _platformId, uint _index) view external returns (address token)
- getAmountByToken(bytes32 _platform, string _platformId, address _token) view external returns (uint token)
+getAmountByToken(bytes32 _platform, string _platformId, address _token) view external returns (uint token)
 ```
