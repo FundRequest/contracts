@@ -44,7 +44,8 @@ contract FundRepository is Callable {
     }
 
     function updateBalances(address _from, bytes32 _platform, string _platformId, address _token, uint256 _value) public onlyCaller {
-        if (balance(_platform, _platformId, _token) <= 0) {
+        if (db.getBool(keccak256(abi.encodePacked("funds.token.address", _platform, _platformId, _token))) == false) {
+            db.setBool(keccak256(abi.encodePacked("funds.token.address", _platform, _platformId, _token)), true);
             //add to the list of tokens for this platformId
             uint tokenCount = getFundedTokenCount(_platform, _platformId);
             db.setAddress(keccak256(abi.encodePacked("funds.token.address", _platform, _platformId, tokenCount)), _token);
@@ -70,15 +71,19 @@ contract FundRepository is Callable {
 
     function refundToken(bytes32 _platform, string _platformId, address _owner, address _token) public onlyCaller returns (uint256) {
         require(!issueResolved(_platform, _platformId), "Can't refund token, issue is already resolved.");
-        require(balance(_platform, _platformId, _token) > 0);
-
 
         //delete amount from user, so he can't refund again
         uint256 userTokenBalance = amountFunded(_platform, _platformId, _owner, _token);
         db.deleteUint(keccak256(abi.encodePacked("funds.amountFundedByUser", _platform, _platformId, _owner, _token)));
 
+
+        uint256 oldBalance = balance(_platform, _platformId, _token);
+        uint256 newBalance = oldBalance.sub(userTokenBalance);
+
+        require(newBalance <= oldBalance);
+
         //subtract amount from tokenBalance
-        db.setUint(keccak256(abi.encodePacked("funds.tokenBalance", _platform, _platformId, _token)), balance(_platform, _platformId, _token).sub(userTokenBalance));
+        db.setUint(keccak256(abi.encodePacked("funds.tokenBalance", _platform, _platformId, _token)), newBalance);
 
         return userTokenBalance;
     }
