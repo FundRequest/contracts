@@ -3,7 +3,7 @@
 module.exports = {
   norpc: true,
   compileCommand: 'npx truffle compile',
-  testCommand: 'node --max-old-space-size=4096 ./node_modules/.bin/truffle test --network coverage',
+  testCommand: 'npx truffle test --network coverage',
   skipFiles: [
     'mocks',
     'Migrations.sol',
