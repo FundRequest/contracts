@@ -2,7 +2,7 @@
 
 module.exports = {
   norpc: true,
-  compileCommand: '../node_modules/.bin/truffle compile',
+  compileCommand: 'npx truffle compile',
   testCommand: 'node --max-old-space-size=4096 ../node_modules/.bin/truffle test --network coverage',
   skipFiles: [
     'mocks',
@@ -11,6 +11,9 @@ module.exports = {
     'utils/strings.sol',
     'token/MiniMeToken.sol',
     'factory/MiniMeTokenFactory.sol',
+    'crowdsale/FundRequestTokenGeneration.sol',
+    'token/*.sol',
+    'utils/strings.sol'
   ],
   copyNodeModules: true,
 };
