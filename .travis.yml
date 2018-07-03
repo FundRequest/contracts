@@ -6,21 +6,19 @@ cache:
   - "$HOME/.npm"
   - "$HOME/.yarn-cache"
   - node_modules
+notifications:
+  email: false
 node_js:
   - 8
-compiler:
-- gcc
-- clang
 env:
-- CXX=g++-4.8
-script: 
-  - ./node_modules/.bin/ganache-cli&
-  - ./node_modules/.bin/truffle test
+  - TASK=lint
+  - TASK=coverage
+before_script:
+  - npm prune
+script: "npm run $TASK"
 addons:
   apt:
     sources:
     - ubuntu-toolchain-r-test
-    packages:
-    - gcc-4.8
-    - g++-4.8
-    - clang
+after_success:
+  - cat coverage/lcov.info | ./node_modules/.bin/coveralls

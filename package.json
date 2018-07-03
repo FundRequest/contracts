@@ -6,29 +6,33 @@
     "test": "test"
   },
   "scripts": {
-    "test": "npx truffle test",
-    "coverage": "npx solidity-coverage",
+    "test": "TRUFFLE_TEST=true npm run ganache-cli:test",
+    "test:gas": "GAS_REPORTER=true npm test",
+    "coverage": "SOLIDITY_COVERAGE=true npm run ganache-cli:test",
+    "ganache-cli:test": "scripts/ganache-cli.sh",
+    "prepublishOnly": "truffle compile --all"
     "build-contracts": "npx sol-merger './contracts/**/*.sol' ./build_merged",
     "migrate": "npx truffle migrate",
-    "lint": "npx solium -d contracts/"
+    "lint": "solium --dir ./contracts",
   },
   "author": "FundRequest",
   "license": "MIT",
   "dependencies": {
     "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
     "babel-register": "^6.26.0",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "dotenv": "^6.0.0",
-    "ethjs-signer": "^0.1.1",
-    "ganache-cli": "^6.1.3",
+    "ganache-cli": "^6.1.4",
+    "eth-gas-reporter": "^0.1.9",
     "mocha": "^5.1.1",
     "sol-merger": "^0.1.2",
-    "solidity-coverage": "^0.5.0",
+    "solidity-coverage": "^0.5.5",
     "solium": "^1.1.7",
-    "truffle": "^4.1.12",
+    "truffle": "^4.1.13",
     "truffle-hdwallet-provider": "0.0.5",
+    "truffle-privatekey-provider": "0.1.0",
     "web3": "^1.0.0-beta.34"
   }
 }
