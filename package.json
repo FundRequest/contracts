@@ -13,7 +13,7 @@
     "prepublishOnly": "truffle compile --all",
     "build-contracts": "npx sol-merger './contracts/**/*.sol' ./build_merged",
     "migrate": "npx truffle migrate",
-    "lint": "solium --dir ./contracts",
+    "lint": "solium --dir ./contracts"
   },
   "author": "FundRequest",
   "license": "MIT",
