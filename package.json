@@ -25,6 +25,7 @@
     "dotenv": "^6.0.0",
     "ganache-cli": "^6.1.4",
     "eth-gas-reporter": "^0.1.9",
+    "decimal.js": "^10.0.1",
     "mocha": "^5.1.1",
     "sol-merger": "^0.1.2",
     "solidity-coverage": "^0.5.5",
