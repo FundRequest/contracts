@@ -38,14 +38,15 @@ contract('FundRequestContract', function (accounts) {
 
     await fundRepository.updateCaller(frc.address, true, {from: owner});
     await claimRepository.updateCaller(frc.address, true, {from: owner});
-    await fnd.approve(frc.address, 999999999999999999);
+    await fnd.approve(frc.address, 999999999999999999, { from: owner});
+    await fnd.approve(frc.address, 999999999999999999, {from: accounts[1]});
 
     await frc.updateCaller(accounts[1], true, {from: owner})
   });
 
   //TESTS
 
-  it('should be possible to do a refundByUser with the correct signature', async function () {
+  it('should be possible to do a refund', async function () {
     await fundDefaultRequest();
 
     await expectBalance({
@@ -64,7 +65,9 @@ contract('FundRequestContract', function (accounts) {
   });
 
 
-  it('it should be possible to refund more than one fund', async function () {
+
+
+  it('should be possible to refund more than one fund', async function () {
     await fundDefaultRequest();
     await fundDefaultRequest();
 
@@ -83,10 +86,93 @@ contract('FundRequestContract', function (accounts) {
     });
   });
 
+  it('funding after refunding should work without any issues', async function () {
+    await fundDefaultRequest();
+
+    await expectBalance({
+      platform: "github",
+      platformId: "1",
+      value: 100
+    });
+
+    await frc.refund(web3.fromAscii("github"), "1", accounts[0], {from: accounts[1]});
+
+    await expectBalance({
+      platform: "github",
+      platformId: "1",
+      value: 0
+    });
+
+    await fundDefaultRequest();
+
+    await expectBalance({
+      platform: "github",
+      platformId: "1",
+      value: 100
+    });
+
+    await frc.refund(web3.fromAscii("github"), "1", accounts[0], {from: accounts[1]});
+
+    await expectBalance({
+      platform: "github",
+      platformId: "1",
+      value: 0
+    });
+  });
+
+  it('funding with mutiple people should allow refund of one user', async function () {
+    await fundDefaultRequest();
+
+    await expectBalance({
+      platform: "github",
+      platformId: "1",
+      value: 100
+    });
+
+    await fundByOtherUser();
+
+    await expectBalance({
+      platform: "github",
+      platformId: "1",
+      value: 200
+    });
+
+    await frc.refund(web3.fromAscii("github"), "1", accounts[0], {from: accounts[1]});
+
+    await expectBalance({
+      platform: "github",
+      platformId: "1",
+      value: 100
+    });
+
+    await fundDefaultRequest();
+
+    await expectBalance({
+      platform: "github",
+      platformId: "1",
+      value: 200
+    });
+
+    await frc.refund(web3.fromAscii("github"), "1", accounts[1], {from: accounts[1]});
+
+    await expectBalance({
+      platform: "github",
+      platformId: "1",
+      value: 100
+    });
+
+    await frc.refund(web3.fromAscii("github"), "1", accounts[0], {from: accounts[1]});
+
+    await expectBalance({
+      platform: "github",
+      platformId: "1",
+      value: 0
+    });
+  });
+
 
   it('refunding should put the user balance to 0 too', async function () {
     await fundDefaultRequest();
-
 
     let amountFundedBeforeRefund = await fundRepository.amountFunded(web3.fromAscii("github"), "1", accounts[0], fnd.address);
     expect(amountFundedBeforeRefund.toNumber()).to.equal(100);
@@ -111,13 +197,20 @@ contract('FundRequestContract', function (accounts) {
     );
   }
 
-  let refundRequest = async () => {
-    //await frc.refundByUser("github", "1", accounts[0], )
-    return null;
+  let fundRequest = async function (data) {
+    await frc.fund(web3.fromAscii(data.platform), data.platformId, data.token, data.value, {from: data.funder});
   };
 
-  let fundRequest = async function (data) {
-    await frc.fund(web3.fromAscii(data.platform), data.platformId, data.token, data.value);
+  let fundByOtherUser = async function () {
+    let data = {
+      platform: "github",
+      platformId: "1",
+      token: fnd.address,
+      value: 100,
+      funder: accounts[1]
+    };
+    await fundRequest(data);
+    return data;
   };
 
   let fundDefaultRequest = async function () {
@@ -125,7 +218,8 @@ contract('FundRequestContract', function (accounts) {
       platform: "github",
       platformId: "1",
       token: fnd.address,
-      value: 100
+      value: 100,
+      funder: owner
     };
     await fundRequest(data);
     return data;
@@ -136,5 +230,6 @@ contract('FundRequestContract', function (accounts) {
     fnd = await FND.new(tokenFactory.address, 0x0, 0, "FundRequest", 18, "FND", true);
     await fnd.changeController(owner);
     await fnd.generateTokens(owner, 666000000000000000000);
+    await fnd.generateTokens(accounts[1], 666000000000000000000);
   };
 });
