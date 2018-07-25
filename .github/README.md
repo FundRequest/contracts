@@ -48,8 +48,9 @@ Contracts for FundRequest (token, crowdsale and platform contracts)
   Old FundRequestContract: 0x22b6cf852e39e91f18d4c8b0cb64810d6d49bc27
   FundRequestContract: 0x7392daafbd4f22f2c356eb42461cfbe2aa346ca1
   New FundRequestContract: 0x59fcdfbda305f934bc6d982170c31287c4f1f434
-  ClaimRepository: 0x4beeee82c9b72174513d088cd0f90b79dac6770b
-  FundRepository: 0x71cc56ae39ecc0ebe52b269d4da0939b29e63acd
+  Newest FundRequestContract: 0x55356bccfa48d09dc824c0aea6ebd868ff5edf50
+  ClaimRepository: 0xdf79ff25e845c6c5f3c48ff0e3228a853c20e2d3
+  FundRepository: 0x2bf1b6a964290f5ab2c64ea6ac91382c528a063d
   TokenWhitelistPrecondition: 0xb12e3fe9fac35a79030e428bcec2639183bfeb0f
   Server Caller: 0x692a913ad3a1f17a5abb0f060a317a48e9826244
   ClaimSignerAddress: 0xb93206b18f018fb91eefbc39cb59fa1ce8e626d4
