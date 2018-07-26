@@ -1,4 +1,4 @@
-const EternalStorage = artifacts.require('./storage/EternalStorage.sol');
+const EternalStorage = artifacts.require('./platform/storage/EternalStorage.sol');
 const FRC = artifacts.require('./platform/FundRequestContract.sol');
 const FRC_FUND_REPO = artifacts.require('./token/repository/FundRepository.sol');
 const FRC_CLAIM_REPO = artifacts.require('./token/repository/ClaimRepository.sol');

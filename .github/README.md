@@ -1,4 +1,4 @@
-### FundRequest Contracts<img align="right" src="https://fundrequest.io/assets/img/logo.png" height="30px" />
+### FundRequest Contracts<img align="right" src="https://github.com/FundRequest.png?size=30" />
 
 [![Build Status](https://img.shields.io/travis/FundRequest/contracts.svg?style=for-the-badge)](https://img.shields.io/travis/FundRequest/contracts.svg?style=for-the-badge) 
 [![Greenkeeper badge](https://badges.greenkeeper.io/FundRequest/contracts.svg)](https://greenkeeper.io/)
@@ -26,23 +26,32 @@ Contracts for FundRequest (token, crowdsale and platform contracts)
   FundRequestToken: 0x02f96ef85cad6639500ca1cc8356f0b5ca5bf1d2
   0xToken: 0x6ff6c0ff1d68b964901f986d4c9fa3ac68346570
   EternalStorage: 0xea4f67d52771e177037c5787e3d73c5eca0d83ae
-  ClaimRepository: 0x4ac69cfa88e38edd81b192edb084983b24ca8f9e
-  FundRepository: 0x309c50ca57ec4f856f9eefffc53586f7cdda046f
-  FundRequestContract: 0xea387e184f1366b10c98c08b92cd90eb876dbbc0
+  ClaimRepository: 0x7f0c48656b37f28aa9b496867be27dc83d5b6aee
+  FundRepository: 0x82be5dfb0dc6bd39a2ad6b1f58107a795a8f17d1
+  Old FundRequestContract: 0xea387e184f1366b10c98c08b92cd90eb876dbbc0
+  FundRequestContract: 0x7da8a4b527e17c6bb7ae426955106cea015bd752
+  New FundRequestContract: 0xeb154b05b1ed84f27cc9a0f1794f02877b43f086
   TokenWhitelistPrecondition: 0xec498c0a6bab80c99e4575bbe425dba806db48ea
+  Server Caller: 0x692a913ad3a1f17a5abb0f060a317a48e9826244
+  ClaimSignerAddress: 0xb93206b18f018fb91eefbc39cb59fa1ce8e626d4
 ```
 
 
 
 
-### Kovan dev-web
+### Kovan Test
 
 ```
   FundRequestToken: 0x02f96ef85cad6639500ca1cc8356f0b5ca5bf1d2
   0xToken: 0x6ff6c0ff1d68b964901f986d4c9fa3ac68346570
   EternalStorage: 0x1e5370467e0fa38de1902fa02ed8096b7a81ba74
-  FundRequestContract: 0x22b6cf852e39e91f18d4c8b0cb64810d6d49bc27
-  ClaimRepository: 0x97590d2ba0b015c6138ee3f744d90e8707f3ff9c
-  FundRepository: 0xca9d455591d1573e9f5f42dbd3db348232e583e0
+  Old FundRequestContract: 0x22b6cf852e39e91f18d4c8b0cb64810d6d49bc27
+  FundRequestContract: 0x7392daafbd4f22f2c356eb42461cfbe2aa346ca1
+  New FundRequestContract: 0x59fcdfbda305f934bc6d982170c31287c4f1f434
+  Newest FundRequestContract: 0x55356bccfa48d09dc824c0aea6ebd868ff5edf50
+  ClaimRepository: 0xdf79ff25e845c6c5f3c48ff0e3228a853c20e2d3
+  FundRepository: 0x2bf1b6a964290f5ab2c64ea6ac91382c528a063d
   TokenWhitelistPrecondition: 0xb12e3fe9fac35a79030e428bcec2639183bfeb0f
-``
+  Server Caller: 0x692a913ad3a1f17a5abb0f060a317a48e9826244
+  ClaimSignerAddress: 0xb93206b18f018fb91eefbc39cb59fa1ce8e626d4
+```

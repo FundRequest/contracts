@@ -13,7 +13,6 @@ buid/contracts/
 node_modules
 *.iml
 .idea/
-package-lock.json
 config/*
 config/local/
 config/rinkeby/

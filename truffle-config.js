@@ -1,3 +1,6 @@
+const HDWalletProvider = require("truffle-hdwallet-provider");
+const PrivateKeyProvider = require('truffle-privatekey-provider');
+
 require('dotenv').config();
 'use strict';
 
@@ -6,7 +9,17 @@ require('babel-register')({
 });
 require('babel-polyfill');
 
-const HDWalletProvider = require("truffle-hdwallet-provider");
+
+
+const mochaGasSettings = {
+  reporter: 'eth-gas-reporter',
+  reporterOptions : {
+    currency: 'USD',
+    gasPrice: 3
+  }
+}
+
+const mocha = process.env.GAS_REPORTER ? mochaGasSettings : {};
 
 module.exports = {
 	networks: {
@@ -15,7 +28,11 @@ module.exports = {
 			host: "localhost",
 			port: 8545,
 		},
-		kovan: {
+		staging: {
+			network_id: '42',
+			provider: new HDWalletProvider(process.env.MNEMONIC, "https://kovan.fundrequest.io/")
+		},
+		test: {
 			network_id: '42',
 			provider: new HDWalletProvider(process.env.MNEMONIC, "https://kovan.fundrequest.io/")
 		},
@@ -25,9 +42,15 @@ module.exports = {
 			from: process.env.MAINNET_FROM,
 			gas: 4612388,
 			gasPrice: 23000000000
-		}
+		},
+    coverage: {
+      host: "localhost",
+      network_id: "*",
+      port: 8555,
+      gas: 0xffffffffff,
+      gasPrice: 0x01
+    }
 	},
-	mocha: {
-		useColors: true
-	}
+	build: {},
+	mocha,
 };
