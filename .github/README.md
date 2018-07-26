@@ -14,9 +14,10 @@ Contracts for FundRequest (token, crowdsale and platform contracts)
 | FundRequestToken  | 0x4df47b4969b2911c966506e3592c41389493953b  |
 | FundRequestTokenGeneration  | 0xbcc546eb5a290977180f85cafaa712019893729c  |
 | FundRequestContract  | 0xa8aa4ce1bcd0d78bf19889f389cd030dfc96275e  |
+| New FundRequestContract | 0x9582627919d8c0643af2f81a9cb2193a4cb993d4 |
 | TokenWhitelistPrecondition  | 0x06d4eccf466d08246856b3f8fc52b13a51cf01ca  |
-| FundRepository  | 0x9b13026a4430acbfd3d80d9dea2cebc4e7d1d79a  |
-| ClaimRepository  | 0x3f5460cc85921d43f14b99699bfc87ab8aa3ab97  |
+| FundRepository  | 0xce089b8b079597662614df7557e215f19ec8c3fa  |
+| ClaimRepository  | 0x634074a19df5d6509ccc68fa86e3fe8205f37946  |
 | EternalStorage  | 0x0821d33c50d2d2d1381b5dfca34900bacad909a7  |
 
 

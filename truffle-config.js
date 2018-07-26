@@ -38,10 +38,10 @@ module.exports = {
 		},
 		mainnet: {
 			network_id: '1',
-      provider: new HDWalletProvider(process.env.MNEMONIC_MAINNET, "https://mainnet.fundrequest.io"),
+      provider: new HDWalletProvider(process.env.MNEMONIC_MAINNET, "https://mainnet2.fundrequest.io"),
 			from: process.env.MAINNET_FROM,
-			gas: 4612388,
-			gasPrice: 23000000000
+			gas: 6721975,
+			gasPrice: 7000000000
 		},
     coverage: {
       host: "localhost",
